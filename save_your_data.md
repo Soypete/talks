@@ -96,29 +96,115 @@ Cloudera uses ml to auto scale their clusters-->
 
 ---
 # Machine Learning
-Forcasting outages/high network usage(att example)
+Forcasting outages/high network usage
+<!-- (att example) -->
+
+![bg right fit width:700px](https://www.amnh.org/var/ezflow_site/storage/images/media/tornado-leading-image/1666587-1-eng-US/tornado-leading-image.jpg)
 
 ---
 # Machine Learning
-  
+
 * Product enhancement (weave sentiment analysis)
 
 ---
 
 # Data Architecture as part of planning process
-* What data is developed in each step?
+<!-- * What data is developed in each step?
 * What are availability needs?
   - Does the product need to consume this data? 
   - Do other services need to consume this data? 
-* Is it worth the storage cost?
+* Is it worth the storage cost? -->
+
+---
+
+# Data Architecture as part of planning process
+
+Questions to ask when planning or designing 
+---
+
+# Data Architecture as part of planning process
+
+Questions to ask when planning
+- Am I creating, consuming, or communicating the data?
+---
+
+# Data Architecture as part of planning process
+
+Questions to ask when planning
+- Am I creating, consuming, or communicating the data?
+- Where is the final resting place of my data?
+---
+
+# Data Architecture as part of planning process
+
+Questions to ask when planning
+- Am I creating, consuming, or communicating the data?
+- Where is the final resting place of my data?
+- How much does is cost to store the data?
+
+---
+
+# Data Architecture as part of planning process
+
+Questions to ask when planning
+- Am I creating, consuming, or communicating the data?
+- Where is the final resting place of my data?
+- How much does is cost to store the data?
+- What are availability needs?
+
+---
+# Data Architecture as part of planning process
+
+Questions to ask when planning
+- What are availability needs?
+  - Does the product need to consume this data? 
+---
+
+# Data Architecture as part of planning process
+
+Questions to ask when planning
+- What are availability needs?
+  - Does the product need to consume this data? 
+  - Do other services need to consume this data? 
+---
+
+# Data Architecture as part of planning process
+
+Questions to ask when planning
+- What are availability needs?
+  - Does the product need to consume this data? 
+  - Do other services need to consume this data? 
+  - How often is the data consumed?
+---
+
+# Data Architecture as part of planning process
+
+## Where do we start?
 
 ---
 
 # Where do we start?
+
 * Pain points
 
 ---
+# Where do we start?
 
+* Pain points
+* Central Features
+
+---
+
+# Where do we start?
+
+* Pain points
+* Central Features
+* Product needs
+
+---
+Questions?
+
+---
 # Resources
 
 *[wikipedia data-computing](https://en.wikipedia.org/wiki/Data_(computing))
