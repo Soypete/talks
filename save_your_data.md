@@ -17,8 +17,8 @@ Miriah Peterson
 
 # Bio
 
-- Data Learning Engineer at Weave in Lehi, Utah
-- Meetup/Conference Organizer with Forge Foundation
+- Engineer at Weave in Lehi, Utah
+- Board Member with Forge Foundation
 - Proud Dog Mom
 - [Twitter captiainnobody1](https://www.twitter.com/captainnobody1)
 - [GitHub soypete](https://www.github.com/soypete)
@@ -27,24 +27,81 @@ Miriah Peterson
 ---
 
 # Types of Data
----
-# Types of Data
-## time series data
----
-# Types of Data
-## personal data
----
-# Types of Data
-## usage data
+Data: Data (treated as singular, plural, or as a mass noun) is any sequence of one or more symbols given meaning by specific act(s) of interpretation.
 
 ---
 
-# How to use your data?
-* Reports
+# Types of Data
+Data: Data (treated as singular, plural, or as a mass noun) is any sequence of one or more symbols given meaning by specific act(s) of interpretation.
+
+Types:
+- Machine-generated data
+- User generated data
+
+---
+## machine-generated data
+
+What are types of machine generated data does your software produce?
+
+---
+## Machine-generated data
+
+What are types of machine generated data does your software produce?
+* Event Data
+* Error Data
+* Network Usage Data
+* App Actions (click-stream) data
+* Change log data
+
+
+---
+## User generated
+What are types of user generated data does your software produce?
+* Account information
+* Personal information
+* Transaction (payment/currency)
+* Product Data
+---
+# Types of Data
+
+Which is more important?
+
+---
+# Ways to use your data - Direct in Product
+![width:1100px](https://images.squarespace-cdn.com/content/v1/51de2380e4b091cde978ef91/1588886509103-ZLTSJ8MUO79FYGC83320/ke17ZwdGBToddI8pDm48kN1dY1Dq4-GP8qanlVosGJJ7gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z5QPOohDIaIeljMHgDF5CVlOqpeNLcJ80NK65_fV7S1UVjDcrmeH5fWy8wfaTorp5Rk9NxNSsFtcKUvJT2EfhrlZtJ3qR9G2BYeA0wOAaeYNg/Screen+Shot+2020-05-07+at+3.18.53+PM.png?format=1500w)
+
+---
+
+# Ways to use your data - Dashboard/Reports
+<!-- * Reports
 * Dashboards
-* Bi/Data analysis
-* risk analysis
 * product use case
+* machine learning  -->
+![width:1100px](https://grafana.com/static/img/docs/animated_gifs/drag_drop.gif)
+
+---
+# Ways to use your data - Dashboard/Reports
+
+In what ways are you using machine-generated or user generated data?
+
+--- 
+
+# Machine Learning
+
+---
+# Machine Learning
+Monitoring usage to trigger an action.
+<!-- kubernetes auto scale 
+Cloudera uses ml to auto scale their clusters-->
+
+---
+# Machine Learning
+Forcasting outages/high network usage(att example)
+
+---
+# Machine Learning
+  
+* Product enhancement (weave sentiment analysis)
 
 ---
 
@@ -57,13 +114,6 @@ Miriah Peterson
 
 ---
 
-# When can we use machine learning? 
-* monitoring (kubernetes auto scale)
-* forcasting (att example)
-* Product enhancement (weave sentiment analysis)
-
----
-
 # Where do we start?
 * Pain points
 
@@ -71,5 +121,8 @@ Miriah Peterson
 
 # Resources
 
+*[wikipedia data-computing](https://en.wikipedia.org/wiki/Data_(computing))
 *[Software Engineering Daily May 28, 2020](https://softwareengineeringdaily.com/2020/05/28/distributed-systems-research-with-peter-alvaro/)
+*[machine-generated vs human-generated](http://dbmsmusings.blogspot.com/2010/12/machine-vs-human-generated-data.html)
+*[cloudera autoscaling](https://docs.cloudera.com/machine-learning/cloud/autoscaling-overview/topics/ml-autoscaling-overview.html)
 ---
