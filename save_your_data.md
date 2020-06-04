@@ -177,6 +177,24 @@ Questions to ask when planning
   - How often is the data consumed?
 ---
 
+# Data Architecture as part pf planning process
+ ![bg fit](https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Google-BigQuery-Logo.svg/1200px-Google-BigQuery-Logo.svg.png)
+ ![bg fit](images/1_aNSe9ZERfX5-Dl0wAVBOOg.png)
+ ![bg fit](images/vitess-stacked-color.png)
+ ![bg fit](https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Vertica_pos_blk_rgb.svg/440px-Vertica_pos_blk_rgb.svg.png)
+![bg fit](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Hadoop_logo.svg/1280px-Hadoop_logo.svg.png)
+![bg fit](https://svn.apache.org/repos/asf/kafka/site/logos/originals/png/ICON%20-%20Black%20on%20Transparent.png)
+
+ ---
+
+ # Data Architecture as part of planning process
+ Methods for adding Machine Learning Models
+ - API calls
+ - Static Model
+ - Part of Event Stream
+
+ ---
+
 # Data Architecture as part of planning process
 
 ## Where do we start?
