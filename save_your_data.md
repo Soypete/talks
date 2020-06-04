@@ -20,7 +20,7 @@ Miriah Peterson
 - Engineer at Weave in Lehi, Utah
 - Board Member with Forge Foundation
 - Proud Dog Mom
-- [Twitter captiainnobody1](https://www.twitter.com/captainnobody1)
+- [Twitter @captainnobody1](https://www.twitter.com/captainnobody1)
 - [GitHub soypete](https://www.github.com/soypete)
 - [LinkedIn](https://www.linkedin.com/in/miriah-peterson-35649b5b)
 
@@ -37,9 +37,13 @@ Data: Data (treated as singular, plural, or as a mass noun) is any sequence of o
 Types:
 - Machine-generated data
 - User generated data
+<!-- 
+structured: data with a schema
+unstructed data: raw loose data
+-->
 
 ---
-## machine-generated data
+## Machine-generated data
 
 What are types of machine generated data does your software produce?
 
@@ -51,8 +55,7 @@ What are types of machine generated data does your software produce?
 * Error Data
 * Network Usage Data
 * App Actions (click-stream) data
-* Change log data
-
+* Database change capture (anamoly detection)
 
 ---
 ## User generated
@@ -61,6 +64,8 @@ What are types of user generated data does your software produce?
 * Personal information
 * Transaction (payment/currency)
 * Product Data
+*  *Metadata  <!--- number of times logged into account --->
+
 ---
 # Types of Data
 
@@ -73,20 +78,24 @@ Which is more important?
 ---
 
 # Ways to use your data - Dashboard/Reports
-<!-- * Reports
-* Dashboards
-* product use case
-* machine learning  -->
+<!---* The Crutch --->
 ![width:1100px](https://grafana.com/static/img/docs/animated_gifs/drag_drop.gif)
 
 ---
-# Ways to use your data - Dashboard/Reports
+# Ways to use your data
 
 In what ways are you using machine-generated or user generated data?
 
 --- 
+ 
+# Ways to use your data
+
+Machine Learning from stored data.
+
+--- 
 
 # Machine Learning
+<!-- the Easier the data is to consume by a data scientist the quicker you see ROI --->
 
 ---
 # Machine Learning
@@ -119,38 +128,41 @@ Forcasting outages/high network usage
 
 # Data Architecture as part of planning process
 
-Questions to ask when planning or designing 
----
-
-# Data Architecture as part of planning process
-
 Questions to ask when planning
-- Am I creating, consuming, or communicating the data?
----
-
-# Data Architecture as part of planning process
-
-Questions to ask when planning
-- Am I creating, consuming, or communicating the data?
-- Where is the final resting place of my data?
----
-
-# Data Architecture as part of planning process
-
-Questions to ask when planning
-- Am I creating, consuming, or communicating the data?
-- Where is the final resting place of my data?
-- How much does is cost to store the data?
 
 ---
 
 # Data Architecture as part of planning process
 
 Questions to ask when planning
-- Am I creating, consuming, or communicating the data?
-- Where is the final resting place of my data?
-- How much does is cost to store the data?
+- Who is creating, consuming, or communicating the data?
+---
+
+# Data Architecture as part of planning process
+<!-- counting errors -->
+Questions to ask when planning
+- Who is creating, consuming, or communicating the data?
+  - Where is the final resting consumption of my data?
+
+---
+
+# Data Architecture as part of planning process
+
+Questions to ask when planning
+- Who is creating, consuming, or communicating the data?
+  - Where is the final resting place of my data?
+- How much does it cost to store the data?
+
+---
+
+# Data Architecture as part of planning process
+
+Questions to ask when planning
+- Who is creating, consuming, or communicating the data?
+  - Where is the final resting place of my data?
+- How much does it cost to store the data?
 - What are availability needs?
+<!-- OLTP Online transactional processing/ OLAP Online Analysis processing--->
 
 ---
 # Data Architecture as part of planning process
@@ -169,7 +181,7 @@ Questions to ask when planning
 ---
 
 # Data Architecture as part of planning process
-
+<!--When do you run into these problems --->
 Questions to ask when planning
 - What are availability needs?
   - Does the product need to consume this data? 
@@ -190,7 +202,7 @@ Questions to ask when planning
  # Data Architecture as part of planning process
  Methods for adding Machine Learning Models
  - API calls
- - Static Model
+ - Static Model <!--- static file/database -->
  - Part of Event Stream
 
  ---
@@ -203,24 +215,24 @@ Questions to ask when planning
 
 # Where do we start?
 
-* Pain points
+* **Pain points**
 
 ---
 # Where do we start?
 
-* Pain points
+* **Pain points**
 * Central Features
 
 ---
 
 # Where do we start?
 
-* Pain points
+* **Pain points**
 * Central Features
 * Product needs
 
 ---
-Questions?
+# Questions?
 
 ---
 # Resources
