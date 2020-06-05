@@ -13,7 +13,7 @@ Miriah Peterson
 
 ---
 
-![bg right fit rotate:90](images/IMG_3232.jpg)
+![bg right fit](images/IMG_3232.jpg)
 
 # Bio
 
@@ -73,7 +73,7 @@ Which is more important?
 
 ---
 # Ways to use your data - Direct in Product
-![width:1100px](https://images.squarespace-cdn.com/content/v1/51de2380e4b091cde978ef91/1588886509103-ZLTSJ8MUO79FYGC83320/ke17ZwdGBToddI8pDm48kN1dY1Dq4-GP8qanlVosGJJ7gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z5QPOohDIaIeljMHgDF5CVlOqpeNLcJ80NK65_fV7S1UVjDcrmeH5fWy8wfaTorp5Rk9NxNSsFtcKUvJT2EfhrlZtJ3qR9G2BYeA0wOAaeYNg/Screen+Shot+2020-05-07+at+3.18.53+PM.png?format=1500w)
+![fit width:1100px](https://images.squarespace-cdn.com/content/v1/51de2380e4b091cde978ef91/1588886509103-ZLTSJ8MUO79FYGC83320/ke17ZwdGBToddI8pDm48kN1dY1Dq4-GP8qanlVosGJJ7gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z5QPOohDIaIeljMHgDF5CVlOqpeNLcJ80NK65_fV7S1UVjDcrmeH5fWy8wfaTorp5Rk9NxNSsFtcKUvJT2EfhrlZtJ3qR9G2BYeA0wOAaeYNg/Screen+Shot+2020-05-07+at+3.18.53+PM.png?format=1500w)
 
 ---
 
@@ -96,10 +96,11 @@ Machine Learning from stored data.
 
 # Machine Learning
 <!-- the Easier the data is to consume by a data scientist the quicker you see ROI --->
+![bg right fit](https://media.giphy.com/media/9PrqNHPAdWyJVOXntF/giphy.gif)
 
 ---
 # Machine Learning
-Monitoring usage to trigger an action.
+Monitoring usage to trigger an action (predictive autoscaling).
 <!-- kubernetes auto scale 
 Cloudera uses ml to auto scale their clusters-->
 
@@ -114,6 +115,7 @@ Forcasting outages/high network usage
 # Machine Learning
 
 * Product enhancement (weave sentiment analysis)
+![bg right fit](https://www.getweave.com/wp-content/uploads/2019/12/messaging-hero-image.png)
 
 ---
 
@@ -241,4 +243,8 @@ Questions to ask when planning
 *[Software Engineering Daily May 28, 2020](https://softwareengineeringdaily.com/2020/05/28/distributed-systems-research-with-peter-alvaro/)
 *[machine-generated vs human-generated](http://dbmsmusings.blogspot.com/2010/12/machine-vs-human-generated-data.html)
 *[cloudera autoscaling](https://docs.cloudera.com/machine-learning/cloud/autoscaling-overview/topics/ml-autoscaling-overview.html)
+*[Data Driven Applications](https://www.amazon.com/gp/product/1449373321/ref=ppx_yo_dt_b_asin_title_o05_s02?ie=UTF8&psc=1)
+*[kubernetes autoscaling](https://kubernetes.io/blog/2016/07/autoscaling-in-kubernetes/)
+*[autoscale wikipedia](https://en.wikipedia.org/wiki/Autoscaling#Predictive_autoscaling)
+*[predictive autoscaling aws](https://aws.amazon.com/blogs/aws/new-predictive-scaling-for-ec2-powered-by-machine-learning/)
 ---
