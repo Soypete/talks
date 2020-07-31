@@ -11,7 +11,7 @@ footer: ![width:200px](images/WeaveLogoDarkGray.png)
 # Tips and Tricks for Data Engineering in the #GOshop
 Miriah Peterson
 <!-- 
-Abstract: --> 
+Abstract: Data Engineers today work primarily in Python and Java to create large scale piplines and Data platforms for their companies. As a Data Engineer I have spent the past two years working exclusively in --> 
 
 ___
 
