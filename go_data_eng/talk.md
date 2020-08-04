@@ -11,14 +11,15 @@ footer: ![width:200px](images/WeaveLogoDarkGray.png)
 # Tips and Tricks for Data Engineering in the #GOshop
 Miriah Peterson
 <!-- 
-Abstract: Data Engineers today work primarily in Python and Java to create large scale piplines and Data platforms for their companies. As a Data Engineer I have spent the past two years working exclusively in --> 
+Abstract: Data Engineers today work primarily in Python and Java to create large scale piplines and Data platforms for their companies. As a Data Engineer I have spent the past two years working exclusively in Go. 
+In this talk I want to share what I have learn and tips and tricks for success.--> 
 
 ___
 
 
 ![bg right fit](images/IMG_3232.jpg)
 
-# Bio
+## Bio
 
 - Data Engineer at Weave in Lehi, Utah
 - Board Member with Forge Foundation
@@ -29,21 +30,39 @@ ___
 
 ---
 
+## Intro
+
 >Bob: I am wondering if you actually get to use Go in your data pipelines or is it still mostly SQL/Python for you? I am curious how do you go about ensuring data quality in your data pipelines? Does Weave have a formal framework for monitoring/alerting on quality?
 Me:  We are all go
 Bob: Wow! What runs Go for ETL besides Beam/DataFlow?
 Me: We are very creative with sql
-Bob: I am intrigued! Anything open-sourced?
-Me: The only non-open source product we have in our data stack is vertica (except homegrown of course )
-Bob: Aha. So you express your ETL in Go which then translates to SQL? Or writing good old SQL? just curious
+Bob: I am intrigued!
 
 ---
 
-Tips and Tricks I have learned doing Data Engineering in Go
+## Intro
+
+Tips and Tricks I have learned doing Data Engineering in Go:
+- Platform
+- Extract Data
+- Load Data
+- Transform Data
 
 ---
 
-Do ELT not ETL
+## Platform
+Platform: Infrastructure for storing, transfering, analyzing, and transforming data. 
+
+--- 
+
+Use If you don't have to make it in house, if you do, do not over engineer it 
+ - pachydern
+ - beam
+
+___
+
+Plan for Monolith or Microservice upfront. no hybrids
+- If you are doing microservice architecture they each consumption point is a unique service
 
 --- 
 
@@ -54,11 +73,29 @@ Use a messaging/streaming service over channels
 
 ---
 
+Use a schema repository (grpc + go =  heart)
+
+--- 
+
+## Extraction 
 Pick the Data type at Extration and stick to it
 - unstructured data is popular in other platforms *avoid it*
 - Can you use scraping to help define data
 
 ---
+
+Don't be afraid of generating code
+
+--- 
+
+Pointers make things lighter
+
+--- 
+
+Always pass errors up
+
+---
+## Transform
 
 Rely on your database
 
@@ -68,31 +105,12 @@ Transforming for the Database is not the same as transforming for product consum
 
 --- 
 
-If you are doing microservice architecture they each consumption point is a unique service
 
---- 
 
-Don't be afraid of generating code
-
---- 
-
-Use a schema repository (grpc + go =  heart)
-
---- 
 
 Find a good sql library
 
 --- 
 
-Use If you don't have to make it in house, if you do, do not over engineer it 
- - pachydern
- - beam
-___
 
-Pointers make things lighter
 
---- 
-
-Always pass errors up
-
----
