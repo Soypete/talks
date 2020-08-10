@@ -3,9 +3,9 @@ theme: gaia
 _class: lead
 paginate: true
 backgroundColor: #fff
-backgroundImage: url('https://marp.app/assets/hero-background.jpg')
+backgroundImage: url('../images/gopher_slide.png')
 marp: true
-footer: ![width:200px](images/WeaveLogoDarkGray.png)
+footer: ![width:200px](../images/WeaveLogoDarkGray.png)
 ---
 
 # Tips and Tricks for Data Engineering in the #GOshop
@@ -17,7 +17,7 @@ In this talk I want to share what I have learn and tips and tricks for success.-
 ___
 
 
-![bg right fit](images/IMG_3232.jpg)
+<!-- ![bg right fit](../images/IMG_3232.jpg) -->
 
 ## Bio
 
@@ -51,66 +51,72 @@ Tips and Tricks I have learned doing Data Engineering in Go:
 ---
 
 ## Platform
-Platform: Infrastructure for storing, transfering, analyzing, and transforming data. 
 
---- 
+Platform: Infrastructure for storing, transfering, analyzing, and transforming data.
 
-Use If you don't have to make it in house, if you do, do not over engineer it 
+---;
+
+Use If you don't have to make it in house, if you do, do not over engineer it
  - pachydern
  - beam
 
-___
+---;
 
 Plan for Monolith or Microservice upfront. no hybrids
 - If you are doing microservice architecture they each consumption point is a unique service
 
---- 
+---;
 
 Use a messaging/streaming service over channels
 - nats
 - nsq
 - api calls slow things down
 
----
+---;
 
 Use a schema repository (grpc + go =  heart)
 
---- 
+--- ;
 
-## Extraction 
+## Extraction
+
 Pick the Data type at Extration and stick to it
 - unstructured data is popular in other platforms *avoid it*
 - Can you use scraping to help define data
 
----
+---;
 
 Don't be afraid of generating code
 
---- 
+---;
 
 Pointers make things lighter
 
---- 
+---;
 
 Always pass errors up
 
----
+---;
+
 ## Transform
 
 Rely on your database
 
---- 
+---;
 
 Transforming for the Database is not the same as transforming for product consumption
 
---- 
-
-
-
+---;
 
 Find a good sql library
 
---- 
+---;
+## Load
 
+Can you use scraping to help define data?
 
+---;
+ Don't be afraid of generating code
 
+---;
+ Monitor your data change. It makes debugging easier.
