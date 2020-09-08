@@ -32,12 +32,7 @@ ___
 
 ## Intro
 
->Bob: I am wondering if you actually get to use Go in your data pipelines or is it still mostly SQL/Python for you? I am curious how do you go about ensuring data quality in your data pipelines? Does Weave have a formal framework for monitoring/alerting on quality?
-Me:  We are all go
-Bob: Wow! What runs Go for ETL besides Beam/DataFlow?
-Me: We are very creative with sql
-Bob: I am intrigued!
-
+>I am wondering if you actually get to use Go in your data pipelines or is it still mostly SQL/Python for you? I am curious how do you go about ensuring data quality in your data pipelines? Does Weave have a formal framework for monitoring/alerting on quality?
 ---
 
 ## Intro
@@ -54,69 +49,113 @@ Tips and Tricks I have learned doing Data Engineering in Go:
 
 Platform: Infrastructure for storing, transfering, analyzing, and transforming data.
 
----;
+---
+
+## Platform
 
 Use If you don't have to make it in house, if you do, do not over engineer it
- - pachydern
- - beam
+- anticipate constraints and security
+<!-- over the wire  -->
+- anticipate compliance
+- budget time to iterate on your design
+ <!-- - pachydern
+ - beam -->
 
----;
+---
+
+## Platform
 
 Plan for Monolith or Microservice upfront. no hybrids
-- If you are doing microservice architecture they each consumption point is a unique service
+- You don't want to maintain/create unnecessary services
+- Caching layer
+- Number of transfer points
+- Don't cheat yourself with Go routines and channels
+<!-- - If you are doing microservice architecture then each consumption point is a unique service -->
 
----;
+---
 
-Use a messaging/streaming service over channels
+## Platform
+
+Use a messaging/streaming services to manage data flow
 - nats
 - nsq
 - api calls slow things down
 
----;
+---
 
-Use a schema repository (grpc + go =  heart)
+## Platform
 
---- ;
+Use a schema repository (grpc + go =  :heart:)
+- Standardize data types across services (microservice)
+- Leverage Generation
+<!-- we need a genericized example of protobuf code generation. Possible vitess?  -->
+
+
+---
 
 ## Extraction
 
 Pick the Data type at Extration and stick to it
-- unstructured data is popular in other platforms *avoid it*
-- Can you use scraping to help define data
+- Avoid non-typed data <!-- This is leveraged alot in python and can require thought process switching -->
+- Optimize type for storage
+- Can you leverage scraping?
 
----;
+---
+
+## Extraction
 
 Don't be afraid of generating code
+<!-- we need a genericized example of protobuf code generation. Possible vitess?  -->
 
----;
+---
 
-Pointers make things lighter
+## Extraction
 
----;
+Create Struct types for complex data structures
+- Pointers make things lighter
+- memory doesn't matter until it does
+- Leverage interfaces for complete picture
+<!-- you need code here -->
+<!-- being smart about naming, functions, processes can allows for new integraions to proceed with ease -->
 
-Always pass errors up
+---
 
----;
+## Extraction
+
+Fail Fast isn't always your friend
+- Always pass errors up
+- Leverage back-off and retry
+- Track failed data
+
+---
 
 ## Transform
 
 Rely on your database
+- Optimize for Storage 
+<!-- Transforming for the Database is not the same as transforming for product consumption -->
 
----;
 
-Transforming for the Database is not the same as transforming for product consumption
+---
 
----;
+## Transform
 
 Find a good sql library
 
----;
+---
+
 ## Load
 
 Can you use scraping to help define data?
 
----;
- Don't be afraid of generating code
+---
 
----;
- Monitor your data change. It makes debugging easier.
+## Load
+
+Don't be afraid of generating code
+
+---
+
+## Load
+
+Monitor your data change. It makes debugging easier.
