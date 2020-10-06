@@ -192,7 +192,7 @@ Do not infuse business data model into your storage
 
 - Optimize for Storage
 - Pick a type and stick to it
-- Make data discoverable
+- Make data discoverableq
 <!-- Transforming for the Database is not the same as transforming for product consumption -->
 
 ---
