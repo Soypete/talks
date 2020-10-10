@@ -31,9 +31,23 @@ ___
 ---
 
 ## Intro
+<!-- welcome to utah. This is where I work and alot of what I am going to talk about has to do with the tech land scape of the start up heavy and young tech game. -->
+
+![auto](https://2utfff4d3dkt3biit53nsvep-wpengine.netdna-ssl.com/wp-content/uploads/2018/06/utah-1.png)
+---
+
+
+## Intro
 <!-- People reach out to me lot with wondering how I do my job because I work at Weave. -->
 >I am wondering if you actually get to use Go in your data pipelines or is it still mostly SQL/Python for you? I am curious how do you go about ensuring data quality in your data pipelines? Does Weave have a formal framework for monitoring/alerting on quality?
 
+---
+
+## Intro
+
+<!-- I work at weave. In this area, we are one of the bigger players and our backend is all Go. We are very public being heavily involved in meetups and having a recent unicorn valuation. That being said we are young. Alot of what I am sharing today are due to the nature of the tech land scape in utah, at weave, and my youth in the industry -->
+![auto](https://media-exp1.licdn.com/dms/image/C4E0BAQEPIWvZ0fLRoQ/company-logo_200_200/0?e=1609977600&v=beta&t=s10QPTtKJeB4JJ8gWacFKttc9LAgkBCyLgdsLEmD9i0)
+- https://www.crunchbase.com/organization/weave
 ---
 
 ## Intro
@@ -51,19 +65,24 @@ Tips and Tricks I have learned doing Data Engineering in Go:
 
 Platform: Infrastructure for storing, transfering, analyzing, and transforming data.
 
+![auto](https://media.giphy.com/media/LscmpwWq2W6CA/giphy.gif)
+
 ---
 
 ## Platform
 
 If possible don't build your own home grown solution
 
-![width:200px height:200px](../images/beam-logo-full-color-name-bottom-500.png)
-![width:200px height:200px](../images/pachyderm.svg)
+<!-- ![width:200px height:200px](../images/beam-logo-full-color-name-bottom-500.png)
+![width:200px height:200px](../images/pachyderm.svg) -->
+![auto](https://media.giphy.com/media/l2Jeiw5zzyd7HNPvG/giphy.gif)
+
  <!-- - pachydern
  - beam  
  remember beam is dataflow and "has" a go sdk-->
 
  ---
+
 ## Platform
 <!-- when you inevitably build your own  -->
 <!-- data state over the wire  is important cause that is one of the places where data cn be most vulnerablee-->
@@ -123,7 +142,7 @@ Pick the Data type at Extration and stick to it
 
 - Avoid non-typed data 
 - Optimize type for storage
-- Can you leverage scraping?
+- Leverage Scraping as Needed 
 
 ---
 
@@ -192,7 +211,7 @@ Do not infuse business data model into your storage
 
 - Optimize for Storage
 - Pick a type and stick to it
-- Make data discoverableq
+- Make data discoverable
 <!-- Transforming for the Database is not the same as transforming for product consumption -->
 
 ---
@@ -222,14 +241,18 @@ func (ex *example{{ $Type }}) Convert(ctx context.Context) (record.Record, error
 ---
 ## Transform
 
-Business Logic Here!
+DON'T Add Feature Logic Here!
+
+![auto](https://media.giphy.com/media/G2MPcSmq0DZcs/giphy.gif)
+<!-- it is really easy to pinhole yourself buy narrowing scope to one feature or stakeholder. -->
 
 ---
 
 ## Transform
 
 Live Data insights
-<!-- I can make recommendations, but have no real work experience here. 
+![auto](https://media.giphy.com/media/12NUbkX6p4xOO4/giphy.gif)
+<!-- Live updates are possible, here are some tools. They’re sexy but harder to build. Most of the time batch processing provides just as much value. 
 - Redis
 - Streaming and Beam
 - Online ML -->
@@ -263,4 +286,8 @@ Tips and Tricks Go:
 
 ---
 ## REFERENCE:
+- https://news.crunchbase.com/news/utahs-tech-scene-its-rising-profile-and-the-third-generation-of-startups/
 - https://blog.gopheracademy.com/advent-2018/apache-beam/ 
+- https://www.pachyderm.com/
+- https://dataintensive.net/
+- http://streamingsystems.net/
