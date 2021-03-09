@@ -20,7 +20,7 @@ ___
 <!-- ![bg right fit](../images/IMG_3232.jpg) -->
 
 ## Bio
-
+<!-- So Today I am going to tell you a story of my adventures as trying to build out a data ingestion pipeline and Weave. To do that, I need to give you a little context. -->
 - Data Engineer at Weave in Lehi, Utah
 - Board Member with Forge Foundation
 - Proud Dog Mom
@@ -31,15 +31,9 @@ ___
 ---
 
 ## Intro
-<!-- welcome to utah. This is where I work and alot of what I am going to talk about has to do with the tech land scape of the start up heavy and young tech game. -->
+<!-- welcome to utah. This is where I work and alot of what I am going to talk about has to do with the tech land scape of the start up heavy and young tech game. We are a pretty sheltered area. We think our companies rival silicon valley, and all of the businesses here do some variation of a service of what we call `Small Businesses` or companies with fewer than 1000 employees. because we all provide similar services we look for unique ways to differential ourselves-->
 
-![auto](https://2utfff4d3dkt3biit53nsvep-wpengine.netdna-ssl.com/wp-content/uploads/2018/06/utah-1.png)
----
-
-
-## Intro
-<!-- People reach out to me lot with wondering how I do my job because I work at Weave. -->
->I am wondering if you actually get to use Go in your data pipelines or is it still mostly SQL/Python for you? I am curious how do you go about ensuring data quality in your data pipelines? Does Weave have a formal framework for monitoring/alerting on quality?
+![width:800px](https://2utfff4d3dkt3biit53nsvep-wpengine.netdna-ssl.com/wp-content/uploads/2018/06/utah-1.png)`
 
 ---
 
@@ -48,6 +42,14 @@ ___
 <!-- I work at weave. In this area, we are one of the bigger players and our backend is all Go. We are very public being heavily involved in meetups and having a recent unicorn valuation. That being said we are young. Alot of what I am sharing today are due to the nature of the tech land scape in utah, at weave, and my youth in the industry -->
 ![auto](https://media-exp1.licdn.com/dms/image/C4E0BAQEPIWvZ0fLRoQ/company-logo_200_200/0?e=1609977600&v=beta&t=s10QPTtKJeB4JJ8gWacFKttc9LAgkBCyLgdsLEmD9i0)
 - https://www.crunchbase.com/organization/weave
+
+---
+
+
+## Intro
+<!-- People reach out to me lot with wondering how I do my job because I work at Weave. -->
+>I am wondering if you actually get to use Go in your data pipelines or is it still mostly SQL/Python for you? I am curious how do you go about ensuring data quality in your data pipelines? Does Weave have a formal framework for monitoring/alerting on quality?
+
 ---
 
 ## Intro
