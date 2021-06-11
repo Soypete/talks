@@ -3,15 +3,13 @@ theme: gaia
 _class: lead
 paginate: true
 backgroundColor: #fff
-backgroundImage: url('../images/gopher_slide.png')
+backgroundImage: url('../images/ray.jpg')
 marp: true
-footer: ![width:200px](../images/WeaveLogoDarkGray.png)
 ---
 
 # Go from Zero to Hero: Learning Go when you don't know how to code
 Miriah Peterson
 ___
-![bg right fit](../images/IMG_3232.jpg)
 
 ## Bio
 - Data Engineer at Weave in Lehi, Utah
@@ -24,26 +22,24 @@ ___
 ---
 # Intro
 
-insert gopher here
+![bg fit](../images/Go_Diversity.png)
 <!--- 
 - Why Go. reabability, speed, stability
 - go was my first language
 --->
 ---
 # Intro
-insert image/iframe of the intro to go resources from golang.com? 
+![w:620](../images/go_sites.png) 
 <!---
 - most existing tutorials do not cater to persons who have little to no understanding of basic programing concepts
 --->
 ---
 # Open Source Learning
-insert money gif
+![h:450](https://media.giphy.com/media/1ppudqsvJAWPa63iLU/giphy.gif)
 
 ---
 # Tutorial
-<!---
-if you get this live then iframe of site here
---->
+
 ---
 
 ## Part-1 Intro to Programming
