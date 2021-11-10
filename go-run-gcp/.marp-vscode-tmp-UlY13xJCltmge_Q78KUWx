@@ -230,9 +230,8 @@ gcloud scheduler jobs create http test-handler --schedule "5 * * * *"
 
 ---
 ## Summary
-Go is the best programming language 
-Docker support makes it really easy to create a containerized applications/scripts. 
-Great for deploying and running go your code.
+* Go is the best programming language! 
+* Docker support makes it really easy to create a containerized applications/scripts. 
 ![bg right 100%](../images/Bob_Ross.png)
 
 ---
