@@ -4,7 +4,7 @@ _class: lead
 paginate: true
 backgroundColor: #fff
 backgroundImage: url('../images/ray.jpg')
-footer: '[crawler code](https://github.com/soypete/event-web-crawler)'
+footer: '[Twitter @captainnobody1](https://www.twitter.com/captainnobody1)'
 marp: true
 ---
 
@@ -14,10 +14,12 @@ ___
 
 ## Bio
 - golang + rust streamer Twitch : [@soypete](https://www.twitch.tv/soypete01)
-- Board Member with Forge Foundation
+- Organizer [GoWest Conference](https://gowestconf.com) 
 - Proud Dog Mom
 - [Twitter @captainnobody1](https://www.twitter.com/captainnobody1)
 - [GitHub soypete](https://www.github.com/soypete)
+
+![bg right](../images/Gamer_2.png)
 
 ---
 
@@ -30,13 +32,38 @@ ___
 
 ---
 
+<!--- Time to hack out a solution--->
+![bg](../images/Programmer_2.png)
 
-## Web Scrappery
-1. call web address to get the site file
-1. parse the site file to get the event information
-1. Take the json and Dump it to a cloud firestore
 ---
-## Web Scrappery
+
+## Web Scrapper
+* build using go! <!--- This is not the typical choice but their are tools for navigating the dom--->
+  * [utah air quailty example](https://github.com/Soypete/Example-Web-Crawler/blob/master/main.go)
+  * [dom parser](github.com/PuerkitoBio/goquery)
+
+  [crawler code](https://github.com/soypete/event-web-crawler)
+---
+
+## Web Scrapper
+* firestore for storage <!--- there were two motivations for --->
+  * [firestore](https://firebase.google.com/docs/firestore/quickstart)
+  * [firestore go client](cloud.google.com/go/firestore)
+  * [firestore go talk from utah go meetup](https://www.youtube.com/watch?v=_XQZQZ_QZqw)
+
+[crawler code](https://github.com/soypete/event-web-crawler)---
+
+---
+## Web Scrapper
+* want a weekly pull for historical meetup data
+  * meetup name
+  * talk title and description
+  * _number of attendees_ (to be implemented)
+  
+  [crawler code](https://github.com/soypete/event-web-crawler)
+
+  ---
+## Web Scrapper
 ```json
 {
   "@context": "http://schema.org",
@@ -46,16 +73,8 @@ ___
   "description": "",
   "startDate": "2021-05-25T18:30-06:00",
   "endDate": "2021-05-25T20:30-06:00",
-  "eventStatus": "https://schema.org/EventScheduled",
-  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-  "location": {
-    "@type": "Place",
-    "address": {
-      "@type": "PostalAddress",
-      "addressRegion": "UT"
-    },
-
-  },
+  ...
+  "location": { ... },
   "organizer": {
     "@type": "Organization",
     "name": "Women Who Go  Utah ( + Allies)",
@@ -63,6 +82,15 @@ ___
   }
 }
 ```
+--- 
+## Web Scrapper
+
+1. call web address to get the site file
+1. parse the site file to get the event information
+1. Take the json and Dump it to a cloud firestore
+
+[crawler code](https://github.com/soypete/event-web-crawler)
+
 ---
 ## Web Scrapper
 
@@ -71,9 +99,6 @@ CODE TIME!
 ![w:630 right](https://media.giphy.com/media/mYhd1NHQkHmZLiqN7M/giphy.gif)
 <!-- - demo the web scrapper and show it work -->
 
---- 
-## Web Scrapper
-Pull weekly report
 
 ---
 ## Cron Job
@@ -180,15 +205,34 @@ gcloud scheduler jobs create http test-handler --schedule "5 * * * *"
 --oidc-token-audience=https://{app_address}/crawl
 ```
 ---
+
+## Why not Cloud functions?
+
+1. cloud functions support go
+1. cloud functions can run on a schedule
+1. cloud functions can be still connect to firestore
+
+* [Cloud Functions](https://cloud.google.com/functions)
+* [Cloud Functions + Scheduler](https://cloud.google.com/scheduler/docs/tut-pub-sub)
+
+---
+## Why not Cloud functions?
+
+![bg 80%](https://media.giphy.com/media/VTxmwaCEwSlZm/giphy.gif)
+
+---
 ## Hurdles
 - Creating service accounts 
-- adding the firebase permissions
+- Adding the firebase permissions
 - Accessing logs
-- exposing endpoints
+- Exposing endpoints
+![bg right 100%](../images/Bernie_Sanders.png)
+
 ---
 ## Summary
-Docker support makes it really easy to create a containerized applications/scripts. 
-Great for deploying and running go your code.
+* Go is the best programming language! 
+* Docker support makes it really easy to create a containerized applications/scripts. 
+![bg right 100%](../images/Bob_Ross.png)
 
 ---
 ## Questions
@@ -201,3 +245,4 @@ Thanks you for coming out to this talk!
 ## Resources
 - [Firestore video](https://www.youtube.com/watch?v=lIyPvpWqxKM)
 - [Crawler streams](https://youtu.be/LsJQqa-kW6Q)
+- [crawler code](https://github.com/soypete/event-web-crawler)
