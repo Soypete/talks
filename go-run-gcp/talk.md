@@ -3,8 +3,8 @@ theme: gaia
 _class: lead
 paginate: true
 backgroundColor: #fff
-backgroundImage: url('../images/ray.jpg')
-footer: '[Twitter @captainnobody1](https://www.twitter.com/captainnobody1)'
+backgroundImage: url('../images/weave_theme.png')
+footer: '[crawler code](https://github.com/soypete/event-web-crawler)'
 marp: true
 ---
 
@@ -34,7 +34,6 @@ Weave is hiring all these positions are remote US or in Lehi, UT office:
 * [SRE](https://grnh.se/87a333853us)
 * [software support](https://grnh.se/a8d6c9073us)
 
-![bg](..images/weave_theme.png)
 
 ---
 
@@ -57,8 +56,6 @@ Weave is hiring all these positions are remote US or in Lehi, UT office:
 * build using go! <!--- This is not the typical choice but their are tools for navigating the dom--->
   * [utah air quailty example](https://github.com/Soypete/Example-Web-Crawler/blob/master/main.go)
   * [dom parser](github.com/PuerkitoBio/goquery)
-
-  [crawler code](https://github.com/soypete/event-web-crawler)
   
 ---
 
@@ -69,8 +66,6 @@ Weave is hiring all these positions are remote US or in Lehi, UT office:
   * [firestore go client](cloud.google.com/go/firestore)
   * [firestore go talk from utah go meetup](https://www.youtube.com/watch?v=_XQZQZ_QZqw)
 
-[crawler code](https://github.com/soypete/event-web-crawler)
-
 ---
 
 ## Web Scrapper
@@ -79,10 +74,8 @@ Weave is hiring all these positions are remote US or in Lehi, UT office:
   * meetup name
   * talk title and description
   * _number of attendees_ (to be implemented)
-  
-  [crawler code](https://github.com/soypete/event-web-crawler)
 
-  ---
+---
 
 ## Web Scrapper
 
@@ -111,8 +104,6 @@ Weave is hiring all these positions are remote US or in Lehi, UT office:
 1. call web address to get the site file
 1. parse the site file to get the event information
 1. Take the json and Dump it to a cloud firestore
-
-[crawler code](https://github.com/soypete/event-web-crawler)
 
 ---
 ## Web Scrapper
@@ -154,7 +145,7 @@ Options:
 - [App Engine Cron](https://cloud.google.com/appengine/docs/flexible/nodejs/scheduling-jobs-with-cron-yaml)
 - [Cloud Functions + Scheduler](https://cloud.google.com/scheduler/docs/tut-pub-sub)
 - [Cloud Run + Scheduler](https://cloud.google.com/run/docs/triggering/using-scheduler)
-![bg right 60%](../images/cloud-functions-512-color.png)
+![bg right 60%](../images/cloud_run.png)
 ---
 ## Cron Job
 Running cron jobs on Google Cloud Platform.
@@ -164,13 +155,12 @@ Options:
 - [Cloud Functions + Scheduler](https://cloud.google.com/scheduler/docs/tut-pub-sub)
 - [Cloud Run + Scheduler](https://cloud.google.com/run/docs/triggering/using-scheduler)
 - [Kubernetes Cron on GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/cronjobs)
-
-![bg right 50%](../images/gke-cron-512-color.png)
+![bg right 50%](../images/gke-512-color.png)
 
 ---
 ## FAAS (asside)
 
-![bg](..images/faas.drawio.png)
+![bg 90%](../images/faas_drawio.png)
 
 ---
 ## Cron Job
