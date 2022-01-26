@@ -13,6 +13,7 @@ Miriah Peterson
 ___
 
 ## Bio
+- [DRE](https://medium.com/weave-lab/introduction-to-data-reliability-engineering-2ddacf7122b7) @ Weave
 - golang + rust streamer Twitch : [@soypete](https://www.twitch.tv/soypete01)
 - Organizer [GoWest Conference](https://gowestconf.com) 
 - Proud Dog Mom
@@ -20,6 +21,20 @@ ___
 - [GitHub soypete](https://www.github.com/soypete)
 
 ![bg right](../images/Gamer_2.png)
+
+---
+
+## Weave is HIRING
+
+Weave is hiring all these positions are remote US or in Lehi, UT office:
+
+* [backend-engineer SR level](https://grnh.se/249a85c43us)
+* [backend-engineer Mid level](https://grnh.se/0da0ca773us)
+* [Engineering Manager](https://grnh.se/210ff6e93us)
+* [SRE](https://grnh.se/87a333853us)
+* [software support](https://grnh.se/a8d6c9073us)
+
+![bg](..images/weave_theme.png)
 
 ---
 
@@ -141,7 +156,14 @@ Options:
 - [Cloud Functions + Scheduler](https://cloud.google.com/scheduler/docs/tut-pub-sub)
 - [Cloud Run + Scheduler](https://cloud.google.com/run/docs/triggering/using-scheduler)
 - [Kubernetes Cron on GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/cronjobs)
+
 ![bg right 50%](../images/gke-cron-512-color.png)
+
+---
+## FAAS (asside)
+
+![bg](..images/faas.drawio.png)
+
 ---
 ## Cron Job
 
