@@ -38,23 +38,28 @@ ___
 ---
 
 ## Web Scrapper
+
 * build using go! <!--- This is not the typical choice but their are tools for navigating the dom--->
   * [utah air quailty example](https://github.com/Soypete/Example-Web-Crawler/blob/master/main.go)
   * [dom parser](github.com/PuerkitoBio/goquery)
 
   [crawler code](https://github.com/soypete/event-web-crawler)
+  
 ---
 
 ## Web Scrapper
+
 * firestore for storage <!--- there were two motivations for --->
   * [firestore](https://firebase.google.com/docs/firestore/quickstart)
   * [firestore go client](cloud.google.com/go/firestore)
   * [firestore go talk from utah go meetup](https://www.youtube.com/watch?v=_XQZQZ_QZqw)
 
-[crawler code](https://github.com/soypete/event-web-crawler)---
+[crawler code](https://github.com/soypete/event-web-crawler)
 
 ---
+
 ## Web Scrapper
+
 * want a weekly pull for historical meetup data
   * meetup name
   * talk title and description
@@ -63,7 +68,9 @@ ___
   [crawler code](https://github.com/soypete/event-web-crawler)
 
   ---
+
 ## Web Scrapper
+
 ```json
 {
   "@context": "http://schema.org",
@@ -82,6 +89,7 @@ ___
   }
 }
 ```
+
 --- 
 ## Web Scrapper
 
