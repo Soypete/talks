@@ -119,9 +119,18 @@ func SumIntsOrFloats[K comparable, V int64 | float64](m map[K]V) V {
 ---
 
 ## Using Types
-<!--- verbally credit bill kenedy for the example --->
+<!--- verbally credit bill kenedy for the example
+GO to code here and run the last command on various type --->
 ```go
+type vector[T any] []T
 
+func (v vector[T]) last() (T, error) {
+    var zero T
+    if len(v) == 0 {
+        return zero, fmt.Errorf("empty vector")
+    }
+    return v[len(v)-1], nil
+}
 ```
 ---
 ## Using Types
@@ -137,9 +146,42 @@ vGenStr = vector{"a", "b", "c"}
 ```
 ---
 ## Using Structs
+Declaring your own type with a struct
+<!--- this is an example for a linked list
+I would use the example from mastering go if I have time to add
+--->
+
+```go
+type node[T any]struct{
+    Data T
+    next *node[T]
+    prev *node[T]
+}
+
+```
+---
+## Using Behavior
+This isn't new to Go! it is just a slightly different way to write interfaces
 
 ---
 ## Using Behavior
+```go
+type user struct{
+    name string 
+}
+func (u Use) String() string {
+    return u.name
+}
+type Stringer interface{
+    String() string
+}
+type Concrete(u User){
+    u.String()
+}
+type Polymoprhic(s Stringer){
+    s.String()
+}
+```
 
 ---
 ## Best Practices
@@ -154,6 +196,40 @@ add the realease note here
 from the vitess article
 --->
 ---
+## Execution time
+
+```go
+func BenchmarkSumGenInt(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		SumIntsOrFloats(BenchInts)
+	}
+func BenchmarkSumIntLarge(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		SumInts(BenchInts)
+	}
+}
+```
+---
+
+## Execution time
+
+```go
+func BenchmarkSumGenFloat(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		SumIntsOrFloats(Benchfloats)
+	}
+}
+func BenchmarkSumFloatLarge(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		SumFloats(Benchfloats)
+	}
+}
+```
+---
+## Execution time
+<!--- run the example if you have time--->
+![bg](../images/generics_nops.png)
+---
 
 ## Best Practices
 <!--- Use cases from the Vitess article--->
@@ -161,7 +237,8 @@ from the vitess article
 - Where compiler will optimize your code(inlining)
 - When you have a good grasp on Memory Management and how to optimize it
 
-*DO NOT USE UNTIL IT IS THE ONLY OPTION LET
+*DO NOT USE UNTIL IT IS THE ONLY OPTION LEFT*
+
 ---
 
 ## Cautions
@@ -179,9 +256,21 @@ Thanks you for coming out to this talk!
 ---
 ## Resources
 - [Generics slow down your code](https://planetscale.com/blog/generics-can-make-your-go-code-slower)
-- [Generics and Value Typs in Go](https://www.dolthub.com/blog/2022-04-01-fast-generics/)
+- [Generics and Value Types in Go](https://www.dolthub.com/blog/2022-04-01-fast-generics/)
 - [Generics in Go](https://go.dev/blog/intro-generics)
 - [Generic Dilema](https://research.swtch.com/generic)
 - [Ultimate Go Notebook](https://courses.ardanlabs.com/courses/ultimate-go-notebook)
 - [Learning Go](https://www.oreilly.com/library/view/learning-go/9781492077206/)
 - [Mastering Go](https://www.packtpub.com/product/mastering-go-third-edition/9781801079310)
+
+--- 
+## Compile time and binary size
+<!---how do we measure this--->
+---
+## [Constraints](https://pkg.go.dev/golang.org/x/exp/constraints)
+- type Complex
+- type Float
+- type Integer
+- type Ordered
+- type Signed
+- type Unsigned
