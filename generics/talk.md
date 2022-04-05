@@ -15,7 +15,8 @@ ___
 
 ## Bio
 - [DRE](https://medium.com/weave-lab/introduction-to-data-reliability-engineering-2ddacf7122b7) @ Weave
-- Software development streamer : [@soypete](https://www.twitch.tv/soypete01)
+- [O'riely Instructor](https://www.oreilly.com/live-events/production-go-patterns-and-anti-patterns/0636920072265/0636920072264/)
+- Software development streamer : [@soypete01](https://www.twitch.tv/soypete01)
 - Organizer [GoWest Conference](https://gowestconf.com) 
 - Proud Dog Mom
 - [Twitter @captainnobody1](https://www.twitter.com/captainnobody1)
@@ -25,12 +26,46 @@ ___
 
 ---
 
+## Learn More About Go
+
+- [Production Go: Patterns and Anti-patterns for Memory Mamangement]()
+- [GoWest Conference]()
+
 ## Weave is HIRING
 
 - [SRE](https://grnh.se/87a333853us)
 - [SWE 4](https://grnh.se/90fb5fb03us)
 - [Backend Engineer](https://grnh.se/249a85c43us)
 
+---
+
+## What are Generics
+<!--- 
+parametric programming
+--->
+
+---
+
+## Generics in Go
+
+---
+
+## Defining Constraints
+
+---
+
+## Best Practices
+<!---
+add the realease note here
+from the vitess article
+--->
+---
+
+## Cautions
+<!---
+add the realease note here
+from vitess articles
+--->
 ---
 ## Questions
 Thanks you for coming out to this talk!
