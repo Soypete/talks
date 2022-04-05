@@ -228,24 +228,37 @@ func BenchmarkSumFloatLarge(b *testing.B) {
 ---
 ## Execution time
 <!--- run the example if you have time--->
-![bg](../images/generics_nops.png)
+![bg 80% ](../images/generics_nops.png)
+
 ---
 
 ## Best Practices
 <!--- Use cases from the Vitess article--->
 - Where you want to use same logic for different types of data
-- Where compiler will optimize your code(inlining)
+- Where you can parametrize functional helpers by their callback types. In some cases, it may allow the Go compiler to flatten them.
 - When you have a good grasp on Memory Management and how to optimize it
+([Planetscale blog](https://planetscale.com/blog/generics-can-make-your-go-code-slower))
 
 *DO NOT USE UNTIL IT IS THE ONLY OPTION LEFT*
 
 ---
 
 ## Cautions
-<!---
-add the realease note here
-from vitess articles
---->
+
+From [Planetscale blog](https://planetscale.com/blog/generics-can-make-your-go-code-slower)
+* DO try to de-duplicate identical methods that take a string and a []byte using a ByteSeq constraint
+* DO NOT attempt to use Generics to de-virtualize or inline method calls.<!---If you have already optimized for performance refactroing to generics will cause you to start all over --->
+* DO NOT pass an interface to a generic function, under any circumstances. <!---functional programming with ggenerics is unsafe --->
+* DO NOT rewrite interface-based APIs to use Generics.
+
+---
+
+## Cautions
+from the [relsease notes](https://tip.golang.org/doc/go1.18)
+* The Go compiler does not accept arguments of type parameter type with the predeclared functions real, imag, and complex
+* The Go compiler does not support accessing a struct field x.f where x is of type parameter type even if all types in the type parameter's type set have a field f. <!---print example from the list--->
+* Embedding a type parameter, or a pointer to a type parameter, as an unnamed field in a struct type is not permitted
+
 ---
 ## Questions
 Thanks you for coming out to this talk!
@@ -266,6 +279,19 @@ Thanks you for coming out to this talk!
 --- 
 ## Compile time and binary size
 <!---how do we measure this--->
+
+---
+## GCShapes 
+[proposal GCShape stenciling](https://github.com/golang/proposal/blob/master/design/generics-implementation-gcshape.md)
+<!--- they say don't do recursion cause generics don't support them --->
+
+---
+## Dictionaries
+[Design Spec](https://github.com/golang/proposal/blob/master/design/generics-implementation-dictionaries-go1.18.md)
+
+<!--- dictionaries are not new to go they are actually how we presently store strings
+leverages existing map paradigms to add contracts to types --->
+
 ---
 ## [Constraints](https://pkg.go.dev/golang.org/x/exp/constraints)
 - type Complex
