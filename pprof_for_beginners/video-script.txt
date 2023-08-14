@@ -1,0 +1,128 @@
+Mango color is pprof website
+Title: "Optimizing Go Code with Profiling - Exploring pprof in Production"
+
+[Introduction]
+Host: Hello, everyone! Welcome back to our channel. In today's video, we'll dive into the world of Go programming by setting up and exploring
+pprof, a powerful profiling tool. We'll be using an example from GitHub to showcase the capabilities of pprof
+and how it can help you identify performance bottlenecks in your applications.
+
+[Part1 - GitHub Example]
+Host: Our example today comes from the GitHub repository at github.com/soypete/Production-Go-Examples. Feel free to follow along with the code as we go
+through the video.
+It's a example demonstration of how to use parallel workers in Go to count the number of times "whale"-like words appear in the text of Moby Dick. 
+as you can see we are simulating work through two steps, a sleep, and printing the words or moby dick to standard out. This allows us to capture profiling 
+data as well as to simluate cpu and memory loads for certain function. 
+
+[Slide 2 - Profiling Setup]
+Host: Before we get into the details, let's set up the profiling environment. 
+We've added pprof to our server, running on port 6060, and exposed an endpoint at /debug/pprof.
+
+[Slide 3 - pprof Data Definitions]
+Host: Let's navigate to the default pprof web page. On this page is an incrediblty helpful set of definitions available in pprof:
+
+1. Allocs: This provides a sampling of all past memory allocations.
+2. Block: You'll find stack traces that led to blocking on synchronization primitives.
+3. Cmdline: Shows the command line invocation of the current program.
+4. Goroutine: Provides stack traces of all current goroutines. You can use debug=2 as a query parameter to export in the same format as an unrecovered panic.
+5. Heap: Offers a sampling of memory allocations of live objects. You can specify the gc GET parameter to run garbage collection before taking the heap sample.
+6. Mutex: Includes stack traces of holders of contended mutexes.
+7. Profile: This is the CPU profile. You can specify the duration in the seconds GET parameter. After you get the profile file, use the 'go tool pprof' command to investigate the profile.
+8. Threadcreate: Shows stack traces that led to the creation of new OS threads.
+9. Trace: Contains a trace of the execution of the current program. You can specify the duration in the seconds GET parameter. After you get the trace file, use the 'go tool trace' command to investigate the trace.
+
+[Slide 4 - Exploring Profiling Data]
+Host: Now, let's dive into the practical part. You can click on the hyperlinks to see the raw data associated with each field. 
+
+But one of the most useful links on this page is the "Goroutine" dump.
+
+[Slide 5 - Goroutine Dump]
+Host: The "Goroutine" dump allows you to see the last synchronized goroutine to pprof. If your program is hanging, this will allow you to see what function it's hanging on. This is incredibly valuable for diagnosing issues in your Go applications.
+
+[Conclusion]
+Host: That wraps up our exploration of pprof in Go programming. Profiling is an essential tool for optimizing your code, and pprof makes it accessible and powerful. Don't forget to check out the example on GitHub for hands-on experience. If you found this video helpful, please give it a thumbs up and subscribe for more programming tutorials and tips. Thanks for watching, and we'll see you in the next video!
+
+[Outro]
+Host: If you have any questions or want us to cover specific topics in future videos, please leave a comment down below. Until next time, happy coding!
+
+cli video script - blue
+
+Title: "Profiling Go code Part 2 - Exploring pprof CLI"
+
+[Introduction]
+Host: Hello, everyone! In today's software video, we're going to explore the pprof CLI tool, a fantastic utility shipped with the Go standard library. We'll be running this tool on a GitHub example included in the video. Let's dive right in!
+
+[Slide 1 - Introduction to pprof CLI]
+Host: The pprof CLI tool is a powerful resource for analyzing the performance of your Go applications. It allows you to examine various aspects of your program's execution. To get started, ensure you have the pprof tool installed, which is included with the Go standard library.
+
+[Slide 2 - Entering Interactive Mode]
+Host: To access the interactive CLI tool, you can use the "go tool pprof" command with the URL of the pprof endpoint in your application. For instance, if your app is running locally, you can use the following command:
+
+```shell
+go tool pprof http://localhost:6060/debug/pprof/{endpoint}
+```
+
+alternatively you can provide a locally stored cpu or memory profile to the pprof tool. 
+
+[Slide 3 - Available Commands]
+Host: We will start by exploring the allocs space. When you first use the pprof CLI, the "help" command is your best friend. It shows all the commands available. Please explore these commands at your leasure. Additional documentation is provided at the pprof gihub page.
+
+[Slide 4 - The "top" Command]
+Host: I've found the "top" command to be the most valuable when exploring profiles via the cli . It provides a wealth of information about your program's performance.
+
+[Slide 5 - Analyzing Memory Profiles]
+Host: Once inside the interactive CLI tool, using the "top" command, you can examine historical memory profiles of your application. Two important aspects to consider are "flat" and "cum." "Flat" represents the profile of the function itself, while "cum" encompasses the function and all the functions it calls. This information can help you identify memory-related issues.
+
+[Slide 6 - Exploring Heap Data]
+Host: After analyzing memory, you can exit the allocs space and enter the heap space using the CLI. Here, you'll want to focus on "flat" and "cum" for the heap. These profiles show live memory allocations, and monitoring them can help diagnose Garbage Collection issues.
+
+[Slide 7 - Examining Threads]
+Host: Exit the heap space and enter the threads space in the CLI. Here, you'll again want to look at "flat" and "cum" values. Ideally, you should see only one thread, which represents the creation of the main thread.
+
+[Conclusion]
+Host: And there you have it! We've explored the pprof CLI tool, ran it on an example project, and highlighted its powerful capabilities. Remember, profiling is an essential part of optimizing your Go code. If you found this video helpful, please give it a thumbs up and subscribe for more software-related content. If you have any questions or suggestions, leave them in the comments below. Thanks for watching, and happy coding!
+
+[Outro]
+Host: Stay tuned for more exciting software videos, and until next time, keep building amazing things with Go!
+
+green - ui
+
+Title: "Profiling Go Code Part 3 - Exploring pprof UI"
+
+[Introduction]
+Host: Hello, everyone! Welcome back to our series on profiling Go code. In today's episode, we're going to take a deep dive into the pprof UI, an essential tool for understanding the performance of your Go applications. We'll explore various aspects of the UI, so let's get started!
+
+[Slide 1 - Accessing pprof UI]
+Host: To access the pprof interactive UI, we first need to call it from the CLI tool. You will need to install the Graphviz tool prior to accessing the UI. instructions for installing graphviz are linked in the description. Make sure you have Graphviz installed, as it's required to visualize the UI properly. We'll call the UI using the `--http` flag with the port we want to run it on. But there's one more crucial detail: we have to add a sampling rate to the URL.
+
+[Slide 2 - Callgraph View]
+Host: Once we've set everything up, the first view we encounter in the pprof UI is the "Callgraph." This view shows the call stack of the program. Here's what you need to know:
+
+- Red nodes represent functions that have the largest cumulative CPU footprint.
+- Large-sized nodes indicate functions with the largest flat CPU footprint.
+- Functions with the "inline" marker have been inlined by the compiler.
+- The lines between nodes indicate which functions call other functions.
+
+[Slide 3 - Callgraph with Goroutines]
+Host: The Callgraph view can also display multiple goroutines. Understanding how different goroutines interact is essential for optimizing your Go code. In our program we should see two goroutines, one for the main routine and the runtime routine. The runtime routine is responsible for garbage collection and other os level tasks.
+
+[Slide 4 - Original Flame Graph]
+Host: Next up, we have the "Original Flame Graph." This graph illustrates the CPU usage of the program:
+
+- The Y-axis represents the stack depth.
+- The X-axis shows CPU usage.
+- The width of each bar indicates the amount of time spent in that function.
+- The color of the bar corresponds to the function name.
+
+[Slide 5 - Extended Flame Graph]
+Host: pprof offers an extended flame graph, denoted with the "(new)" label. It provides more details when you click on a function. The absence of a border indicates that the function has been inlined by the compiler. Clicking on a function will zoom in on it's unique flame graph. also, if the line is removed the function is inlined by the compiler.
+
+[Slide 6 - Peak]
+Host: Another view you'll find is "Peak," a text-based version of the flame graph. It can be a handy alternative for analyzing performance data.
+
+[Slide 7 - Source Code Exploration]
+Host: Last but not least, we have the "Source" view. This view allows you to explore the source code of your program. You can click on functions to dig deeper and gather more details about their performance characteristics. This view is incredibly useful for understanding the performance of your code as it will show you the exact lines of code that were being executed when the profile was taken. If there are any bottlenecks in your code, this view will help you identify them.
+
+[Conclusion]
+Host: And that's a wrap for our exploration of the pprof UI. Profiling Go code is a crucial step in optimizing your applications, and pprof makes it accessible and powerful. If you found this video helpful, please give it a thumbs up and subscribe for more in-depth software tutorials.
+
+[Outro]
