@@ -10,21 +10,22 @@ marp: true
 Miriah Peterson
 
 ---
-<!--- we need to understand how go manages bits --->
-
-## Intro
-- Brief overview of Go's I/O mechanisms
-- Importance of io.Reader and io.Writer interfaces in Go
-- Purpose of the talk: to explore top implementations, efficiencies, patterns, anti-patterns, and uses
-
----
-
-## Basics of io.Reader and io.Writer
-- Explanation of io.Reader and io.Writer interfaces
-- How they are used in Go programming
+## Never have I ever?
+- Written a handleFunc() for an http.Server{}?
+- Created an http.Request{} for an http.Client{}
+- Read from a sq.DB?
+- Writen to or read from a file?
+- Accessed an env variable?
+- Accepted a CLI flag or arguement?
+<!--- every single one of these operations uses eithre the REader or the Writer interface--->
 
 ---
+# Go's most powerful interfaces: io.Reader + io.Writer
+* Std lib [Reader](https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo)
+* Std lib [Writer](https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo)
+<!---138 implementations of just the reader interface in the std lib https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo and  161 of the writer interface https://cs.opensource.google/search?q=Write%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&sq=&ss=go%2Fgo as of 4/29/2024--->
 
+---
 ## Readers
 <!-- deep dive into into I/O writer for http, memory, db, channels, etc
 
@@ -33,24 +34,21 @@ Miriah Peterson
 - when does it block the garbage collector
 - how do channels play in --->
 
-> "The io package specifies the io.Reader interface, which represents the read end of a stream of data."
+> The io package specifies the io.Reader interface, which represents the read end of a stream of data.
+
 https://go.dev/tour/methods/21
 
 ---
 
-##  **File I/O**
-   - Efficiency analysis
-   - Common usage patterns
-   - Anti-patterns to avoid
+##  **File I/O**: os.File
+- Creates a connections for reading data over an os protocol
 
 ---
-   
-## **Network I/O (e.g., TCP/UDP)**
-   - Performance considerations
-   - Best practices for handling network I/O
-   - Security considerations
+##  **File I/O**: os.Create
+- Created a connections for writing data over an os protocol
 
 ---
+
 
 ## **Buffered I/O**
    - Advantages of buffering
@@ -59,24 +57,21 @@ https://go.dev/tour/methods/21
 
 ---
 
-## **Concurrency and io.Pipe**
+## **Database conentions:**
    - Using io.Pipe for inter-process communication
    - Concurrency patterns with io.Reader and io.Writer
    - Pitfalls in concurrent I/O operations
 
 ---
 
-## Memory Profiling with pprof
-- Introduction to pprof for memory profiling
-- Setting up pprof in Go programs
-- Demo: measuring memory usage of different io.Reader and io.Writer implementations
-
+## **Network I/O (e.g., TCP/UDP)**: http.ReadResponse
+- Creates a conenction to the data packets sent over an Internet protocol
 ---
-
-## Conclusion
-- Recap of key points about io.Reader and io.Writer interfaces
-- Best practices for efficient I/O in Go
-- Resources for further learning
+   
+## **Network I/O (e.g., TCP/UDP)**: http.Write
+   - Performance considerations
+   - Best practices for handling network I/O
+   - Security considerations
 
 ---
 
