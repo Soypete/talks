@@ -1,9 +1,8 @@
 ---
-theme: gaia
-_class: lead
+theme: default
 paginate: true
-backgroundColor: #d9ffff
 marp: true
+backgroundImage: url('../images/Template.png')
 ---
 
 # Go's Byte Bridge: io.Reader and io.Writer deep dive
@@ -55,7 +54,7 @@ type Reader interface {
 
 ---
 ## Readers
-* It takes the data from one location and ingests it to another location inside the go app
+It takes the data from one location and ingests it to another location inside the go app
 
 <!---Find the expection and hold it in notes as an example. What are the copy operations that take bytes from one location in memory and move it to another? --->
 
@@ -104,6 +103,9 @@ How many times are the io.Reader and io.Writer interfaces inmplemented inside th
 ---
 ##  I/O Patterns
 When choosing to write to and from memory, there are two major type of opeations buffered and non-buffered I/o operations
+
+---
+##  I/O Patterns
 
 Who can tell me the difference?
 
@@ -231,13 +233,15 @@ func messageHandler(w http.ResponseWriter, r *http.Request) {
 
 ## Demo
 
-[video]()
 [code](https://github.com/Soypete/read_write_benchmark)
 
 ---
 
 ## In Summary
-Know your code.
+* Every Go App leverages I/O operations
+* There are lots of options for implementations of io.Reader and io.Writer
+* What kinds of operations Readers and Writers have
+* How to evaluate our Readers and Writers
 
 ---
 
@@ -246,7 +250,6 @@ Know your code.
 * [Twitter @captainnobody1](https://www.twitter.com/captainnobody1)
 * [GitHub soypete](https://www.github.com/soypete)
 * [LinkedIn](https://www.linkedin.com/in/miriah-peterson-35649b5b)
+* [twitch](https://twitch.tv/soypetetech)
 
----
-## REFERENCE:
-* 
+![bg right w:620](../images/sp_max_loulou.jpeg)
