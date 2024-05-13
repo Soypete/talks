@@ -13,10 +13,10 @@ Miriah Peterson
 * Written a handleFunc() for an http.Server{}?
 * Created an http.Request{} for an http.Client{}
 * Read from a sq.DB?
-* Writen to or read from a file?
+* Written to or read from a file?
 * Accessed an env variable?
-* Accepted a CLI flag or arguement?
-<!--- every single one of these operations uses eithre the REader or the Writer interface--->
+* Accepted a CLI flag or argument?
+<!--- every single one of these operations uses either the REader or the Writer interface--->
 
 ---
 
@@ -56,7 +56,7 @@ type Reader interface {
 ## Readers
 It takes the data from one location and ingests it to another location inside the go app
 
-<!---Find the expection and hold it in notes as an example. What are the copy operations that take bytes from one location in memory and move it to another? --->
+<!---Find the exception and hold it in notes as an example. What are the copy operations that take bytes from one location in memory and move it to another? --->
 
 ---
 
@@ -70,7 +70,7 @@ type WriterAt interface {
 }
 ```
 
-It takes data from inside the fo app and sends it to another location outsite the go app.
+It takes data from inside the fo app and sends it to another location outside the go app.
 <!--- I think io.Copy can be used internally. --->
 
 ---
@@ -91,18 +91,18 @@ type ReadCloser interface {
 ```
 [src/io/io.go](https://cs.opensource.google/go/go/+/master:src/io/io.go;l=131?q=ReadWriter&ss=go/go)
 
-<!-- Here we need examples of some of the direct implemendations like ReadWriter -->
+<!-- Here we need examples of some of the direct implementations like ReadWriter -->
 
 ---
 ## How do I implement Readers and Writers? 
-How many times are the io.Reader and io.Writer interfaces inmplemented inside the standard lib?
+How many times are the io.Reader and io.Writer interfaces implemented inside the standard lib?
 * Std lib [Reader](https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo)
 * Std lib [Writer](https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo)
 <!---138 implementations of just the reader interface in the std lib https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo and  161 of the writer interface https://cs.opensource.google/search?q=Write%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&sq=&ss=go%2Fgo as of 4/29/2024--->
 
 ---
 ##  I/O Patterns
-When choosing to write to and from memory, there are two major type of opeations buffered and non-buffered I/o operations
+When choosing to write to and from memory, there are two major type of operations buffered and non-buffered I/o operations
 
 ---
 ##  I/O Patterns
@@ -141,7 +141,7 @@ When to use classic I/O patterns
 ---
 
 ## Buffered I/O
-Buffered I/O in Go is any read write operation in the [bufio moldule](https://pkg.go.dev/bufio). These operators store the data in memory before it sends the data outside the api.
+Buffered I/O in Go is any read write operation in the [bufio module](https://pkg.go.dev/bufio). These operators store the data in memory before it sends the data outside the api.
 
 ---
 
@@ -175,7 +175,7 @@ func readFileBuf() {
 ---
 
 ## Database I/O
-Database drivers inmplent the io.Readers/Writers to manage the data stream between the data store and the go software app.
+Database drivers implement the io.Readers/Writers to manage the data stream between the data store and the go software app.
 
 ---
 
@@ -208,7 +208,7 @@ func readfromdb() {
 4. we prepare an sql statement using `db.prepare`, which returns a `*sql.stmt` representing the prepared statement.
 5. we write data using `stmt.exec`, which executes the prepared statement, utilizing the `io.writer` interface to write data to the database.
 
-where is the interaface actually implemented it is in the driver haha. https://github.com/lib/pq/blob/master/copy.go
+where is the interface actually implemented it is in the driver haha. https://github.com/lib/pq/blob/master/copy.go
 --->
 ---
 
