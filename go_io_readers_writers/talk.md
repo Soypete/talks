@@ -65,8 +65,8 @@ It takes the data from one location and ingests it to another location inside th
 What is a writer?
 
 ```
-type WriterAt interface {
-	WriteAt(p []byte, off int64) (n int, err error)
+type Writer interface {
+	Write(p []byte) (n int, err error)
 }
 ```
 
@@ -176,6 +176,9 @@ func readFileBuf() {
 
 ## Database I/O
 Database drivers implement the io.Readers/Writers to manage the data stream between the data store and the go software app.
+* These implementation happen in the drivers.
+* sqlite and duckdb-go use cgo to manage their file writes and the io module
+* establishing a new db connection everytime you need to access the db is very inefficient, for effcient db write use a connection pool.
 
 ---
 
