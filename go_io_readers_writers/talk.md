@@ -2,7 +2,7 @@
 theme: default
 paginate: true
 marp: true
-backgroundImage: url('../images/Template.png')
+backgroundImage: url('../images/korea_background.png')
 ---
 
 # Go's Byte Bridge: io.Reader and io.Writer deep dive
@@ -178,7 +178,7 @@ func readFileBuf() {
 Database drivers implement the io.Readers/Writers to manage the data stream between the data store and the go software app.
 * These implementation happen in the drivers.
 * sqlite and duckdb-go use cgo to manage their file writes and the io module
-* establishing a new db connection everytime you need to access the db is very inefficient, for effcient db write use a connection pool.
+* establishing a new db connection every time you need to access the db is very inefficient, for efficient db write use a connection pool.
 
 ---
 
