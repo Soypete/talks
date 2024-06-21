@@ -6,41 +6,47 @@ backgroundImage: url('../images/Template.png')
 ---
 
 # Go's Byte Bridge: io.Reader and io.Writer deep dive
+
 Miriah Peterson
 
 ---
+
 ## Never have I ever?
+
 * Written a handleFunc() for an http.Server{}?
 * Created an http.Request{} for an http.Client{}
 * Read from a sq.DB?
 * Written to or read from a file?
 * Accessed an env variable?
 * Accepted a CLI flag or argument?
-<!--- every single one of these operations uses either the REader or the Writer interface--->
+  <!--- every single one of these operations uses either the REader or the Writer interface--->
 
 ---
 
 ## What is I/O?
 
->In computing, input/output (I/O, i/o, or informally io or IO) is the communication between an information processing system, such as a computer, and the outside world, such as another computer system, peripherals, or a human operator
-(https://en.wikipedia.org/wiki/Input/output)
+> In computing, input/output (I/O, i/o, or informally io or IO) is the communication between an information processing system, such as a computer, and the outside world, such as another computer system, peripherals, or a human operator
+> (https://en.wikipedia.org/wiki/Input/output)
 
 ---
 
 ## What is I/O?
+
 In the go ecosystem we are mostly talking about from inside the go app's memory to outside the go apps memory.
 
-<!--- In the cases where we run a Copy from one internal memory location ot another memory location (not common) the original location is marked by the garbage collection--->
----
+## <!--- In the cases where we run a Copy from one internal memory location ot another memory location (not common) the original location is marked by the garbage collection--->
+
 ## Readers
 
 What is a reader?
+
 ```
 type Reader interface {
 	Read(p []byte) (n int, err error)
 }
 ```
-<!-- 
+
+<!--
 
 * where does is write
 * how does it write
@@ -48,12 +54,16 @@ type Reader interface {
 * how do channels play in --->
 
 ---
+
 ## Readers
+
 > The io package specifies the io.Reader interface, which represents the read end of a stream of data.
-(https://go.dev/tour/methods/21)
+> (https://go.dev/tour/methods/21)
 
 ---
+
 ## Readers
+
 It takes the data from one location and ingests it to another location inside the go app
 
 <!---Find the exception and hold it in notes as an example. What are the copy operations that take bytes from one location in memory and move it to another? --->
@@ -65,17 +75,19 @@ It takes the data from one location and ingests it to another location inside th
 What is a writer?
 
 ```
-type WriterAt interface {
-	WriteAt(p []byte, off int64) (n int, err error)
+type Writer interface {
+	Write(p []byte) (n int, err error)
 }
 ```
 
 It takes data from inside the fo app and sends it to another location outside the go app.
+
 <!--- I think io.Copy can be used internally. --->
 
 ---
 
 ## Inhereting Readers/Writers
+
 ```
 // ReadWriter is the interface that groups the basic Read and Write methods.
 type ReadWriter interface {
@@ -89,30 +101,38 @@ type ReadCloser interface {
 	Closer
 }
 ```
+
 [src/io/io.go](https://cs.opensource.google/go/go/+/master:src/io/io.go;l=131?q=ReadWriter&ss=go/go)
 
 <!-- Here we need examples of some of the direct implementations like ReadWriter -->
 
 ---
-## How do I implement Readers and Writers? 
+
+## How do I implement Readers and Writers?
+
 How many times are the io.Reader and io.Writer interfaces implemented inside the standard lib?
-* Std lib [Reader](https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo)
-* Std lib [Writer](https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo)
-<!---138 implementations of just the reader interface in the std lib https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo and  161 of the writer interface https://cs.opensource.google/search?q=Write%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&sq=&ss=go%2Fgo as of 4/29/2024--->
+
+* Std lib [Reader](<https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo>)
+* Std lib [Writer](<https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo>)
+  <!---138 implementations of just the reader interface in the std lib https://cs.opensource.google/search?q=Read%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&ss=go%2Fgo and  161 of the writer interface https://cs.opensource.google/search?q=Write%5C(%5Cw%2B%5Cs%5C%5B%5C%5Dbyte%5C)&sq=&ss=go%2Fgo as of 4/29/2024--->
 
 ---
-##  I/O Patterns
+
+## I/O Patterns
+
 When choosing to write to and from memory, there are two major type of operations buffered and non-buffered I/o operations
 
 ---
-##  I/O Patterns
+
+## I/O Patterns
 
 Who can tell me the difference?
 
-<!--- Add file write from example cod--->
----
-##  File I/O
-```go 
+## <!--- Add file write from example cod--->
+
+## File I/O
+
+```go
 func readAllFile() {
 	f, err := os.Open("twitchChat.txt")
 	if err != nil {
@@ -125,12 +145,13 @@ func readAllFile() {
 	}
 }
 ```
-<!--- Add file write from example cod--->
----
+
+## <!--- Add file write from example cod--->
 
 ## File I/O
 
 When to use classic I/O patterns
+
 * Does memory matter?
    <!---> Buffered I/O requires additional memory allocation for buffers, which can increase memory usage, especially if large buffers are used or if multiple buffered streams are active concurrently.
 * High Synchronization
@@ -141,11 +162,13 @@ When to use classic I/O patterns
 ---
 
 ## Buffered I/O
+
 Buffered I/O in Go is any read write operation in the [bufio module](https://pkg.go.dev/bufio). These operators store the data in memory before it sends the data outside the api.
 
 ---
 
 ## Buffered I/O
+
 When to Use buffered I/O
 
 * Optimized Throughput
@@ -154,8 +177,10 @@ When to Use buffered I/O
    <!-- * Buffered I/O simplifies error handling by allowing operations to complete in a batch, making it easier to manage errors and retries. -->
 
 ---
+
 ## Buffered I/O (generated example)
-``` go
+
+```go
 func readFileBuf() {
 	file, err := os.Open("twitchChat.txt")
 	if err != nil {
@@ -172,14 +197,56 @@ func readFileBuf() {
 	}
 }
 ```
+
 ---
 
+## Direct system calls
+
+In the previous examples we are creating a file that implements the io.Reader and io.Writer interfaces. There more direct ways to use these interfaces once the struct is created.
+
+```go
+func readFileOS() {
+	_, err := os.ReadFile("twitchChat.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+---
+
+## io.Reader as a parameter
+
+Sometimes you can get a speed boost by passing the io.Reader as a parameter to a function instead of creating the io.Reader inside the function. This is because the io.Reader is already created the pointer that the underlying array of bytes is passed and written to. This means you are not creating a second copy of the data that the garbage collector has to clean up.
+
+```go
+func byteReader() {
+	r := bytes.NewReader([]byte(testString))
+	buf := make([]byte, 64)
+	if _, err := r.Read(buf); err != nil {
+		fmt.Println("error:", err)
+	}
+}
+
+func byteReadFrom() {
+	r := bytes.NewReader([]byte(testString))
+	b := new(bytes.Buffer)
+	if _, err := b.ReadFrom(r); err != nil {
+		fmt.Println("error:", err)
+	}
+}
+```
+
+## <!-- these perform about the same in benchmarking, but it is one is a bytesBuffer with is a slice -->
+
 ## Database I/O
+
 Database drivers implement the io.Readers/Writers to manage the data stream between the data store and the go software app.
 
 ---
 
 ## Database I/O
+
 ```go
 func readfromdb() {
 	filename := "twitchchat.db"
@@ -210,9 +277,11 @@ func readfromdb() {
 
 where is the interface actually implemented it is in the driver haha. https://github.com/lib/pq/blob/master/copy.go
 --->
+
 ---
 
 ## I/O over the internet
+
 In go, when we are making calls over ip, we are still using the io.reader/writer. all data is sent as a stream, so the chucks of bytes instead of being directly written are just sent as data in a packet.
 
 ---
@@ -229,6 +298,7 @@ func messageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 ```
+
 ---
 
 ## Demo
@@ -238,6 +308,7 @@ func messageHandler(w http.ResponseWriter, r *http.Request) {
 ---
 
 ## In Summary
+
 * Every Go App leverages I/O operations
 * There are lots of options for implementations of io.Reader and io.Writer
 * What kinds of operations Readers and Writers have
