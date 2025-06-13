@@ -18,9 +18,11 @@ by: Miriah Peterson
 ## Who Am I?
 
 - Engineer, tinkerer, and homelab builder
-- Have been working on Data Engineering for several years
+- Data Engineer as SchoolAI 
 - I built [IAM_pedro](github.com/soypetetech/IAM_pedro) — a locally hosted AI discord and twitch bot
 - Have been streaming all my work with Pedro on [Twitch](https://twitch.tv/soypetetech) and it makes for some great content
+
+![bg right](../images/pedro.gif)
 
 ---
 
@@ -34,7 +36,7 @@ by: Miriah Peterson
 
 ## Why Local?
 
-- AI is **experimental** — do it takes a lot of iteration to get right
+- AI is **experimental** — it takes a lot of iteration to get right
 - Local dev = faster feedback, higher throughput, and more calls
 - **Ownership** of your workflow and data
 
@@ -45,18 +47,19 @@ s definitely a machine dependent situation, but anyone running an apple silicon 
 
 ## The Local AI Hosting
 
-- [**Ollama**](https://ollama.com/) — Local-first LLM runner for open source models
+- [**Ollama**](https://ollama.com/) — LLM runner for open source models
 - [**llama.cpp**](https://github.com/ggml-org/llama.cpp) — Lean inference engine for open source models
 - [**LMStudio**](https://lmstudio.ai/) - UI based model runner for open source models
+- [**vLLM**](https://github.com/vllm-project/vllm) - Prod ready LLM serving framework
 
-<!-- Ollama has a repo of models you can run locally, including LLaMA3, Mistral, and Qwen. lmstudio works the same way, you only get models that are available in their repo. llama.cpp is a library that allows you to run models locally, but you have to download the model files yourself. it supports gguf files and I just find my models on Hugging Face and download them manually. at the end of the day they all wrap llama.cpp but some will be easier for certain users-->
+<!-- Ollama has a repo of models you can run locally, including LLaMA3, Mistral, and Qwen. lmstudio works the same way, you only get models that are available in their repo. llama.cpp is a library that allows you to run models locally, but you have to download the model files yourself. it supports gguf files and I just find my models on Hugging Face and download them manually. at the end of the day they all wrap llama.cpp but some will be easier for certain users. Although I havent used VLLM, it's docs seem t ome more cloud native than others. but again, you are using what they provide-->
 ---
 
 ## What is Ollama?
 
 - **Ollama** is a local-first LLM runner
 - Run models with a single command
-- It is written in Go and uses llama.cpp under the hood
+- It is written in Go and uses Llama.cpp under the hood
 
 ![bg right](../images/ollama.svg)
 
@@ -134,7 +137,7 @@ llama-server --hf-repo TheBloke/Mistral-7B-Instruct-v0.2-GGUF \
 
 <!-- the note for gpus is that you will have to build llama.cpp from source with the appropriate flags for your gpu. -->
 
----
+<!-- ---
 
 ## AI homelab stack
 
@@ -143,7 +146,7 @@ If you want an AI for your homelab, you need:
 
 [raspberry pi setup video](https://youtu.be/_o07iZYSAfU?si=gDzRBPOEBO42DhmU)
 
-![bg right](../images/rpi.png)
+![bg right](../images/rpi.png) -->
 
 ---
 
@@ -195,14 +198,14 @@ Tips:
 
 ---
 
-## Local AI coding tools
+<!-- ## Local AI coding tools
 
 * [**llama.vim**](https://github.com/ggml-org/llama.vim) - LLM-powered Vim plugin 
 * [**llama.vscode**](https://github.com/ggml-org/llama.vscode) - LLM-powered VSCode extension
 
 <!-- these do not run with server mode, they call the binaries directly. They are great for local-first coding with LLMs. -->
 
----
+<!-- --- --> -->
 ## Future For PedroGPT
 
 * Github Actions for CI/CD: 
