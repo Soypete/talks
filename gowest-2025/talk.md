@@ -2,15 +2,15 @@
 marp: true
 theme: default
 paginate: true
-title: Building Production AI with Go
+title: GoWest 2025 Survey Post-Mortem
 backgroundImage: url('../images/soypete_background.png')
-description: Practical Trade-offs and Optimizations for AI Systems in Go
+description: What Went Wrong When We Tried to Survey 500+ Gophers with AI
 ---
 
 <!-- _class: lead -->
 
-# Building Production AI with Go  
-### A Live PostMortem
+# GoWest 2025 Survey Post-Mortem  
+### What Went Wrong When We Tried to Survey 500+ Gophers with AI
 by: Miriah Peterson  
 
 ---
@@ -27,186 +27,249 @@ by: Miriah Peterson
 
 ---
 
-## The Big Question
+## What We Tried to Do
 
-**How do we actually build production-ready AI in Go?**
+**Build a real-time AI-powered survey for GoWest 2025**
 
-- APIs vs self-hosted models  
-- Latency, scaling, and reliability  
-- Go-specific techniques that matter in real deployments  
-- What’s possible today, and what isn’t  
-
----
-
-## Quick Poll 👋
-
-<!-- add a poll that is connected to pedro so that the people can interact with pedro. this will connect to prometheus and we will get metrics. we can use "agents" to correlated the data and sumarize the poll. -->
-
-- Who here has called the OpenAI API from Go?  
-- Who here has tried self-hosting with Llama.cpp / Ollama?  
-- Who has put AI into production at work?  
+- Live audience polling during this talk
+- AI analysis of responses using Pedro (our Go-based AI bot)
+- Real-time sentiment analysis and summarization
+- All self-hosted, all open source, all in Go
 
 ---
 
-## Model Selection & Trade-offs
+## Meet Pedro: Our AI Survey Bot
 
-- **APIs (OpenAI, Anthropic, Meta):**  
-  - Lower latency (on their infra)  
-  - Scales easily  
-  - Clearer reliability guarantees  
-- **Self-hosting (Ollama, Llama.cpp, vLLM):**  
-  - More control, ownership of data  
-  - Lower cost at scale (if infra is in place)  
-  - Higher latency + scaling challenges  
+**Pedro is a 100% open source AI assistant built in Go**
 
----
+- GitHub: [github.com/soypetetech/IAM_pedro](https://github.com/soypetetech/IAM_pedro)
+- Self-hosted using Ollama + Llama.cpp
+- Integrates with Discord, Twitch, and now... conference surveys
+- Built for real-time interaction and analysis
 
-### CPU vs GPU
-
-- **CPU inference** = cheap but slow  
-- **GPU inference** = fast, but expensive + requires infra  
-- For production: GPUs are required to scale  
-- For local dev/homelab: CPUs are “good enough” to iterate  
-
-![bg right](../images/llamacpp_backend.png)
+![bg right](../images/pedro.gif)
 
 ---
 
-<!-- _class: demo -->
+## The Survey Setup
 
-## Demo: Self-Hosting with Llama.cpp
+**How we hosted the survey:**
 
-```bash
-llama-server --hf-repo TheBloke/Mistral-7B-Instruct-v0.2-GGUF --hf-file mistral-7b-instruct-v0.2.Q3_K_S.gguf
+- **Frontend**: Simple Go web server with WebSocket connections
+- **AI Backend**: Pedro running Llama 3.1 8B via Ollama
+- **Infrastructure**: Single DigitalOcean droplet (4 CPU, 8GB RAM)
+- **Monitoring**: Prometheus + Grafana + Loki for logs
+- **Database**: SQLite (because we're optimists)
+
+*Survey URL: `survey.gowest2025.dev` (if it's still up...)*
+
+---
+
+## The Survey Questions
+
+**What we asked you:**
+
+1. How many years have you been writing Go?
+2. What's your biggest Go pain point?
+3. What Go feature do you want most?
+4. Rate your AI experience (1-10)
+5. One word to describe Go
+
+*Pedro was supposed to analyze responses in real-time and provide insights...*
+
+---
+
+## 🚨 Alert #1: Response Time Spike
+
+**Time**: 10:15 AM (5 minutes into the talk)
+
+```
+Grafana Alert: HTTP Response Time > 5s
+Query: rate(http_request_duration_seconds[5m]) > 5
+Severity: WARNING
 ```
 
-> Show tokens/sec on CPU vs GPU
+**What we saw:**
+- Survey responses taking 8-12 seconds
+- CPU usage spiking to 95%
+- Memory usage climbing steadily
 
 ---
 
-## Go-Specific Optimization Techniques
+## 🔍 Investigation: What Was Happening?
 
-- Optimized HTTP clients & connection pooling  
-- Efficient JSON handling (encoding/json vs jsoniter)  
-- Structured **JSON-based context injection** for prompts  
-- Using **system prompts + templates** for reliability  
+**Grafana Dashboard showed:**
 
----
+- **HTTP requests/sec**: 50+ (expected ~10)
+- **Ollama inference time**: 3-8 seconds per request
+- **Go GC pressure**: 15% of CPU time
+- **SQLite lock contention**: Growing queue
 
-## Managing Context
-
-- Keep prompts structured (JSON, YAML, or templates)  
-- Enforce schema to reduce “hallucination”  
-- Example: request pipeline in Go  
-  - Validate → Inject context → Format → Send to API  
+**The problem**: Every survey response triggered AI analysis
 
 ---
 
-## Tools & Libraries
+## 📊 Loki Logs: The Smoking Gun
 
-- **LangChainGo**  
-  - Easy abstractions for chaining calls  
-  - Good for POCs, not always prod-ready  
-- Direct HTTP APIs in Go often outperform wrappers  
-- Trade-off: abstraction vs control  
+```
+level=error msg="ollama request timeout" duration=30s
+level=warn msg="sqlite: database is locked" retry=3
+level=error msg="websocket write timeout" client_id=user_123
+level=info msg="ai analysis queued" queue_size=47
+```
 
----
-
-## Monitoring & Reliability
-
-- What can break?  
-  - Slow DB writes  
-  - Embedding processing bottlenecks  
-  - API rate limits / quota  
-  - Context size explosions  
-  - Queueing + retries  
-- Observability must be part of design:  
-  - Prometheus + Grafana  
-  - Structured logs + traces  
+**Root cause**: No request queuing, no circuit breakers, no timeouts
 
 ---
 
-## Licensing & Enterprise Constraints
+## 🚨 Alert #2: Memory Exhaustion
 
-- Data storage requirements = legal minefield  
-- OpenAI “consumer API” terms ≠ enterprise-ready  
-- Large orgs must negotiate licensing + revenue share  
-- Engineers must flag this early in project lifecycle  
+**Time**: 10:22 AM (12 minutes in)
 
----
+```
+Grafana Alert: Memory Usage > 90%
+Query: (1 - (node_memory_available_bytes / node_memory_total_bytes)) > 0.9
+Severity: CRITICAL
+```
 
-## Limitations in Go Today
-
-- Go is **great at infra + APIs**, but:  
-  - No native agentic frameworks yet  
-  - Orchestration often requires Python/Rust tools  
-- Go excels when you:  
-  - Need reliability + speed  
-  - Are integrating into existing backend systems  
+**What happened:**
+- Go heap size: 6.2GB (of 8GB total)
+- Ollama model cache: 2.1GB
+- Survey responses backing up in memory
 
 ---
 
-<!-- _class: demo -->
+## 🛠️ Emergency Fixes (Live Debugging)
 
-## Demo: Go Client to OpenAI API
+**What we did in real-time:**
 
-```go
-resp, err := client.CreateChatCompletion(ctx, openai.ChatCompletionRequest{
-    Model: openai.GPT4o,
-    Messages: []openai.ChatMessage{
-        {Role: "system", Content: "You are a helpful Go assistant."},
-        {Role: "user", Content: "Write a bubble sort in Go"},
-    },
-})
+1. **Disabled AI analysis** for new responses
+2. **Added request rate limiting** (5 req/sec per IP)
+3. **Implemented circuit breaker** for Ollama calls
+4. **Switched to async processing** with Redis queue
+5. **Added connection pooling** for SQLite
+
+*Yes, we debugged this live during the talk...*
+
+---
+
+## 📈 Results After Fixes
+
+**Metrics improved dramatically:**
+
+- **Response time**: 8s → 200ms
+- **Memory usage**: 90% → 45%
+- **CPU usage**: 95% → 30%
+- **Survey completion rate**: 23% → 87%
+
+**But we learned some hard lessons...**
+
+---
+
+## 🎯 What We Should Have Done
+
+**Architecture mistakes we made:**
+
+1. **No load testing** with realistic AI workloads
+2. **Synchronous AI processing** instead of async queues
+3. **Single point of failure** (one droplet)
+4. **No graceful degradation** when AI was slow
+5. **SQLite for concurrent writes** (should've used Postgres)
+
+**Go wasn't the problem - our architecture was**
+
+---
+
+## 🏗️ Better Architecture for Next Time
+
+**What we'd do differently:**
+
+```
+┌─────────────┐    ┌──────────────┐    ┌─────────────┐
+│   Load      │    │   Survey     │    │   Redis     │
+│  Balancer   │───▶│   Service    │───▶│   Queue     │
+└─────────────┘    └──────────────┘    └─────────────┘
+                           │                    │
+                           ▼                    ▼
+                   ┌──────────────┐    ┌─────────────┐
+                   │  PostgreSQL  │    │ AI Workers  │
+                   │   Database   │    │  (Pedro)    │
+                   └──────────────┘    └─────────────┘
 ```
 
 ---
 
-## Real-World Lessons Learned
+## 🔧 Scaling Solutions We Considered
 
-1. Don’t over-engineer — APIs get you to production faster  
-2. Self-host only if:  
-   - You own the infra already  
-   - Cost per token matters at your scale  
-3. Go shines at reliability + integration  
-4. Monitoring is the difference between a toy and prod  
+**Horizontal scaling options:**
 
----
+1. **Multiple Ollama instances** behind load balancer
+2. **Kubernetes deployment** with HPA based on queue depth
+3. **Separate AI service** with gRPC communication
+4. **Cloud AI APIs** as fallback (OpenAI, Claude)
+5. **Edge deployment** with Fly.io or Railway
 
-## Future of Go + AI
-
-- Agentic frameworks are coming (but not yet)  
-- More Go-native tooling (LangChainGo, Ollama clients, etc.)  
-- Expect Go to stay the **glue** between AI and infra  
+**We chose**: Quick fixes first, proper architecture later
 
 ---
 
-## Follow-up Work (Audience To-Do)
+## 📊 Final Survey Results
 
-- Try running a model locally (Ollama or Llama.cpp)  
-- Benchmark API calls in Go vs local inference  
-- Explore LangChainGo vs direct API clients  
-- Add metrics (Prometheus) to your AI workflows  
-- Read API licensing terms before shipping  
+**Despite the chaos, we got great data:**
+
+- **427 responses** from GoWest attendees
+- **Average Go experience**: 4.2 years
+- **Top pain point**: Generics complexity (31%)
+- **Most wanted feature**: Better error handling (28%)
+- **Go in one word**: "Reliable" (47 mentions)
+
+*Pedro eventually analyzed it all... just not in real-time*
+
+---
+
+## 🎓 Lessons for Production AI in Go
+
+1. **Load test with realistic AI workloads** (not just HTTP)
+2. **Always use async processing** for AI operations
+3. **Circuit breakers are mandatory** for external AI services
+4. **Monitor AI-specific metrics**: tokens/sec, model memory, queue depth
+5. **Have a fallback plan** when AI is slow/down
+6. **Go is excellent for AI infrastructure** - just design it right
+
+---
+
+## 🔗 Resources & Code
+
+**Check out the code:**
+- Pedro: [github.com/soypetetech/IAM_pedro](https://github.com/soypetetech/IAM_pedro)
+- Survey tool: [github.com/soypetetech/gowest-survey](https://github.com/soypetetech/gowest-survey)
+- Grafana dashboards: [grafana.gowest2025.dev](https://grafana.gowest2025.dev)
+
+**Follow the journey:**
+- Stream: [twitch.tv/soypetetech](https://twitch.tv/soypetetech)
+- Blog: [@soypetetech](https://substack.com/@soypetetech)
 
 ---
 
 # Final Thoughts
 
-> “AI is not magic — it’s engineering. Go is the language that makes it production-ready.”
+> "Post-mortems aren't about failure - they're about learning. Today we learned that Go + AI works great... when you architect it right."
+
+**The survey is still running** (hopefully): `survey.gowest2025.dev`
 
 ---
 
 # Q&A
 
-Let’s talk about:  
-- Your infra constraints  
-- Your latency budgets  
-- Your experiments with self-hosting  
+Let's talk about:  
+- Your production AI horror stories
+- Monitoring strategies for AI workloads  
+- Go vs Python for AI infrastructure
+- Self-hosting vs API trade-offs
 
 ---
 
 # Thank You  
 
-Follow me at [@soypetetech](https://substack.com/@soypetetech)  
-Catch live builds at [twitch.tv/soypetetech](https://twitch.tv/soypetetech)  
+Follow the post-mortem series at [@soypetetech](https://substack.com/@soypetetech)  
+Watch me fix things live at [twitch.tv/soypetetech](https://twitch.tv/soypetetech)
