@@ -12,30 +12,25 @@ description: A deep dive into Go's net/http package covering servers, auth, rout
 # Beyond Hello World
 ## Mastering net/http for Production Go Services
 
-A practical guide to building robust HTTP servers in Go
-
 ---
-
-<!-- _class: lead -->
 
 ## Who Am I?
 
-**Pete Soloway** (@soypete)
-Developer Advocate @ Weaviate
-Go enthusiast, conference speaker, workshop instructor
-
-🐦 Twitter/X: @soypete
-💼 GitHub: github.com/soypete
-📧 pete@weaviate.io
+**Miriah Peterson**
+Data Engineer at SchoolAI
+Organizer: GoWest, Forge Utah
+SoyPeteTech: Substack, Twitch, YouTube
+O'Reilly Go Course Instructor
 
 ---
 
-## What We'll Cover Today
+## What We'll Cover
 
-- Building HTTP servers with net/http
-- Request routing patterns and muxes
-- Authentication strategies
-- Connection pooling and the default client problem
+- Servers, handlers, and constants
+- HTTP/1 vs HTTP/2
+- TLS and graceful shutdown
+- FileServer and less common types
+- Auth, routing, and connection pools
 - Testing with httptest
 
 ---
@@ -43,33 +38,12 @@ Go enthusiast, conference speaker, workshop instructor
 <!-- _class: lead -->
 
 # Part 1: Building Servers
-## The net/http Package
 
 ---
 
-## Why net/http?
-
-The Go standard library provides everything you need:
-- HTTP/1.1 and HTTP/2 support
-- TLS/SSL built-in
-- Middleware patterns
-- Context support
-- Production-ready performance
-
-No frameworks required for most use cases!
-
----
-
-## Simple Server Example
+## Simple Server
 
 ```go
-package main
-
-import (
-    "fmt"
-    "net/http"
-)
-
 func helloHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Hello, World!")
 }
@@ -82,16 +56,14 @@ func main() {
 
 ---
 
-## Handler Functions
+## Handler Types
 
-Two ways to handle requests:
-
-**1. HandlerFunc** - Simple function signature
+**HandlerFunc** - Simple function
 ```go
 func(w http.ResponseWriter, r *http.Request)
 ```
 
-**2. Handler Interface** - More flexibility
+**Handler Interface** - More control
 ```go
 type Handler interface {
     ServeHTTP(ResponseWriter, *Request)
@@ -100,50 +72,211 @@ type Handler interface {
 
 ---
 
-## The Request Object
+## http.Request Essentials
 
-Key components of `*http.Request`:
-
-- `Method` - HTTP method (GET, POST, PUT, DELETE)
-- `URL` - Request URL with path and query params
-- `Header` - HTTP headers map
+- `Method` - GET, POST, PUT, DELETE
+- `URL` - Path and query params
+- `Header` - HTTP headers
 - `Body` - Request body (io.ReadCloser)
-- `Context()` - Request context for cancellation/timeouts
+- `Context()` - Cancellation/timeouts
+- `BasicAuth()` - Built-in basic auth helper
 
 ---
 
-## The ResponseWriter
+## http.ResponseWriter
 
-`http.ResponseWriter` interface:
-
+Three key methods:
 - `Header()` - Modify response headers
 - `Write([]byte)` - Write response body
-- `WriteHeader(int)` - Set HTTP status code
+- `WriteHeader(int)` - Set status code
 
-**Important**: Headers must be set before writing body!
+**Headers must be set before writing body!**
+
+---
+
+## Constants Are Your Friends
+
+Use stdlib constants for readability:
+```go
+http.StatusOK                    // 200
+http.StatusNotFound              // 404
+http.MethodGet, http.MethodPost  // "GET", "POST"
+```
+
+**See all constants**: https://pkg.go.dev/net/http#pkg-constants
 
 ---
 
 <!-- _class: lead -->
 
-# Part 2: Request Routing
-## Muxes and Patterns
+# FileServer & Less Common Types
 
 ---
 
-## The Default ServeMux
+## http.FileServer
 
-Go provides a default request multiplexer:
+Serve static files easily:
+```go
+fs := http.FileServer(http.Dir("./static"))
+http.Handle("/static/", http.StripPrefix("/static/", fs))
+```
+
+Example: https://pkg.go.dev/net/http#example-FileServer
+
+---
+
+## StripPrefix
+
+Remove path prefix before serving:
+```go
+handler := http.StripPrefix("/static/",
+    http.FileServer(http.Dir("./assets")))
+http.Handle("/static/", handler)
+```
+
+Request `/static/css/style.css` → serves `./assets/css/style.css`
+
+---
+
+## NotFoundHandler
+
+Custom 404 responses:
+```go
+notFound := http.NotFoundHandler()
+http.Handle("/old-path", notFound)
+```
+
+Or create your own custom handler!
+
+---
+
+## Hijacker Interface
+
+Take over the connection (WebSockets, etc):
+```go
+type Hijacker interface {
+    Hijack() (net.Conn, *bufio.ReadWriter, error)
+}
+```
+
+Advanced use case - raw TCP control
+
+---
+
+<!-- _class: lead -->
+
+# HTTP/1 vs HTTP/2
+
+---
+
+## Protocol Support
+
+HTTP/2 enabled by default:
+```go
+server := &http.Server{
+    Addr:    ":8080",
+    Handler: handler,
+}
+server.ListenAndServe()  // Supports both HTTP/1.1 and HTTP/2
+```
+
+Example: https://pkg.go.dev/net/http#example-package-Http2
+
+---
+
+## Force HTTP/1 Only
+
+```go
+server := &http.Server{
+    Addr:    ":8080",
+    Handler: handler,
+    TLSNextProto: make(map[string]func(*http.Server,
+                        *tls.Conn, http.Handler)),
+}
+```
+
+Usually not needed - HTTP/2 is faster!
+
+---
+
+<!-- _class: lead -->
+
+# TLS/HTTPS
+
+---
+
+## ListenAndServeTLS
+
+```go
+func main() {
+    http.HandleFunc("/", handler)
+    http.ListenAndServeTLS(":443",
+        "cert.pem",
+        "key.pem",
+        nil)
+}
+```
+
+That's it - HTTPS enabled!
+
+---
+
+## Custom TLS Config
+
+```go
+tlsConfig := &tls.Config{
+    MinVersion: tls.VersionTLS13,
+    CipherSuites: []uint16{tls.TLS_AES_256_GCM_SHA384},
+}
+server := &http.Server{
+    Addr:      ":443",
+    TLSConfig: tlsConfig,
+}
+server.ListenAndServeTLS("cert.pem", "key.pem")
+```
+
+---
+
+<!-- _class: lead -->
+
+# Graceful Shutdown
+
+---
+
+## Server.Shutdown
+
+```go
+server := &http.Server{Addr: ":8080", Handler: handler}
+
+go server.ListenAndServe()
+
+// Wait for interrupt signal
+<-ctx.Done()
+
+shutdownCtx, cancel := context.WithTimeout(
+    context.Background(), 5*time.Second)
+defer cancel()
+
+server.Shutdown(shutdownCtx)
+```
+
+---
+
+<!-- _class: lead -->
+
+# Request Routing
+
+---
+
+## Default ServeMux
 
 ```go
 http.HandleFunc("/api/users", usersHandler)
-http.HandleFunc("/api/posts", postsHandler)
 http.ListenAndServe(":8080", nil)
 ```
 
-Limited pattern matching:
-- Exact paths
-- Subtree patterns with trailing `/`
+Limited features:
+- Exact paths or subtree `/`
 - No method routing
 - No path parameters
 
@@ -151,391 +284,175 @@ Limited pattern matching:
 
 ## Custom ServeMux
 
-Create your own mux for better control:
-
 ```go
 mux := http.NewServeMux()
 mux.HandleFunc("/api/users", usersHandler)
-mux.HandleFunc("/api/posts", postsHandler)
-
-server := &http.Server{
-    Addr:    ":8080",
-    Handler: mux,
-}
+server := &http.Server{Addr: ":8080", Handler: mux}
 server.ListenAndServe()
 ```
+
+Better control and isolation
 
 ---
 
 ## Method-Based Routing
 
-Handle different HTTP methods:
-
 ```go
-func usersHandler(w http.ResponseWriter, r *http.Request) {
+func handler(w http.ResponseWriter, r *http.Request) {
     switch r.Method {
     case http.MethodGet:
-        getUsers(w, r)
+        handleGet(w, r)
     case http.MethodPost:
-        createUser(w, r)
-    case http.MethodPut:
-        updateUser(w, r)
-    case http.MethodDelete:
-        deleteUser(w, r)
+        handlePost(w, r)
     default:
-        http.Error(w, "Method not allowed",
-                   http.StatusMethodNotAllowed)
+        http.Error(w, "Method not allowed", 405)
     }
 }
 ```
-
----
-
-## Popular Third-Party Routers
-
-When you need more features:
-
-- **gorilla/mux** - Path variables, method routing
-- **chi** - Lightweight, composable
-- **httprouter** - High performance, zero allocation
-- **gin** - Full framework with routing
-
-Consider: Do you need the complexity?
 
 ---
 
 <!-- _class: lead -->
 
-# Part 3: Authentication
-## Securing Your Services
+# Authentication
 
 ---
 
-## Authentication Types
+## Auth Strategies
 
-Common patterns in HTTP services:
-
-1. **Basic Auth** - Username/password (base64)
-2. **Bearer Tokens** - JWT, OAuth tokens
-3. **API Keys** - Custom header or query param
-4. **OAuth 2.0** - Third-party authorization
+1. **Basic Auth** - Base64 username:password
+2. **Bearer Tokens** - JWT, OAuth
+3. **API Keys** - Custom headers
+4. **OAuth 2.0** - Third-party auth
 
 ---
 
-## Basic Authentication
+## Basic Auth
 
-Built into net/http:
-
+Built-in helper:
 ```go
-func basicAuthHandler(w http.ResponseWriter, r *http.Request) {
-    username, password, ok := r.BasicAuth()
-    if !ok {
-        w.Header().Set("WWW-Authenticate",
-                       `Basic realm="restricted"`)
-        http.Error(w, "Unauthorized",
-                   http.StatusUnauthorized)
-        return
-    }
-
-    if !validCredentials(username, password) {
-        http.Error(w, "Forbidden", http.StatusForbidden)
-        return
-    }
-
-    // Continue with authenticated request
+username, password, ok := r.BasicAuth()
+if !ok || !valid(username, password) {
+    w.Header().Set("WWW-Authenticate", `Basic realm="api"`)
+    http.Error(w, "Unauthorized", 401)
+    return
 }
 ```
 
 ---
 
-## Bearer Token Authentication
-
-Common for APIs:
-
-```go
-func bearerAuthHandler(w http.ResponseWriter, r *http.Request) {
-    authHeader := r.Header.Get("Authorization")
-    if authHeader == "" {
-        http.Error(w, "Missing auth token",
-                   http.StatusUnauthorized)
-        return
-    }
-
-    token := strings.TrimPrefix(authHeader, "Bearer ")
-    if !validateToken(token) {
-        http.Error(w, "Invalid token",
-                   http.StatusForbidden)
-        return
-    }
-
-    // Process authenticated request
-}
-```
-
----
-
-## Authentication Middleware
-
-DRY principle - wrap handlers:
+## Auth Middleware
 
 ```go
 func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        token := r.Header.Get("Authorization")
-        if !validateToken(token) {
-            http.Error(w, "Unauthorized",
-                       http.StatusUnauthorized)
+        if !validateToken(r.Header.Get("Authorization")) {
+            http.Error(w, "Unauthorized", 401)
             return
         }
         next(w, r)
     }
 }
-
-// Usage
-http.HandleFunc("/api/protected",
-                authMiddleware(protectedHandler))
 ```
 
 ---
 
 <!-- _class: lead -->
 
-# Part 4: The Default Client Problem
-## Connection Pooling and Configuration
+# The Default Client Problem
 
 ---
 
-## The Default Client Issue
+## Don't Use http.Get!
 
 ```go
-// DON'T do this in production!
-resp, err := http.Get("https://api.example.com/data")
+// BAD - No timeout!
+resp, err := http.Get("https://api.example.com")
 ```
 
-Problems:
-- No timeout (hangs forever)
-- Uncontrolled connection pooling
-- No retry logic
-- Difficult to customize
+Problems: No timeout, poor pooling defaults
 
 ---
 
-## Connection Pooling Basics
-
-HTTP keep-alive reuses TCP connections:
-
-- Reduces latency
-- Saves CPU and memory
-- But needs limits!
-
-Default pool limits may not suit your needs:
-- MaxIdleConns: 100
-- MaxIdleConnsPerHost: 2 (usually too low!)
-- IdleConnTimeout: 90 seconds
-
----
-
-## Creating a Custom Client
+## Create Custom Client
 
 ```go
-var httpClient = &http.Client{
+var client = &http.Client{
     Timeout: 10 * time.Second,
     Transport: &http.Transport{
-        MaxIdleConns:        100,
-        MaxIdleConnsPerHost: 10,
+        MaxIdleConnsPerHost: 10,  // Default is 2!
         IdleConnTimeout:     90 * time.Second,
-        DisableKeepAlives:   false,
-        DisableCompression:  false,
-    },
-}
-
-// Use it everywhere
-resp, err := httpClient.Get("https://api.example.com/data")
-```
-
----
-
-## Important Transport Settings
-
-```go
-&http.Transport{
-    // Connection pooling
-    MaxIdleConns:        100,    // Total idle connections
-    MaxIdleConnsPerHost: 10,     // Per-host idle connections
-    MaxConnsPerHost:     0,      // Unlimited (0)
-
-    // Timeouts
-    IdleConnTimeout:       90 * time.Second,
-    ResponseHeaderTimeout: 10 * time.Second,
-    ExpectContinueTimeout: 1 * time.Second,
-
-    // TLS
-    TLSHandshakeTimeout: 10 * time.Second,
-}
-```
-
----
-
-## Client Timeouts
-
-Multiple timeout types:
-
-```go
-client := &http.Client{
-    Timeout: 30 * time.Second, // Overall request timeout
-    Transport: &http.Transport{
-        DialContext: (&net.Dialer{
-            Timeout:   5 * time.Second,  // Connection timeout
-            KeepAlive: 30 * time.Second,
-        }).DialContext,
-        TLSHandshakeTimeout:   10 * time.Second,
-        ResponseHeaderTimeout: 10 * time.Second,
     },
 }
 ```
 
+**Reuse this client everywhere**
+
 ---
 
-## Connection Pool Best Practices
+## Connection Pooling
 
-1. **Create one client per host/service**
-   - Reuse clients across requests
-   - Don't create new clients per request
+Key settings:
+- `MaxIdleConns: 100` - Total pool size
+- `MaxIdleConnsPerHost: 10` - Per-host limit
+- `IdleConnTimeout: 90s` - Idle timeout
 
-2. **Tune MaxIdleConnsPerHost**
-   - Default of 2 is usually too low
-   - Set to match expected concurrent requests
-
-3. **Set appropriate timeouts**
-   - Prevent hanging requests
-   - Account for slow networks
+Default `MaxIdleConnsPerHost` of 2 is too low!
 
 ---
 
 <!-- _class: lead -->
 
-# Part 5: Testing
-## httptest Package
+# Testing with httptest
 
 ---
 
-## Why httptest?
+## httptest.ResponseRecorder
 
-Testing HTTP services should be:
-- Fast (no real network calls)
-- Reliable (no external dependencies)
-- Isolated (test one component)
-
-`net/http/httptest` provides:
-- Mock servers
-- Response recorders
-- Request builders
-
----
-
-## ResponseRecorder
-
-Test handlers without a server:
-
+Test handlers directly:
 ```go
-func TestHelloHandler(t *testing.T) {
-    req := httptest.NewRequest(http.MethodGet, "/hello", nil)
+func TestHandler(t *testing.T) {
+    req := httptest.NewRequest("GET", "/hello", nil)
     w := httptest.NewRecorder()
-
     helloHandler(w, req)
 
-    resp := w.Result()
-    body, _ := io.ReadAll(resp.Body)
-
-    if resp.StatusCode != http.StatusOK {
-        t.Errorf("Expected 200, got %d", resp.StatusCode)
-    }
-    if string(body) != "Hello, World!" {
-        t.Errorf("Unexpected body: %s", body)
+    if w.Code != 200 {
+        t.Errorf("Got %d", w.Code)
     }
 }
 ```
 
 ---
 
-## Test Server
+## httptest.NewServer
 
 Test HTTP clients:
-
 ```go
-func TestAPIClient(t *testing.T) {
-    server := httptest.NewServer(
-        http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-            w.WriteHeader(http.StatusOK)
-            w.Write([]byte(`{"status":"ok"}`))
-        }),
-    )
-    defer server.Close()
+server := httptest.NewServer(http.HandlerFunc(
+    func(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte(`{"status":"ok"}`))
+    }))
+defer server.Close()
 
-    client := NewAPIClient(server.URL)
-    status, err := client.GetStatus()
-
-    if err != nil {
-        t.Fatalf("Unexpected error: %v", err)
-    }
-    if status != "ok" {
-        t.Errorf("Expected status ok, got %s", status)
-    }
-}
+client := NewAPIClient(server.URL)
 ```
 
 ---
 
-## Testing with Table Tests
-
-Go idiom for comprehensive testing:
+## Table Tests
 
 ```go
-func TestUserHandler(t *testing.T) {
-    tests := []struct {
-        name           string
-        method         string
-        body           string
-        expectedStatus int
-        expectedBody   string
-    }{
-        {"valid GET", "GET", "", 200, `{"users":[]}`},
-        {"invalid POST", "POST", "invalid", 400, ""},
-        {"unauthorized", "DELETE", "", 401, ""},
-    }
-
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            // Test logic here
-        })
-    }
+tests := []struct {
+    name   string
+    method string
+    want   int
+}{
+    {"GET", "GET", 200},
+    {"DELETE", "DELETE", 401},
 }
-```
 
----
-
-## Testing Middleware
-
-Test middleware in isolation:
-
-```go
-func TestAuthMiddleware(t *testing.T) {
-    nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        w.WriteHeader(http.StatusOK)
-        w.Write([]byte("success"))
-    })
-
-    handlerToTest := authMiddleware(nextHandler)
-
-    req := httptest.NewRequest("GET", "/", nil)
-    req.Header.Set("Authorization", "Bearer valid-token")
-    w := httptest.NewRecorder()
-
-    handlerToTest(w, req)
-
-    if w.Code != http.StatusOK {
-        t.Errorf("Expected 200, got %d", w.Code)
-    }
+for _, tt := range tests {
+    t.Run(tt.name, func(t *testing.T) { /*...*/ })
 }
 ```
 
@@ -549,11 +466,12 @@ func TestAuthMiddleware(t *testing.T) {
 
 ## Remember
 
-1. **net/http is powerful** - You don't always need a framework
-2. **Routing matters** - Choose the right mux for your needs
-3. **Secure early** - Implement auth from the start
-4. **Customize the client** - Don't use http.Get in production
-5. **Test everything** - httptest makes it easy
+- Use stdlib constants for readability
+- HTTP/2 is enabled by default
+- Always use custom clients, never `http.Get`
+- Graceful shutdown with `Server.Shutdown()`
+- TLS is just `ListenAndServeTLS()`
+- `httptest` makes testing easy
 
 ---
 
@@ -565,11 +483,9 @@ func TestAuthMiddleware(t *testing.T) {
 
 ## Resources
 
-- Go net/http docs: https://pkg.go.dev/net/http
-- Go net/http/httptest: https://pkg.go.dev/net/http/httptest
-- Workshop materials: github.com/Soypete/Webservices-in-3-weeks
-- Effective Go: https://go.dev/doc/effective_go
+**Examples**: https://pkg.go.dev/net/http#pkg-examples
+**Constants**: https://pkg.go.dev/net/http#pkg-constants
+**Workshop**: github.com/Soypete/Webservices-in-3-weeks
 
 **Slides**: github.com/soypete/talks
-
-**Contact**: @soypete | pete@weaviate.io
+**Contact**: SoyPeteTech on Substack, Twitch, YouTube
