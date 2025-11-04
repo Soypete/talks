@@ -35,6 +35,17 @@ O'Reilly Go Course Instructor
 
 ---
 
+## Runnable Examples
+
+All code examples from this talk are runnable!
+
+**In this repo**: `/examples` directory
+**Full workshop**: github.com/Soypete/WebServices-in-3-weeks
+
+Each example can be run with `go run main.go`
+
+---
+
 <!-- _class: lead -->
 
 # Part 1: Building Servers
@@ -275,11 +286,6 @@ http.HandleFunc("/api/users", usersHandler)
 http.ListenAndServe(":8080", nil)
 ```
 
-Limited features:
-- Exact paths or subtree `/`
-- No method routing
-- No path parameters
-
 ---
 
 ## Custom ServeMux
@@ -295,20 +301,78 @@ Better control and isolation
 
 ---
 
-## Method-Based Routing
+## Go 1.22 Routing Enhancements
+
+**Game changer!** Method routing + path parameters:
+```go
+mux.HandleFunc("GET /users/{id}", getUserHandler)
+mux.HandleFunc("POST /users", createUserHandler)
+mux.HandleFunc("DELETE /users/{id}", deleteUserHandler)
+```
+
+Blog: https://go.dev/blog/routing-enhancements
+
+---
+
+## Path Parameters
 
 ```go
-func handler(w http.ResponseWriter, r *http.Request) {
-    switch r.Method {
-    case http.MethodGet:
-        handleGet(w, r)
-    case http.MethodPost:
-        handlePost(w, r)
-    default:
-        http.Error(w, "Method not allowed", 405)
-    }
+mux.HandleFunc("GET /users/{id}", func(w http.ResponseWriter, r *http.Request) {
+    id := r.PathValue("id")
+    fmt.Fprintf(w, "User ID: %s", id)
+})
+```
+
+**Wildcards**: `/files/{path...}` matches rest of path
+
+---
+
+<!-- _class: lead -->
+
+# Middleware
+
+---
+
+## What is Middleware?
+
+Functions that wrap handlers to add functionality:
+- Logging
+- Authentication
+- CORS headers
+- Request timing
+- Error recovery
+
+---
+
+## Basic Middleware Pattern
+
+```go
+func middleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // Before handler
+        log.Println("Before:", r.URL.Path)
+
+        next.ServeHTTP(w, r)
+
+        // After handler
+        log.Println("After:", r.URL.Path)
+    })
 }
 ```
+
+---
+
+## Chaining Middleware
+
+```go
+handler := loggingMiddleware(
+    authMiddleware(
+        corsMiddleware(myHandler)))
+
+http.Handle("/api/", handler)
+```
+
+Or use a helper function to chain cleanly
 
 ---
 
@@ -483,9 +547,9 @@ for _, tt := range tests {
 
 ## Resources
 
-**Examples**: https://pkg.go.dev/net/http#pkg-examples
+**Talk Examples**: github.com/soypete/talks/tree/main/go-meetup-nethttp/examples
+**Workshop (3 weeks)**: github.com/Soypete/WebServices-in-3-weeks
+**Go Examples**: https://pkg.go.dev/net/http#pkg-examples
 **Constants**: https://pkg.go.dev/net/http#pkg-constants
-**Workshop**: github.com/Soypete/Webservices-in-3-weeks
 
-**Slides**: github.com/soypete/talks
 **Contact**: SoyPeteTech on Substack, Twitch, YouTube
