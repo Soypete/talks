@@ -155,6 +155,22 @@ Traditional guardrails:
 
 ---
 
+## Three Patterns Emerging in Industry
+
+**1. Ontology as Schema Constraint**
+Constrain outputs to typed predicate space, then verify
+— Apple ODKE+, Graph-Constrained Reasoning (GCR)
+
+**2. Ontology as Context Engineering**
+Organize what context gets retrieved and injected
+— Palantir Ontology-Augmented Generation (OAG)
+
+**3. Ontology Behind Tool Calls**
+KG schema drives what functions exist and how they're called
+— FNCTOD (ACL 2024), edge device function calling
+
+---
+
 ## The Agent Validation Pattern
 
 ```
@@ -289,13 +305,32 @@ Ontologies combine AI flexibility with formal rigor.
 
 ---
 
-## Resources
+## References: Ontology as Guardrail
 
-- [Mastering Unstructured Data](https://williaminmon.substack.com/p/mastering-unstructured-data-data) - Bill Inmon
-- [OWL Web Ontology Language](https://www.w3.org/OWL/)
-- [RDFLib (Python)](https://rdflib.readthedocs.io/)
+- [ODKE+: Ontology-Guided Knowledge Extraction](https://machinelearning.apple.com/research/odke) — Apple, 2025
+- [Graph-Constrained Reasoning (GCR)](https://arxiv.org/html/2410.13080v1) — arXiv, 2024
 
-**Follow me:**
-- Substack: [@soypetetech](https://substack.com/@soypetetech)
-- Twitch: [twitch.tv/soypetetech](https://twitch.tv/soypetetech)
-- GitHub: [github.com/soypetetech](https://github.com/soypetetech)
+## References: Ontology as Context
+
+- [Ontology-Augmented Generation](https://www.palantir.com/docs/foundry/ontology/ontology-augmented-generation) — Palantir Docs
+- [Building with AIP: Data Tools for RAG/OAG](https://blog.palantir.com/building-with-palantir-aip-data-tools-for-rag-oag-b3b509c8b0f3) — Palantir Blog
+
+---
+
+## References: Ontology Behind Tool Calls
+
+- [FNCTOD: Function Calling for Task-Oriented Dialogue](https://aclanthology.org/2024.acl-long.471.pdf) — ACL 2024
+- [LLMs + KGs via Function Calling](https://ceur-ws.org/Vol-3853/paper7.pdf) — CEUR Workshop
+- [Less is More: Function Calling on Edge](https://www.engr.siu.edu/staff/iraklis.anagnostopoulos/files/papers/Less_is_More_Optimizing_Function_Calling_for_LLM_Execution_on_Edge_Devices.pdf) — SIU
+
+## Foundational
+
+- [Mastering Unstructured Data](https://williaminmon.substack.com/p/mastering-unstructured-data-data) — Bill Inmon
+
+---
+
+<!-- _class: lead -->
+
+# Thank You!
+
+**@soypetetech** — Substack, Twitch, YouTube, GitHub
