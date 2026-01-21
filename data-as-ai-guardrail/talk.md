@@ -26,6 +26,24 @@ by: Miriah Peterson
 
 ---
 
+<!-- _class: lead -->
+
+# How many data engineers here are building agentic AI systems?
+
+---
+
+## The Locked Potential of Data
+
+We have **petabytes** of curated, validated enterprise data.
+
+- Data warehouses with decades of business logic
+- Knowledge bases with domain expertise
+- Curated datasets with referential integrity
+
+**Yet AI agents largely ignore it** — they generate from scratch instead of grounding in what we know.
+
+---
+
 ## The Problem: AI Agents Hallucinate
 
 LLMs confidently generate **plausible-sounding nonsense**.
@@ -39,31 +57,50 @@ LLMs confidently generate **plausible-sounding nonsense**.
 
 ---
 
-## We've Solved This Before
+## "Just Add It to the System Prompt"
 
-Data engineers have spent **entire careers** validating data:
+The naive solution: stuff guardrails into the prompt.
 
-- Schema enforcement
-- Referential integrity
-- Business rule validation
-- Data quality pipelines
+```
+You MUST follow these 47 rules...
+You MUST NOT make claims about...
+You MUST validate against these constraints...
+```
 
-We have **decades of validated data stores** — why aren't we using them to ground AI?
+**The more context you add, the less reliably it follows any single rule.**
+
+System prompts don't scale as guardrails.
 
 ---
 
-## The Gap: Structured vs Unstructured
+## Raw Data Isn't Enough Either
 
-| Structured Data | Unstructured Text |
-|-----------------|-------------------|
-| ERD/Schema | ??? |
-| Foreign keys | ??? |
-| Constraints | ??? |
-| Explicit context | Derived context |
+You can retrieve data, but AI can't **infer relationships** without semantic context.
 
-The word **"fire"** = flame? weapon? termination? excellence?
+```sql
+SELECT * FROM products WHERE category_id = 5;
+```
 
-**AI works with text. Text has no schema.**
+The AI sees rows. It doesn't know:
+- What "category 5" means in your domain
+- How products relate to inventory, pricing, compliance
+- What business rules constrain valid states
+
+**Data without semantics is just noise to an LLM.**
+
+---
+
+## We Need an ERD for Semantics
+
+Data engineers know how to model relationships:
+
+| Problem | Structured Solution |
+|---------|---------------------|
+| Data integrity | Foreign keys |
+| Business rules | Constraints |
+| Relationships | ERD |
+
+**What's the equivalent for AI working with text and concepts?**
 
 ---
 
