@@ -18,11 +18,10 @@ by: Miriah Peterson
 ## Who Am I?
 
 - Data Engineer at SchoolAI
-- Organizer of GoWest, Forge Utah
+- Organizer of UDEM and MLOps Utah Meetups
 - SoyPeteTech: Substack, Twitch, YouTube
-- Building [Pedro](https://github.com/soypetetech/IAM_pedro) — AI bot with semantic grounding
 
-![bg right](../images/pedro.gif)
+![bg right](../images/SP_Logo-02.png)
 
 ---
 
@@ -40,7 +39,9 @@ We have **petabytes** of curated, validated enterprise data.
 - Knowledge bases with domain expertise
 - Curated datasets with referential integrity
 
-**Yet AI agents largely ignore it** — they generate from scratch instead of grounding in what we know.
+**Yet AI agents largely ignore it** — they generate from prompts without data validation.
+
+<!-- When you query ChatGPT or use AI for search, how do you validate the results? -->
 
 ---
 
@@ -53,7 +54,13 @@ LLMs confidently generate **plausible-sounding nonsense**.
 - Logically inconsistent reasoning
 - Domain violations that sound correct
 
-**Autonomous agents amplify this risk** — they act on their own outputs.
+---
+
+<!-- _class: lead -->
+
+# [Autonomous agents amplify this risk without guardrails](https://soypetetech.substack.com/p/optimizing-into-chaos-why-ai-agents?r=1vuifh)
+
+### They act on their own outputs
 
 ---
 
@@ -71,6 +78,8 @@ You MUST validate against these constraints...
 
 System prompts don't scale as guardrails.
 
+<!-- Note: Capital letters DO make a difference in prompts, but length increases processing time and I've seen system prompts get ignored entirely. -->
+
 ---
 
 ## Raw Data Isn't Enough Either
@@ -86,21 +95,11 @@ The AI sees rows. It doesn't know:
 - How products relate to inventory, pricing, compliance
 - What business rules constrain valid states
 
-**Data without semantics is just noise to an LLM.**
-
 ---
 
-## We Need an ERD for Semantics
+<!-- _class: lead -->
 
-Data engineers know how to model relationships:
-
-| Problem | Structured Solution |
-|---------|---------------------|
-| Data integrity | Foreign keys |
-| Business rules | Constraints |
-| Relationships | ERD |
-
-**What's the equivalent for AI working with text and concepts?**
+# Data without semantics is just noise to an LLM.
 
 ---
 
@@ -108,7 +107,11 @@ Data engineers know how to model relationships:
 
 > "The data model for structured data is the ERD. The data model for unstructured text is the **ontology/taxonomy**."
 
-**Ontologies are the schema for text.**
+📖 [Mastering Unstructured Data](https://williaminmon.substack.com/p/mastering-unstructured-data-data) - Bill Inmon
+
+---
+
+## Ontologies are the schema for text
 
 | Structured Data | Unstructured Text |
 |-----------------|-------------------|
@@ -116,18 +119,15 @@ Data engineers know how to model relationships:
 | Foreign keys | **Relationships** |
 | Constraints | **Inference rules** |
 
-📖 [Mastering Unstructured Data](https://williaminmon.substack.com/p/mastering-unstructured-data-data) - Bill Inmon
+---
+
+<!-- _class: lead -->
+
+# What is an Ontology?
 
 ---
 
-## What is an Ontology?
-
-An ontology provides semantic structure for unstructured data:
-
-- **Vocabulary**: Domain-specific terms and definitions
-- **Taxonomy**: Hierarchical organization of concepts
-- **Relationships**: How concepts connect to each other
-- **Context**: Disambiguation of ambiguous terms
+## An ontology provides semantic structure for unstructured data
 
 ```
 Animal
@@ -138,57 +138,62 @@ Animal
     └── Parrot → speaks, has_feathers, is_pet
 ```
 
----
-
-## Ontologies in Practice: OWL/RDF
-
-```turtle
-@prefix edu: <http://example.org/education#> .
-
-edu:Concept a owl:Class .
-edu:Prerequisite a owl:ObjectProperty ;
-    rdfs:domain edu:Concept ;
-    rdfs:range edu:Concept .
-
-edu:Algebra a edu:Concept ;
-    edu:prerequisite edu:Arithmetic ;
-    edu:teaches "solving equations" .
-
-edu:Calculus a edu:Concept ;
-    edu:prerequisite edu:Algebra ;
-    edu:teaches "rates of change" .
-```
-
-<!-- Ontologies define what concepts exist and how they relate -->
+<!--
+- Vocabulary: Domain-specific terms and definitions
+- Taxonomy: Hierarchical organization of concepts
+- Relationships: How concepts connect to each other
+- Context: Disambiguation of ambiguous terms
+-->
 
 ---
 
-## The Key Insight: AI Can Inference on Ontologies
+## You Already Use Ontologies
 
-LLMs understand semantic relationships **natively**.
+An ontology is a **semantic data model** — a certain type of knowledge graph organized in a specific way.
 
-An AI agent can:
-1. Traverse ontology hierarchies
-2. Query relationships between concepts
-3. Validate assertions against defined semantics
-4. Infer new knowledge from existing relationships
+You interact with ontologies every time you search:
+- **Google Search** — Knowledge Graph connects entities and concepts
+- **Amazon** — Product taxonomies, categories, and relationships
+- **Medical systems** — Disease classifications and drug interactions
 
-**This makes ontologies natural guardrails for AI.**
+They power the semantic understanding behind modern search and recommendation systems.
 
 ---
 
-## Ontologies as AI Guardrails
+## The Key Insight: Ontologies as Inference Models
 
-Traditional guardrails:
-- Prompt engineering (fragile)
-- Output filtering (reactive)
-- LLM self-critique (inconsistent)
+Ontologies are **semantic models** — similar to ML models, you can inference off of them and make deductions.
 
-**Ontology-based guardrails:**
-- Deterministic validation
-- Domain-grounded reasoning
-- Self-correcting through inference
-- Auditable decision paths
+They're built for **human traversal** and reasoning.
+
+**But do they work for AI traversal?**
+
+Can an AI agent:
+1. Traverse ontology hierarchies?
+2. Query relationships between concepts?
+3. Validate assertions against defined semantics?
+4. Infer new knowledge from existing relationships?
+
+---
+
+## Revisiting Guardrails: Traditional Approaches
+
+Traditional guardrails for AI systems:
+- **Prompt engineering** — fragile
+- **Output filtering** — reactive
+- **LLM self-critique** — inconsistent
+
+[Without proper guardrails, autonomous agents can optimize into chaos](https://soypetetech.substack.com/p/optimizing-into-chaos-why-ai-agents?r=1vuifh)
+
+---
+
+## Ontology-Based Guardrails
+
+A different approach:
+- **Deterministic validation** — against defined semantics
+- **Domain-grounded reasoning** — using enterprise knowledge
+- **Self-correcting through inference** — logical deduction
+- **Auditable decision paths** — traceable reasoning
 
 ---
 
@@ -196,15 +201,15 @@ Traditional guardrails:
 
 **1. Ontology as Schema Constraint**
 Constrain outputs to typed predicate space, then verify
-— Apple ODKE+, Graph-Constrained Reasoning (GCR)
+— [Apple ODKE+](https://machinelearning.apple.com/research/odke), [Graph-Constrained Reasoning (GCR)](https://arxiv.org/html/2410.13080v1)
 
 **2. Ontology as Context Engineering**
 Organize what context gets retrieved and injected
-— Palantir Ontology-Augmented Generation (OAG)
+— [Palantir Ontology-Augmented Generation (OAG)](https://www.palantir.com/docs/foundry/ontology/ontology-augmented-generation)
 
 **3. Ontology Behind Tool Calls**
 KG schema drives what functions exist and how they're called
-— FNCTOD (ACL 2024), edge device function calling
+— [FNCTOD (ACL 2024)](https://aclanthology.org/2024.acl-long.471.pdf), [edge device function calling](https://www.engr.siu.edu/staff/iraklis.anagnostopoulos/files/papers/Less_is_More_Optimizing_Function_Calling_for_LLM_Execution_on_Edge_Devices.pdf)
 
 ---
 
@@ -278,7 +283,7 @@ async def generate_with_validation(prompt: str):
 
 ## Real Example: Educational Content
 
-**Procedural Knowledge Ontology** for validating learning content:
+**[Procedural Knowledge Ontology](https://www.linkedin.com/pulse/process-knowledge-management-jessica-talisman-kt3ce/)** for validating learning content:
 
 ```
 Assertion: "Students should learn calculus before algebra"
@@ -292,6 +297,8 @@ Agent Action: Regenerate with correct ordering
 ```
 
 The ontology provides **ground truth** for domain knowledge.
+
+Implementation: [PKO Experiment in Professor Pedro](https://github.com/Soypete/professor_pedro/pull/22) — AI assistant with semantic grounding
 
 ---
 
