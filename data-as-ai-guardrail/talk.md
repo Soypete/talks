@@ -26,41 +26,58 @@ by: Miriah Peterson
 
 ---
 
-## The Problem: AI Works with Unstructured Data
+## The Problem: AI Agents Hallucinate
 
-AI primarily processes **text** — which is inherently unstructured.
+LLMs confidently generate **plausible-sounding nonsense**.
 
-Traditional data modeling doesn't work here:
-- No ERDs or schemas for natural language
-- No foreign keys or constraints
-- No built-in validation
+- Fabricated facts presented as truth
+- Invented citations and references
+- Logically inconsistent reasoning
+- Domain violations that sound correct
 
-**Without structure, how do we validate AI outputs?**
-
----
-
-## The Context Problem
-
-The word **"fire"** means completely different things:
-
-- 🔥 A flame burning
-- 🔫 Discharge a weapon
-- 💼 Terminate employment
-- 🎯 "You're on fire!" (excelling)
-
-In structured data, context is **explicit** (column names, relationships).
-In text, context must be **derived**.
-
-<!-- This is Bill Inmon's key insight about unstructured data -->
+**Autonomous agents amplify this risk** — they act on their own outputs.
 
 ---
 
-## Bill Inmon's Insight
+## We've Solved This Before
+
+Data engineers have spent **entire careers** validating data:
+
+- Schema enforcement
+- Referential integrity
+- Business rule validation
+- Data quality pipelines
+
+We have **decades of validated data stores** — why aren't we using them to ground AI?
+
+---
+
+## The Gap: Structured vs Unstructured
+
+| Structured Data | Unstructured Text |
+|-----------------|-------------------|
+| ERD/Schema | ??? |
+| Foreign keys | ??? |
+| Constraints | ??? |
+| Explicit context | Derived context |
+
+The word **"fire"** = flame? weapon? termination? excellence?
+
+**AI works with text. Text has no schema.**
+
+---
+
+## Bill Inmon's Answer
 
 > "The data model for structured data is the ERD. The data model for unstructured text is the **ontology/taxonomy**."
 
-**Structured Data** → ERD as compass (inward-facing, internal processes)
-**Unstructured Text** → Ontology as compass (external-facing, world knowledge)
+**Ontologies are the schema for text.**
+
+| Structured Data | Unstructured Text |
+|-----------------|-------------------|
+| ERD/Schema | **Ontology** |
+| Foreign keys | **Relationships** |
+| Constraints | **Inference rules** |
 
 📖 [Mastering Unstructured Data](https://williaminmon.substack.com/p/mastering-unstructured-data-data) - Bill Inmon
 
@@ -258,11 +275,11 @@ Ontologies combine AI flexibility with formal rigor.
 
 ## Key Takeaways
 
-- **Unstructured data needs ontologies** like structured data needs ERDs
-- **AI naturally understands** semantic relationships
-- **Ontologies enable deterministic validation** of AI outputs
-- **Agentic AI can self-validate** through ontology inference
-- **Combines flexibility with rigor** — trustworthy autonomous pipelines
+- **Hallucination is a data validation problem** — we know how to solve those
+- **Ontologies are schemas for text** — apply data engineering to AI
+- **AI natively understands** semantic relationships
+- **Deterministic validation** beats prompt engineering
+- **Your data engineering expertise transfers** — use it to ground AI
 
 ---
 
