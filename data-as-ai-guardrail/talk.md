@@ -127,6 +127,46 @@ The AI sees rows. It doesn't know:
 
 ---
 
+## Ontology: A Formal Definition
+
+> "At its core, an ontology is a **formal, explicit specification of a shared conceptualization** — an agreement about what things exist in a particular domain, how they relate to each other, and what we call them."
+
+— [Jessica Talisman](https://jessicatalisman.substack.com/p/ontologiessome-perspectives), Semantic Engineer & Author of *Intentional Arrangement*
+
+**Key distinction:** Ontologies use logic-based reasoning and can **infer new knowledge** from existing statements.
+
+---
+
+## The Ontology Pipeline
+
+Building semantic knowledge systems follows a progression:
+
+| Step | Structure | What It Provides |
+|------|-----------|------------------|
+| 1 | **Controlled Vocabulary** | Curated list of approved terms |
+| 2 | **Metadata Standards** | Consistent attribute definitions |
+| 3 | **Taxonomy** | Hierarchical parent-child relationships |
+| 4 | **Thesaurus** | Synonyms, related terms, broader/narrower |
+| 5 | **Ontology** | Formal logic + inference rules |
+| 6 | **Knowledge Graph** | Instantiated data + relationships |
+
+📖 [The Ontology Pipeline](https://moderndata101.substack.com/p/the-ontology-pipeline) — Jessica Talisman
+
+---
+
+## Definitions: Building Blocks
+
+**Controlled Vocabulary**
+> "The simplest reliable agreement a team can make about language — a curated, finite list of approved terms, each with one intended meaning."
+
+**Taxonomy**
+> "Takes the controlled vocabulary and transforms it into a hierarchical structure. The beginning of creating relationships between concepts."
+
+**Ontology**
+> "The ultimate controlled vocabulary — not just a list of terms, but a complete knowledge structure that captures concepts, entities, attributes, properties and how these things are related."
+
+---
+
 ## An ontology provides semantic structure for unstructured data
 
 ```
@@ -370,6 +410,9 @@ Ontologies combine AI flexibility with formal rigor.
 ## Foundational
 
 - [Mastering Unstructured Data](https://williaminmon.substack.com/p/mastering-unstructured-data-data) — Bill Inmon
+- [The Ontology Pipeline](https://moderndata101.substack.com/p/the-ontology-pipeline) — Jessica Talisman
+- [Ontologies—Some Perspectives](https://jessicatalisman.substack.com/p/ontologiessome-perspectives) — Jessica Talisman
+- [Controlled Vocabularies](https://jessicatalisman.substack.com/p/controlled-vocabularies) — Jessica Talisman
 
 ---
 
