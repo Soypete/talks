@@ -64,6 +64,18 @@ LLMs confidently generate **plausible-sounding nonsense**.
 
 ---
 
+## What is a Guardrail?
+
+A **guardrail** is a mechanism for **systematically verifying** that LLM outputs remain bounded within:
+
+- **Ideas** — factual claims, domain knowledge, valid concepts
+- **Context** — relevant scope, appropriate framing, business rules
+- **Actions** — permitted operations, safe behaviors, authorized decisions
+
+Guardrails shift validation from *hoping the model behaves* to *enforcing that it does*.
+
+---
+
 ## "Just Add It to the System Prompt"
 
 The naive solution: stuff guardrails into the prompt.
