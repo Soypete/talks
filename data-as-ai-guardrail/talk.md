@@ -179,6 +179,34 @@ Building semantic knowledge systems follows a progression:
 
 ---
 
+## Ontologies Formalize Relationships
+
+Ontologies define **what types of things can participate in relationships**:
+
+- A `Person` can be `employed_by` an `Organization`
+- A `Document` can be `authored_by` a `Person`
+
+These are **domain and range constraints** — they make knowledge representation rigorous and enable automated reasoning.
+
+> If the system knows that only persons can be authors, and something is listed as an author, **the system can infer that thing is a person.**
+
+---
+
+## Knowledge Graphs: Ontologies + Data
+
+> "Knowledge graphs are **ontologies brought to life** with instance data."
+
+| Ontology (Schema) | Knowledge Graph (Instance) |
+|-------------------|----------------------------|
+| `Person` can `worksFor` `Organization` | `Jessica` `worksFor` `Contextually` |
+| `Document` can `authoredBy` `Person` | `README.md` `authoredBy` `Miriah` |
+
+Knowledge graphs combine the **structural richness of ontologies** with the **scale of databases**.
+
+📖 [Relationships and Knowledge Systems](https://jessicatalisman.substack.com/p/relationships-and-knowledge-systems) — Jessica Talisman
+
+---
+
 ## An ontology provides semantic structure for unstructured data
 
 ```
@@ -423,6 +451,7 @@ Ontologies combine AI flexibility with formal rigor.
 
 - [Mastering Unstructured Data](https://williaminmon.substack.com/p/mastering-unstructured-data-data) — Bill Inmon
 - [The Ontology Pipeline](https://moderndata101.substack.com/p/the-ontology-pipeline) — Jessica Talisman
+- [Relationships and Knowledge Systems](https://jessicatalisman.substack.com/p/relationships-and-knowledge-systems) — Jessica Talisman
 - [Ontologies—Some Perspectives](https://jessicatalisman.substack.com/p/ontologiessome-perspectives) — Jessica Talisman
 - [Controlled Vocabularies](https://jessicatalisman.substack.com/p/controlled-vocabularies) — Jessica Talisman
 
