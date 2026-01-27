@@ -64,6 +64,18 @@ LLMs confidently generate **plausible-sounding nonsense**.
 
 ---
 
+## What is a Guardrail?
+
+A **guardrail** is a mechanism for **systematically verifying** that LLM outputs remain bounded within:
+
+- **Ideas** — factual claims, domain knowledge, valid concepts
+- **Context** — relevant scope, appropriate framing, business rules
+- **Actions** — permitted operations, safe behaviors, authorized decisions
+
+Guardrails shift validation from *hoping the model behaves* to *enforcing that it does*.
+
+---
+
 ## "Just Add It to the System Prompt"
 
 The naive solution: stuff guardrails into the prompt.
@@ -124,6 +136,74 @@ The AI sees rows. It doesn't know:
 <!-- _class: lead -->
 
 # What is an Ontology?
+
+---
+
+## Ontology: A Formal Definition
+
+> "At its core, an ontology is a **formal, explicit specification of a shared conceptualization** — an agreement about what things exist in a particular domain, how they relate to each other, and what we call them."
+
+— [Jessica Talisman](https://jessicatalisman.substack.com/p/ontologiessome-perspectives), Semantic Engineer & Author of *Intentional Arrangement*
+
+**Key distinction:** Ontologies use logic-based reasoning and can **infer new knowledge** from existing statements.
+
+---
+
+## The Ontology Pipeline
+
+Building semantic knowledge systems follows a progression:
+
+| Step | Structure | What It Provides |
+|------|-----------|------------------|
+| 1 | **Controlled Vocabulary** | Curated list of approved terms |
+| 2 | **Metadata Standards** | Consistent attribute definitions |
+| 3 | **Taxonomy** | Hierarchical parent-child relationships |
+| 4 | **Thesaurus** | Synonyms, related terms, broader/narrower |
+| 5 | **Ontology** | Formal logic + inference rules |
+| 6 | **Knowledge Graph** | Instantiated data + relationships |
+
+📖 [The Ontology Pipeline](https://moderndata101.substack.com/p/the-ontology-pipeline) — Jessica Talisman
+
+---
+
+## Definitions: Building Blocks
+
+**Controlled Vocabulary**
+> "The simplest reliable agreement a team can make about language — a curated, finite list of approved terms, each with one intended meaning."
+
+**Taxonomy**
+> "Takes the controlled vocabulary and transforms it into a hierarchical structure. The beginning of creating relationships between concepts."
+
+**Ontology**
+> "The ultimate controlled vocabulary — not just a list of terms, but a complete knowledge structure that captures concepts, entities, attributes, properties and how these things are related."
+
+---
+
+## Ontologies Formalize Relationships
+
+Ontologies define **what types of things can participate in relationships**:
+
+- A `Person` can be `employed_by` an `Organization`
+- A `Document` can be `authored_by` a `Person`
+
+These are **domain and range constraints** — they make knowledge representation rigorous and enable automated reasoning.
+
+> If the system knows that only persons can be authors, and something is listed as an author, **the system can infer that thing is a person.**
+
+---
+
+## Knowledge Graphs: Ontologies + Data
+
+> "Knowledge graphs are **ontologies brought to life** with instance data."
+
+| Ontology (Schema) | Knowledge Graph (Instance) |
+|-------------------|----------------------------|
+| `Person` can `worksFor` `Organization` | `Jessica` `worksFor` `Contextually` |
+| `Document` can `authoredBy` `Person` | `README.md` `authoredBy` `Miriah` |
+
+Knowledge graphs combine the **structural richness of ontologies** with the **scale of databases**.
+
+📖 [Relationships and Knowledge Systems](https://jessicatalisman.substack.com/p/relationships-and-knowledge-systems) — Jessica Talisman
 
 ---
 
@@ -370,6 +450,10 @@ Ontologies combine AI flexibility with formal rigor.
 ## Foundational
 
 - [Mastering Unstructured Data](https://williaminmon.substack.com/p/mastering-unstructured-data-data) — Bill Inmon
+- [The Ontology Pipeline](https://moderndata101.substack.com/p/the-ontology-pipeline) — Jessica Talisman
+- [Relationships and Knowledge Systems](https://jessicatalisman.substack.com/p/relationships-and-knowledge-systems) — Jessica Talisman
+- [Ontologies—Some Perspectives](https://jessicatalisman.substack.com/p/ontologiessome-perspectives) — Jessica Talisman
+- [Controlled Vocabularies](https://jessicatalisman.substack.com/p/controlled-vocabularies) — Jessica Talisman
 
 ---
 
