@@ -4,7 +4,7 @@ theme: default
 paginate: true
 title: Build Locally, Think Globally
 backgroundImage: url('../images/soypete_background.png')
-description: The AI Engineer’s Dev Environment for Local-First Iteration
+description: The AI Engineer’s Dev Environment for Local-First Iteration and Running Agents Locally
 ---
 
 <!-- _class: lead -->
@@ -195,6 +195,172 @@ Tips:
 - Use **Ollama** or **Llama.cpp** to generate embeddings locally using the models you have running
 - Use **pgvector** to store and query embeddings in Postgres and do vector search/comparisons
 - You can manage vector stores with code, but I rarely send vectors directly to an llm. I use them for search and retrieval.
+
+---
+
+<!-- _class: lead -->
+
+# Running Agents Locally
+
+### From serving models to building systems that act
+
+---
+
+## From Models to Agents
+
+We've covered running models locally — now what can you **do** with them?
+
+- A local model can answer questions
+- A local **agent** can take actions, run tools, and complete tasks
+- PedroCLI: a local-first agent system built in Go
+- Runs entirely on homelab hardware (RTX 5090, DGX Spark)
+
+<!-- The jump from "I have a model running" to "I have an agent running" is where things get interesting — and where things get dangerous if you don't think about it carefully. -->
+
+---
+
+## What Is a Local Agent?
+
+An agent is a **probabilistic system that proposes actions in pursuit of a goal**
+
+It is NOT:
+- An intern
+- A decision maker
+- A reliable narrator of its own progress
+
+<!-- This definition matters. If you think of an agent as "an AI that does stuff," you will build systems that fail in surprising and expensive ways. -->
+
+---
+
+## The Intern Fallacy
+
+Popular narrative: "Agents are like interns"
+
+This is **catastrophically wrong**:
+
+| Interns | Agents |
+|---------|--------|
+| Have judgment | Fabricate certainty |
+| Hesitate when unsure | Proceed confidently |
+| Ask questions | Invent answers |
+| Understand risk | Understand completion |
+
+> Agents optimize for making you *feel* like progress is happening
+
+<!-- The danger is not that agents are stupid — it's that they are confidently wrong in ways that look like competence. -->
+
+---
+
+## Two Execution Modes
+
+**Interactive Mode (PedroCode)**
+- Open-ended reasoning with human oversight
+- Exploration and self-iteration
+- Human in the loop for decisions
+
+**Background Mode (PedroCLI)**
+- Phased workflows with strict tool contracts
+- System-owned state and artifact-based completion
+- Designed for unattended, long-running jobs
+
+<!-- The distinction matters: unsupervised agents don't understand risk — they understand completion. Background mode needs far more guardrails. -->
+
+---
+
+## Workflows Over Autonomy
+
+The solution to unfettered agent access: **SCOPE**
+
+A workflow answers questions an agent should never decide for itself:
+- What is the task?
+- What tools are allowed *right now*?
+- What does success look like?
+- What is explicitly forbidden?
+
+> Workflows don't weaken agents — they make them *true* automation
+
+<!-- Think of it as the principle of least privilege applied to LLM tool access. Each phase of a workflow only gets the tools it needs. -->
+
+---
+
+## Scoped Tool Access
+
+Each workflow step has **scoped tool calls**:
+
+| Phase | Allowed | Forbidden |
+|-------|---------|-----------|
+| Research | list files, grep | write, edit |
+| Draft | read context, write draft | execute, deploy |
+| Post | read draft, publish | edit source |
+
+> Principle of least privilege — applied to agents
+
+<!-- This is the single most impactful design decision in PedroCLI. A research step that can't write files can't accidentally overwrite your code. -->
+
+---
+
+## Tools Are APIs, Not Suggestions
+
+Tool calling is an **API design problem**, not a prompting problem
+
+- Register tools with strict schemas and meaningful names
+- Without strictness, agents guess, omit fields, invent parameters
+- On self-hosted models: use **logits and grammars** to constrain output
+
+```go
+tool := Tool{
+    Name:        "read_file",
+    Description: "Read contents of a file by path",
+    Parameters:  StrictSchema{Path: required(string)},
+}
+```
+
+<!-- Once tools became strict interfaces, reliability jumped — not because the agent got smarter, but because ambiguity disappeared. -->
+
+---
+
+## The Agent Is Not the System
+
+The **system** defines jobs, steps, progress, and completion conditions.
+The **agent** operates freely *inside* those constraints.
+
+```go
+type JobProgress struct {
+    JobID     string
+    Phase     string
+    Status    Status
+    StartedAt time.Time
+    UpdatedAt time.Time
+    Error     string
+}
+```
+
+> "TASK_COMPLETE" is just a string of tokens — your system must verify it
+
+<!-- Without system-level observability, you're trusting the LLM to tell you it's done. That's like asking a contractor to grade their own work. -->
+
+---
+
+## Why Local Matters for Agents
+
+- **Own the entire stack** — model, tools, permissions, state
+- **Logit manipulation and grammar constraints** — only available when you self-host
+- **No data leaves your network** — critical for agents with file system access
+- **Context windows are a budget** — local models have smaller windows, so phased workflows are essential
+- **Hardware constraints shape architecture** — and that's a *good* thing
+
+<!-- Quantized models behave differently from hosted ones. I learned this the hard way. The constraints of local hardware actually force better agent design. -->
+
+---
+
+## Lessons Learned
+
+- Nearly every failure was **state management, execution semantics, or observability** — not model intelligence
+- Stop asking "How do I make the agent smarter?"
+  → Start asking **"How do I make the system safer?"**
+- Sometimes the answer is a script, sometimes a workflow, sometimes traditional automation — **only sometimes an agent**
+
+<!-- The most important lesson: the agent is the least interesting part of an agent system. The system around it is what determines success or failure. -->
 
 ---
 
