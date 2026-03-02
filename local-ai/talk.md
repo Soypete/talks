@@ -212,8 +212,8 @@ We've covered running models locally — now what can you **do** with them?
 
 - A local model can answer questions
 - A local **agent** can take actions, run tools, and complete tasks
-- PedroCLI: a local-first agent system built in Go
-- Runs entirely on homelab hardware (RTX 5090, DGX Spark)
+- PedroCLI: a local-first agent system I built in Go
+- Runs entirely on homelab hardware (no cloud required)
 
 <!-- The jump from "I have a model running" to "I have an agent running" is where things get interesting — and where things get dangerous if you don't think about it carefully. -->
 
@@ -221,14 +221,13 @@ We've covered running models locally — now what can you **do** with them?
 
 ## What Is a Local Agent?
 
-An agent is a **probabilistic system that proposes actions in pursuit of a goal**
+An agent is an AI system that **proposes and takes actions** to accomplish a goal
 
-It is NOT:
-- An intern
-- A decision maker
-- A reliable narrator of its own progress
+- It uses an LLM to decide what to do next — but those decisions are *guesses*, not guarantees
+- It can call tools: read files, run commands, write code
+- It keeps going until it thinks it's done
 
-<!-- This definition matters. If you think of an agent as "an AI that does stuff," you will build systems that fail in surprising and expensive ways. -->
+<!-- Key framing for the audience: an agent is not magic. It's a loop — the LLM picks a tool, uses it, reads the result, picks the next tool. That's it. The "intelligence" is pattern matching, not reasoning. -->
 
 ---
 
@@ -259,17 +258,17 @@ This is **catastrophically wrong**:
 - Human in the loop for decisions
 
 **Background Mode (PedroCLI)**
-- Phased workflows with strict tool contracts
-- System-owned state and artifact-based completion
+- Step-by-step workflows with strict rules for each step
+- The *system* tracks progress — not the agent
 - Designed for unattended, long-running jobs
 
-<!-- The distinction matters: unsupervised agents don't understand risk — they understand completion. Background mode needs far more guardrails. -->
+<!-- The distinction matters: unsupervised agents don't understand risk — they understand completion. Background mode needs far more guardrails. An "artifact" here means a concrete output — a file, a draft, a test result — that proves a step actually finished. -->
 
 ---
 
 ## Workflows Over Autonomy
 
-The solution to unfettered agent access: **SCOPE**
+The solution to giving agents too much access: **SCOPE**
 
 A workflow answers questions an agent should never decide for itself:
 - What is the task?
@@ -293,9 +292,9 @@ Each workflow step has **scoped tool calls**:
 | Draft | read context, write draft | execute, deploy |
 | Post | read draft, publish | edit source |
 
-> Principle of least privilege — applied to agents
+> Only give each step the permissions it actually needs
 
-<!-- This is the single most impactful design decision in PedroCLI. A research step that can't write files can't accidentally overwrite your code. -->
+<!-- This is the principle of least privilege — a security concept applied to LLM agents. A research step that can't write files can't accidentally overwrite your code. This was the single most impactful design decision in PedroCLI. -->
 
 ---
 
@@ -303,19 +302,19 @@ Each workflow step has **scoped tool calls**:
 
 Tool calling is an **API design problem**, not a prompting problem
 
-- Register tools with strict schemas and meaningful names
-- Without strictness, agents guess, omit fields, invent parameters
-- On self-hosted models: use **logits and grammars** to constrain output
+- Define tools with strict schemas and clear names
+- Without strictness, agents guess, skip fields, and invent parameters
+- On self-hosted models: you can force the model to output valid JSON for tool calls
 
 ```go
 tool := Tool{
     Name:        "read_file",
     Description: "Read contents of a file by path",
-    Parameters:  StrictSchema{Path: required(string)},
+    Schema:      Schema{"path": String, required: true},
 }
 ```
 
-<!-- Once tools became strict interfaces, reliability jumped — not because the agent got smarter, but because ambiguity disappeared. -->
+<!-- "Logits and grammars" is the technical mechanism here — logits are the raw model outputs before they become tokens, and grammars let you constrain which tokens are valid. This means the model literally cannot produce malformed tool calls. Once tools became strict interfaces, reliability jumped — not because the agent got smarter, but because ambiguity disappeared. -->
 
 ---
 
@@ -344,18 +343,18 @@ type JobProgress struct {
 ## Why Local Matters for Agents
 
 - **Own the entire stack** — model, tools, permissions, state
-- **Logit manipulation and grammar constraints** — only available when you self-host
+- **Force valid tool calls** — self-hosting lets you constrain model output at the token level
 - **No data leaves your network** — critical for agents with file system access
-- **Context windows are a budget** — local models have smaller windows, so phased workflows are essential
+- **Context windows are a budget** — LLMs can only "remember" so much text at once; local models have smaller limits, so step-by-step workflows help
 - **Hardware constraints shape architecture** — and that's a *good* thing
 
-<!-- Quantized models behave differently from hosted ones. I learned this the hard way. The constraints of local hardware actually force better agent design. -->
+<!-- Quantized models (compressed to use less memory) behave differently from full-size hosted ones. I learned this the hard way. The constraints of local hardware actually force better agent design because you can't just throw a massive context window at the problem. -->
 
 ---
 
 ## Lessons Learned
 
-- Nearly every failure was **state management, execution semantics, or observability** — not model intelligence
+- Nearly every failure was **tracking state, knowing when things finished, or seeing what went wrong** — not model intelligence
 - Stop asking "How do I make the agent smarter?"
   → Start asking **"How do I make the system safer?"**
 - Sometimes the answer is a script, sometimes a workflow, sometimes traditional automation — **only sometimes an agent**
