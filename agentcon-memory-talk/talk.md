@@ -2,26 +2,25 @@
 marp: true
 theme: gaia
 paginate: true
-title: "Beyond Memory: Building Reliable Agent Context Infrastructure"
+title: "Your AI Agent Does Not Have Memory"
 backgroundImage: url('../images/soypete_background.png')
-description: How to build reliable agent personalization using context engineering
+description: Building reliable agent context infrastructure with structured state, governed retrieval, and validation
 ---
 
 <!-- _class: lead -->
 
-# Beyond Memory
+# Your AI Agent Does Not Have Memory
 
 ## Building Reliable Agent Context Infrastructure
 
-by Miriah Peterson
-@Soypete
+by Miriah Peterson  
 
 ---
 
 ## Who Am I?
 
-- AI/ML Infrastructure Engineer at SchoolAI
-- Creator: MemPalace, Graphify, Ontology-go
+- Data Engineer at SchoolAI
+- Creator:  Ontology-go
 - Building production agent systems since 2023
 - Organizer: Utah Data Engineering & MLOps Meetups
 
@@ -31,308 +30,416 @@ by Miriah Peterson
 
 <!-- _class: lead -->
 
-# PART 1: THE PROBLEM
+# PART 1: THE BUG
 
 ---
 
 ## The Scenario
 
-You ask an agent: *"How do I install ethernet drivers on Ubuntu?"*
+You ask an agent:
 
-Expected: Instructions for Ubuntu ethernet drivers
+> "How do I install ethernet drivers on Ubuntu?"
 
-Actual: The agent tells you about your numpy budgeting script, your conference travel preferences, and that time you mentioned network hardware in 2023.
+Expected:
 
----
+> Instructions for Ubuntu ethernet drivers.
 
-## What's Happening
+Actual:
 
-The agent is "personalizing" — but incorrectly.
-
-It sees:
-- "drivers" → "driver" → "budget script with driver"
-- "Ubuntu" → past conversations about Ubuntu
-- Connects things that shouldn't connect
-
-This is **not memory failure**. It's **context failure**.
+> The agent tells you about your numpy budgeting script, your conference travel preferences, and that time you mentioned network hardware in 2023.
 
 ---
 
-## Why Does This Happen?
+## That Is Not Memory
 
-### From "AI Isn't Getting Smarter"
+The agent did not "remember" wrong.
 
-> "We are scaling preference, not intelligence. AI doesn't discover truth — it learns what we reward."
+The system retrieved and injected the wrong context.
 
-Models are trained to:
-- Agree with you
-- Sound confident
-- Complete your thinking
+It saw:
 
-**Not** to find the right answer.
+- "drivers" → "driver" → budgeting script
+- "Ubuntu" → old homelab notes
+- "network" → conference travel and hardware notes
+
+This is not a memory failure.
+
+It is a **context pipeline failure**.
 
 ---
 
-## The Cost
+## Why This Happens
 
-| Context Window | Cost/Request | Latency |
-|----------------|--------------|---------|
-| 32K tokens | ~$0.10 | ~1s |
-| 128K tokens | ~$0.40 | ~3s |
-| 1M tokens | ~$3.00 | ~15s |
+Most agent memory systems are built from:
 
-More context = more money + more latency + worse quality
+- chat history
+- vector search
+- summaries
+- larger context windows
+
+Those can improve the agent's vibes.
+
+They do not guarantee the right context gets used for the right task.
+
+---
+
+## The Model Is Not the Memory System
+
+Models are good at producing plausible continuations.
+
+They are not good at deciding:
+
+- what state is durable
+- what context is relevant
+- what data the user is allowed to access
+- what should be ignored
+- what should be written back
+
+That is infrastructure work.
+
+---
+
+## The Cost of Dumping Context
+
+More context usually means:
+
+- more latency
+- more spend
+- more distractors
+- harder debugging
+- weaker guarantees
+
+A bigger context window does not fix context quality.
+
+It just gives the system more room to be wrong.
 
 ---
 
 ## Current "Memory" Approaches
 
 | Approach | What It Does | Why It Fails |
-|----------|--------------|--------------|
-| Chat history | Stores all messages | Expensive, decays, drifts |
-| Vector search | Semantic similarity | "Close enough" often wrong |
-| Summarization | Compresses conversation | What was lost? |
-| Large context | Dump everything | Cost explodes |
+|---|---|---|
+| Chat history | Stores conversation turns | Expensive, noisy, drifts |
+| Vector search | Finds semantic similarity | Similar is not correct |
+| Summarization | Compresses prior context | Loses source and precision |
+| Large context | Dumps more input | Cost and distraction grow |
 
 ---
 
 ## The Real Problem
 
-### Two distinct needs, one vague term
+"Memory" is hiding several different engineering problems.
 
-| Term | What it means | We need |
-|------|---------------|---------|
-| **Memory** | Personalizing an experience | Graph-based relationships |
-| **Context** | Adding user data to prompts | Structured retrieval |
+| Need | Better name | Engineering primitive |
+|---|---|---|
+| Personalization | User/world model | Profile store / graph |
+| Task execution | Task context | Scoped retrieval |
+| Long-running work | Workflow state | Durable state / event log |
+| Governance | Context control | Policy, lineage, evals |
 
-"Memory" is the wrong abstraction for both.
-
----
-
-## What We Need
-
-1. **Deterministic** — same query, same result
-2. **Few-shot** — inject context only when needed
-3. **Cost-aware** — only what's necessary
-4. **Validated** — don't hope for correctness
+Calling all of this "memory" makes us build the wrong system.
 
 ---
 
 <!-- _class: lead -->
 
-# PART 2: THE SOLUTION
+# PART 2: THE MODEL
 
 ---
 
 ## Context Engineering
 
-> "Context engineering decides what information is introduced and when, how long it persists, and what gets dropped between steps."
+Context engineering decides:
 
-**Not:**
-- More system prompts
-- More chat history
-- Everything upfront
+- what information is introduced
+- when it is introduced
+- how long it persists
+- what gets dropped
+- what gets written back
+- how the system checks itself
 
-**Yes:**
-- Structured state
-- Timing over volume
-- Validation
+This is not prompt engineering.
 
----
-
-## Two Problems, Two Solutions
-
-### Problem 1: Memory (Personalization)
-
-**Use: Knowledge Graphs**
-
-- Entity relationships
-- Semantic connections
-- "What does this user care about?"
-
-### Problem 2: Context (User Data)
-
-**Use: MemPalace**
-
-- SPO hashing for exact retrieval
-- Wing/Room/Drawer hierarchy
-- One-shot context injection
+It is data engineering and reliability engineering for the agent context pipeline.
 
 ---
 
-## The Architecture
+## The Core Principle
 
+# Inject late.
+
+# Inject little.
+
+# Make it checkable.
+
+---
+
+## The Agent Context Pipeline
+
+```text
+request
+  ↓
+classify intent
+  ↓
+resolve identity + permissions
+  ↓
+retrieve candidate context
+  ↓
+filter / rank / validate
+  ↓
+assemble scoped context
+  ↓
+inject into model or tool call
+  ↓
+observe outcome
+  ↓
+write back state, if allowed
 ```
-┌─────────────────────────────────────────────┐
-│              User Request                   │
-└─────────────────┬───────────────────────────┘
-                  ↓
-┌─────────────────────────────────────────────┐
-│           Problem Classification            │
-│    Memory? → Graph    Context? → MemPalace  │
-└─────────────────┬───────────────────────────┘
-                  ↓
-┌─────────────────────────────────────────────┐
-│         Retrieval Strategy                  │
-│    (Graph query or SPO lookup)              │
-└─────────────────┬───────────────────────────┘
-                  ↓
-┌─────────────────────────────────────────────┐
-│        Tool Call (Context Injection)        │
-│    Exactly right data, right time           │
-└─────────────────┬───────────────────────────┘
-                  ↓
-┌─────────────────────────────────────────────┐
-│              LLM (Task Execution)           │
-│    Probabilistic engine + validated input   │
-└─────────────────────────────────────────────┘
-```
+
+---
+
+## The Model Consumes Context
+
+It should not own the context pipeline.
+
+---
+
+## The Production Pattern
+
+1. Classify
+   What kind of request is this?
+
+2. Retrieve
+   Exact lookup when possible.
+   Semantic search when necessary.
+
+3. Authorize
+   Is this context allowed for this user/task?
+
+4. Assemble
+   Build the smallest useful context packet.
+
+5. Validate
+   Check structure, provenance, and output claims.
+
+---
+
+## Retrieval Is Not One Thing
+
+| Retrieval type | Good for | Failure mode |
+|---|---|---|
+| Key lookup | Known facts | Requires structure upfront |
+| SQL / graph query | Relationships | Requires schema/modeling |
+| BM25 | Lexical match | Misses semantic equivalents |
+| Vector search | Fuzzy recall | Retrieves plausible nonsense |
+| Summaries | Compression | Loses source and precision |
+
+Vector search is a recall tool.
+
+It is not a correctness guarantee.
+
+---
+
+## Determinism Matters
+
+For reliable systems, we need to ask:
+
+- Can the same query produce the same context?
+- Can we explain why this context was selected?
+- Can we prove the user was allowed to access it?
+- Can we test retrieval behavior across releases?
+- Can we prevent bad state from being written back?
+
+If not, the agent does not have memory.
+
+It has vibes with persistence.
 
 ---
 
 <!-- _class: lead -->
 
-# PART 3: THE DEMONSTRATION
+# PART 3: THE CONTROLS
 
 ---
 
-## Solution 1: Graphify
+## Four Controls for Agent Context
 
-### Knowledge Graphs for Personalization
+| Control | What it gives you |
+|---|---|
+| Provenance | Where the context came from |
+| Scoped retrieval | Only the context needed for this task |
+| Policy enforcement | Who/what can access or inject context |
+| Semantic validation | Whether the output is structurally allowed |
 
-```
-┌─────────────────────────────────────────────┐
-│              Input                          │
-│  (files, docs, code, conversations)        │
-└─────────────────┬───────────────────────────┘
-                  ↓
-┌─────────────────────────────────────────────┐
-│           Graph Extraction                  │
-│  EXTRACTED | INFERRED | AMBIGUOUS           │
-└─────────────────┬───────────────────────────┘
-                  ↓
-┌─────────────────────────────────────────────┐
-│         Knowledge Graph                     │
-│                                           │
-│  ┌───┐    knows    ┌───┐                  │
-│  │A │─────────────│B │                  │
-│  └───┘            └───┘                  │
-│    │                 │                     │
-│  works_at         works_at                │
-│    ↓               ↓                      │
-│  ┌───┐            ┌───┐                  │
-│  │C │            │D │  (relations)       │
-│  └───┘            └───┘                  │
-└─────────────────────────────────────────────┘
-```
+These are the pieces that turn memory from a feature into infrastructure.
 
 ---
 
-## Graphify: Audit Trail
+## Control 1: Provenance
 
-Every edge tagged:
+Every piece of context should be tagged by how it was created.
 
-- **EXTRACTED** — found in source
-- **INFERRED** — logically derived
-- **AMBIGUOUS** — uncertain
+Examples:
 
----
+- EXTRACTED — found directly in source material
+- INFERRED — derived from other known facts
+- AMBIGUOUS — possible, but not safe to treat as truth
 
-## Solution 2: MemPalace
+The system should know the difference.
 
-### Structured Context for User Data
-
-```
-┌─────────────────────────────────────────────┐
-│                  Wing                       │
-│         (Person or Project)                 │
-│  ┌─────────────┐  ┌─────────────┐          │
-│  │    Room     │  │    Room     │          │
-│  │  (Topic)    │  │  (Topic)    │          │
-│  │ ┌─────────┐ │  │ ┌─────────┐ │          │
-│  │ │ Drawer  │ │  │ │ Drawer  │ │          │
-│  │ └─────────┘ │  │ └─────────┘ │          │
-│  └─────────────┘  └─────────────┘          │
-└─────────────────────────────────────────────┘
-```
-
-- **Wing** — Person or project
-- **Room** — Topic within wing
-- **Drawer** — Specific memory
+The model usually will not.
 
 ---
 
-## MemPalace: SPO Hashing
+### Example: Graphify
+
+Knowledge Graphs for Personalization
+
+```
+Input
+(files, docs, code, conversations)
+  ↓
+Graph extraction
+(EXTRACTED | INFERRED | AMBIGUOUS)
+  ↓
+Knowledge graph
+(entities + relationships + provenance)
+```
+
+Graph traversal is useful for personalization because personalization is relational.
+
+The question is not just "what text is similar?"
+
+The question is "what does this user care about, and how do those facts relate?"
+
+---
+
+## Control 2: Scoped Retrieval
+
+Task context should be retrieved for the current request.
+
+Not dumped from every prior interaction.
+
+A useful context system should know:
+
+- the subject
+- the predicate
+- the object or expected object type
+- the source
+- the scope
+- the TTL
+- the confidence/provenance level
+
+This makes retrieval smaller and easier to test.
+
+---
+
+### Example: MemPalace
+
+Structured Context for User Data
+
+```
+Wing
+  Person or project
+
+Room
+  Topic within that wing
+
+Drawer
+  Specific scoped context
+```
+
+The point is not the metaphor.
+
+The point is scoped state.
+
+Context should have a home, a boundary, and a retrieval path.
+
+---
+
+## Exact Retrieval Beats Similarity When You Need Facts
 
 ```python
 # Exact Subject-Predicate-Object retrieval
-def make_spo_key(subject, predicate, obj):
-    return hash(f"{subject}|{predicate}|{obj}")
-
-# Query: "miriah works_at"
-# Returns: EXACT match, not "similar"
-
 result = spo_store.get(
-    subject="miriah",
-    predicate="works_at"
+    subject="ubuntu",
+    predicate="has_package_manager"
 )
-# Result: {"schoolai", "known_since": "2024"}
+
+# Returns a known fact from a scoped store.
+# Not the nearest embedding.
+
+# Use semantic search for discovery.
+# Use structured lookup when correctness matters.
 ```
 
 ---
 
-## MemPalace: Dual Retrieval
+## Hybrid Retrieval Is a Policy Decision
 
 ```python
-# When you need search
+# When you need discovery
 vector_results = collection.query(
     "driver installation",
     n=3
 )
 
-# When you need exact answer
+# When you need a known fact
 exact_result = spo_store.get(
     subject="ubuntu",
     predicate="has_package_manager"
 )
 
-# Combine for precision + recall
+# Then validate what is allowed into context.
+
+# The important decision is not "vector or graph."
+# The important decision is what guarantees the task requires.
 ```
 
 ---
 
-## Solution 3: Pedro Middleware
+## Control 3: Policy Enforcement
 
-### Context Control in Production
+Context injection is a permissioned operation.
 
-```
-┌─────────────────────────────────────┐
-│           Agent / LLM               │
-└──────────────┬──────────────────────┘
-               │ Tool Call
-               ▼
-┌─────────────────────────────────────┐
-│        Agent Middleware              │
-│  ┌───────────────────────────────┐  │
-│  │  Context Control              │  │
-│  │  - trusted/untrusted          │  │
-│  └───────────────────────────────┘  │
-│  ┌───────────────────────────────┐  │
-│  │  Tool Control                 │  │
-│  │  - permission                 │  │
-│  │  - validation                 │  │
-│  └───────────────────────────────┘  │
-└──────────────┬──────────────────────┘
-               │ Allowed/Blocked
-               ▼
-┌─────────────────────────────────────┐
-│        Tool Execution               │
-└─────────────────────────────────────┘
-```
+The system should ask:
+
+- Who is making the request?
+- What task are they performing?
+- What tools are available?
+- What context can be used?
+- What context must be excluded?
+- What budget applies?
+
+Agents should not get ambient access to everything.
 
 ---
 
-## Middleware Code
+### Example: Pedro Middleware
+
+Context Control in Production
+
+```
+Agent / LLM
+  ↓ tool call
+Agent middleware
+  ↓
+context policy
+  ↓
+tool policy
+  ↓
+allowed or blocked execution
+```
+
+The middleware owns the boundary.
+
+The model can request context.
+
+The system decides whether that request is valid.
+
+---
+
+### Middleware Code
 
 ```go
 func (m *Middleware) CallTool(
@@ -340,74 +447,68 @@ func (m *Middleware) CallTool(
     name string,
     args map[string]interface{},
 ) (*ToolResult, error) {
-    // 1. Context control
     callerCtx := m.extractCallerContext(ctx)
 
-    // 2. Validate against policy
     decision := m.policy.Evaluate(callerCtx, name, args)
     if decision.Action == Deny {
         return nil, fmt.Errorf("denied: %s", decision.Reason)
     }
 
-    // 3. Execute
     return m.executor.CallTool(ctx, name, args)
 }
 ```
 
 ---
 
-## Context Injection via Tool Call
+## Control 4: Semantic Validation
 
-```go
-type ContextTool struct {
-    store *MemPalaceStore
-}
+The output should be checked against what the system knows.
 
-func (t *ContextTool) Execute(ctx context.Context, args map[string]interface{}) (*ToolResult, error) {
-    query := args["query"].(string)
-    wing := args["wing"].(string)
+Not every sentence can be proven.
 
-    // Exact SPO retrieval, not vector search
-    result := t.store.Get(wing, query)
+But structured claims can be validated.
 
-    // Inject only what's needed
-    return &ToolResult{
-        Content: result.Context,
-    }, nil
-}
-```
+Examples:
+
+- Is this relationship allowed?
+- Is this object type valid?
+- Did this claim come from retrieved context?
+- Is the model inventing a relation that violates the schema?
 
 ---
 
-## Solution 4: Ontology-go
+### Example: Ontology-go
 
-### Semantic Models as Guardrails
+Semantic Models as Guardrails
 
 ```
-┌─────────────────────────────────────────────┐
-│              TBOX                           │
-│         (Schema/Ontology)                   │
-│                                           │
-│  class: Person                             │
-│  property: worksAt → Organization          │
-│  property: knows → Person                  │
-└─────────────────────────────────────────────┘
-                    ↓ maps to
-┌─────────────────────────────────────────────┐
-│              ABOX                           │
-│         (Instance Data)                     │
-│                                           │
-│  miriah worksAt SchoolAI                    │
-│  miriah knows john                          │
-└─────────────────────────────────────────────┘
+TBOX
+(schema / ontology)
+
+Person
+  worksAt → Organization
+  knows   → Person
+
+        ↓ validates
+
+ABOX
+(instance data)
+
+miriah worksAt SchoolAI
+miriah knows john
 ```
+
+An ontology is a schema for language.
+
+It does not make language smarter.
+
+It makes language checkable.
 
 ---
 
-## Ontology Validation
+### Ontology Validation
 
 ```go
-// Validate output against ontology
 func ValidateOutput(output string, ontology *Ontology) error {
     claims := ParseClaims(output)
 
@@ -424,100 +525,173 @@ func ValidateOutput(output string, ontology *Ontology) error {
 }
 ```
 
-> "An ontology is a schema for language. It doesn't make language smarter — it makes it checkable."
+---
+
+<!-- _class: lead -->
+
+# PART 4: EVALUATION
+
+---
+
+## What We Test
+
+Reliable context systems need regression tests.
+
+Not just vibe checks.
+
+Test whether:
+
+- the right context was retrieved
+- the wrong context was excluded
+- permissions were enforced
+- context stayed within budget
+- the output used supported claims
+- write-back created valid state
+- repeated runs stayed consistent
 
 ---
 
 ## Experiment Results
 
 | System | Avg Turns | Avg Search | Latency |
-|--------|-----------|------------|---------|
+|---|---|---|---|
 | LLMWiki | 1.00 | 1.00 | 3.86ms |
 | Graphify | 1.00 | 1.00 | 0.01ms |
-| **MemPalace** | **0.60** | **0.60** | **6.99ms** |
+| MemPalace | 0.60 | 0.60 | 6.99ms |
 
-**Result:** Few-shot/one-shot retrieval achieved
+Result: Scoped retrieval reduced unnecessary search/turns while keeping retrieval explicit.
 
----
+The point is not that one store wins forever.
 
-## When to Use What
-
-| Need | Solution | Why |
-|------|----------|-----|
-| Personalization | Graphify | Entity relationships |
-| User context | MemPalace | Exact SPO retrieval |
-| Validation | Ontology-go | Schema enforcement |
-| Tool control | Middleware | Policy enforcement |
+The point is that retrieval behavior became measurable.
 
 ---
 
-## The Algorithm
+## The Pattern Across Systems
 
-```
-1. Classify: Memory (graph) or Context (SPO)?
-2. Retrieve: Structured query, not semantic search
-3. Inject: Via tool call at right time
-4. Validate: Don't hope, check
-```
+| Need | Control | Example |
+|---|---|---|
+| Personalization | Relationship model | Graphify |
+| User/task context | Scoped retrieval | MemPalace |
+| Tool access | Policy boundary | Pedro Middleware |
+| Output checking | Semantic constraints | Ontology-go |
+| Regression safety | Evaluation harness | Agent tests |
+
+This is context infrastructure.
+
+Not prompt decoration.
 
 ---
 
 <!-- _class: lead -->
 
-# SUMMARY
+# PART 5: WHERE THIS GOES
+
+---
+
+## Future Agent State
+
+Reliable long-running agents need:
+
+- retrieval-aware orchestration
+- versioned context stores
+- context data contracts
+- audit logs for context injection
+- durable workflow state
+- permissioned write-back
+- shared governed state for multi-agent systems
+
+Not shared chat logs.
+
+---
+
+## Multi-Agent Systems Need Governed State
+
+If multiple agents coordinate through chat history, you get:
+
+- state drift
+- unclear ownership
+- untestable handoffs
+- duplicated context
+- permission leaks
+
+Shared state should be explicit.
+
+Readable by agents.
+
+Governed by systems.
+
+Tested like infrastructure.
+
+---
+
+## The Final Algorithm
+
+1. Classify the task.
+2. Resolve identity, scope, and permissions.
+3. Retrieve using the strongest retrieval guarantee available.
+4. Assemble the smallest useful context packet.
+5. Inject context through a controlled boundary.
+6. Validate claims and tool outputs.
+7. Observe behavior.
+8. Write back only valid state.
 
 ---
 
 ## What We Learned
 
-### Problem
-- "Memory" conflates two distinct needs
-- Current approaches are expensive and unreliable
-- Models optimize for confidence, not correctness
+"Memory" conflates too many problems.
 
-### Solution
-- **Memory** → Knowledge graphs (Graphify)
-- **Context** → SPO retrieval (MemPalace)
-- **Control** → Middleware + Ontologies
+Production agents need separate systems for:
 
-### Demonstration
-- Code from production systems
-- Experiment results proving effectiveness
+- personalization
+- task context
+- workflow state
+- authorization
+- validation
+- evaluation
 
----
+The model is not the memory system.
 
-## For Senior Leadership
-
-1. Context engineering is **solved** — it's infrastructure
-2. Cost control through structured retrieval
-3. Reliability = measurable consistency
+The system builds memory through governed state and scoped context retrieval.
 
 ---
 
-## For Engineers
+## Key Takeaway
 
-1. **Memory ≠ Context** — different problems, different solutions
-2. **Tool calls > chat history** — inject when needed
-3. **Validate > hope** — check outputs
+AI memory is not something the model has.
+
+It is something the system builds.
+
+Reliable agents need governed context pipelines:
+
+scoped retrieval, durable state, provenance, permissions, and validation.
 
 ---
 
 ## Open Source
 
-- [MemPalace](https://github.com/soypete/mempalace) — Semantic memory
-- [Graphify](https://github.com/soypete/graphify) — Knowledge graphs
-- [Ontology-go](https://github.com/soypete/ontology-go) — RDF/OWL
-- [Pedro-agentware](https://github.com/soypete/pedro-agentware) — Middleware
+MemPalace — scoped semantic memory
+
+Graphify — knowledge graph extraction
+
+Ontology-go — RDF/OWL modeling
+
+Pedro-agentware — agent middleware
 
 ---
 
 ## References
 
-- [Why I Hate "Context Engineering"](https://soypetetech.substack.com/p/why-i-hate-the-term-context-engineering)
-- [Data as an AI Guardrail](https://soypetetech.substack.com/p/data-as-an-ai-guardrail)
-- [AI Reliability Engineering](https://soypetetech.substack.com/p/ai-reliability-engineering)
-- [Unit Testing Your Agents](https://soypetetech.substack.com/p/unit-testing-your-agents)
-- [AI Isn't Getting Smarter](https://soypetetech.substack.com/p/ai-isnt-getting-smarter-were-just)
+Why I Hate "Context Engineering"
+
+Data as an AI Guardrail
+
+AI Reliability Engineering
+
+Unit Testing Your Agents
+
+AI Isn't Getting Smarter
 
 ---
 
@@ -525,5 +699,6 @@ func ValidateOutput(output string, ontology *Ontology) error {
 
 # Questions?
 
-## Miriah Peterson
-### @Soypete
+Miriah Peterson
+
+@Soypete
