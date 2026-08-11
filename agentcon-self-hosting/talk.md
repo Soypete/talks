@@ -71,11 +71,22 @@ useful agent → more runtime → more tokens → recurring API spend
 
 ---
 
-## Before: Local Capability Meant MoE
+## Why We Hosted MoE
 
-Mixture-of-Experts models made large *total* parameter counts practical.
+For frontier-ish capability, large dense models were a GPU economics problem:
 
-But each token activates only a subset of the experts:
+- every weight had to be available for every token
+- the full model needed enough fast memory
+- consumer VRAM imposed a hard ceiling
+- adding GPUs added cost and operational complexity
+
+**MoE was the practical consumer path to big-model capacity.**
+
+---
+
+## What MoE Bought Us
+
+A router selects only a subset of experts for each token:
 
 ```text
 397B total parameters
@@ -83,10 +94,16 @@ But each token activates only a subset of the experts:
  17B active parameters
 ```
 
-You store the whole model; each token uses only part of it.
+That means less active compute per token.
+
+With expert offloading, inactive experts can live in CPU memory while selected experts move to the GPU.
+
+**The full model still lives somewhere; CPU↔GPU transfer becomes the tradeoff.**
 
 <!-- Speaker note: MoE does not mean fewer transformer layers. The tradeoff is
-sparse expert activation: fewer parameters participate in each token. -->
+sparse expert activation: fewer parameters participate in each token. Offloading is
+an inference implementation choice and introduces transfer latency. Sources:
+https://arxiv.org/abs/2101.03961 and https://arxiv.org/abs/2603.19289 -->
 
 ---
 
