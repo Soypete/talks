@@ -218,3 +218,178 @@ const result = await guardedFetch(toolCall);
 ```
 
 For long-running agents, **why a call ran** matters as much as what ran.
+
+---
+
+<!-- _class: lead -->
+
+# One GPU, Real Agents
+
+## Qwen3.6-27B · RTX 5090 · my house
+
+The experiment is operational: **can ordinary agent stacks use this as infrastructure?**
+
+---
+
+## 🎬 BENCHMARK VIDEO PLACEHOLDER
+
+### Over the wire
+
+```text
+conference laptop
+      ↓ internet
+home inference endpoint
+      ↓
+Qwen3.6-27B on RTX 5090
+```
+
+**DROP OVER-THE-WIRE BENCHMARK VIDEO HERE**
+
+<!-- TODO: Include latency, prompt tokens/sec, and generation tokens/sec overlay. -->
+
+---
+
+## 🎬 BENCHMARK VIDEO PLACEHOLDER
+
+### Local network / on-box
+
+```text
+agent → OpenAI-compatible endpoint → local GPU
+```
+
+**DROP LOCAL BENCHMARK VIDEO HERE**
+
+The delta tells us what is inference—and what is the network.
+
+<!-- TODO: Use the same prompt and generation settings as over-the-wire. -->
+
+---
+
+## PydanticAI: Point the Agent Home
+
+```python
+provider = OpenAIProvider(
+    base_url="https://home.example/v1",
+    api_key="local",
+)
+model = OpenAIModel("Qwen/Qwen3.6-27B", provider=provider)
+agent = Agent(model, tools=[guarded_write, guarded_shell])
+
+result = agent.run_sync("Fix the failing test")
+```
+
+Typed tools and outputs; local inference behind a familiar API.
+
+<!-- API shape: https://ai.pydantic.dev/models/openai/ -->
+
+---
+
+## LangChain DeepAgents: Same Endpoint, Longer Loop
+
+```python
+model = init_chat_model(
+    "openai:Qwen/Qwen3.6-27B",
+    base_url="https://home.example/v1",
+    api_key="local",
+)
+agent = create_deep_agent(
+    model=model,
+    tools=[guarded_write, guarded_shell],
+)
+
+agent.invoke({"messages": [{"role": "user", "content": task}]})
+```
+
+Planning changes the workload—not the serving contract.
+
+<!-- API shape: https://docs.langchain.com/oss/python/deepagents/overview -->
+
+---
+
+## Production Inference Hosting
+
+| | **vLLM** | **llama.cpp** |
+|---|---|---|
+| Reach for it when | GPU throughput and concurrency matter | GGUF portability and hardware flexibility matter |
+| Production strengths | batching, scheduling, metrics | small footprint, broad backends, parallel decoding |
+| Agent interface | OpenAI-compatible API + tool parsing | OpenAI-compatible API + function calling |
+
+**These are the two production-grade defaults I would start from.**
+
+<!-- Sources: https://docs.vllm.ai and https://github.com/ggml-org/llama.cpp -->
+
+---
+
+## Development Tools Deserve Their Place
+
+**Ollama** and **LM Studio** are great for development:
+
+- download a model quickly
+- compare quantizations
+- test prompts and tool templates
+- give a team a friendly local on-ramp
+
+I would not run either as my production serving layer.
+
+**Unsloth Studio desktop** is also not production serving—but keep it nearby. We will come back to it.
+
+---
+
+## The Economics Work—For the Right Job
+
+### Pros
+
+- For long-term agent use, self-hosting is cheaper for **well-defined jobs**.
+- That is AI-native enablement: repeatable work, not a general intelligence tax.
+- Better context engineering makes the model infer less.
+- Smaller models become viable because the system carries more of the burden.
+
+**Known workload + high utilization + tight context = a compelling local case.**
+
+---
+
+## The GPU Is Still Infrastructure
+
+### Cons
+
+- A cloud-hosted, always-on GPU is unreasonable unless it is busy roughly **24 hours a day**.
+- If utilization is bursty, you need a cycling story: start, warm, drain, and stop.
+- Cold starts and model loading become product latency.
+- GPU scheduling is hard: memory, queues, batching, priorities, and failure recovery all interact.
+
+**Owning inference means owning the idle time too.**
+
+---
+
+## LoRAs Are the Natural Extension of Tool Calls
+
+Once agents run long enough, they produce labeled data:
+
+```text
+task + context + tool calls → successful result
+```
+
+Train a LoRA on those successful trajectories:
+
+- improve accuracy on the job you actually run
+- reduce the context shipped with every request
+- toggle the adapter on and off—no separate always-on model cost
+
+**Unsloth Studio is the on-ramp from agent traces to the first adapter.**
+
+---
+
+<!-- _class: lead -->
+
+# Next Steps
+
+1. Pick one well-defined, repeated agent job.
+2. Serve a small dense model with vLLM or llama.cpp.
+3. Put policy enforcement around every tool call.
+4. Capture successful trajectories.
+5. Train and toggle a LoRA with Unsloth Studio.
+
+## Miriah Peterson · @Soypete
+
+CEO & founder, stealth startup<br>
+Co-host, **Domesticating AI** podcast
