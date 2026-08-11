@@ -107,15 +107,19 @@ We genuinely do not know the ceiling yet.
 
 <!-- _class: lead -->
 
-# 🎬 VIDEO PLACEHOLDER
+# “We Are Kids in a Candy Store”
 
-## Christopher TODO_SURNAME
+<iframe
+  width="315"
+  height="560"
+  src="https://www.youtube.com/embed/ljxaBcd5zx8"
+  title="We are kids in a candy store"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen>
+</iframe>
 
-> “We are kids in a candy store.”
-
-**DROP SHORT VIDEO CLIP HERE**
-
-<!-- TODO: Replace this entire slide with the clip or a poster frame. -->
+**Small dense models have opened a new design space.**
 
 ---
 
