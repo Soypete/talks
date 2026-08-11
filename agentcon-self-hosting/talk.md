@@ -14,7 +14,7 @@ description: What changes when fast, tool-trained dense models become local infr
 ## Small Dense Models Change the Math
 
 Miriah Peterson · @Soypete<br>
-TODO_CONFERENCE_NAME · Friday
+AI Builder Day · August 14, 2026
 
 ---
 

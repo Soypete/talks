@@ -2,7 +2,6 @@
 
 Items Miriah still needs to supply or confirm before the Friday talk:
 
-- [ ] Replace `TODO_CONFERENCE_NAME` on the title slide with the AgentCon event name.
 - [ ] Supply the over-the-wire Qwen3.6-27B / RTX 5090 benchmark video. Include latency, prompt tokens/sec, and generation tokens/sec if available.
 - [ ] Supply the local Qwen3.6-27B / RTX 5090 benchmark video using the same prompt and generation settings as the over-the-wire recording.
 - [ ] Confirm the one-line model-quality aside: “Model-quality comparisons are not the point of this talk.”
