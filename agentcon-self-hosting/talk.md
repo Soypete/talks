@@ -393,7 +393,12 @@ Train a LoRA on those successful trajectories:
 4. Capture successful trajectories.
 5. Train and toggle a LoRA with Unsloth Studio.
 
-## Miriah Peterson · @Soypete
+---
 
-CEO & founder, stealth startup<br>
-Co-host, **Domesticating AI** podcast
+<!-- _class: lead -->
+
+# Miriah Peterson · @Soypete
+
+## CEO & founder, stealth startup
+
+## Co-host, **Domesticating AI** podcast
