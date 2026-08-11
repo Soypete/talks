@@ -14,5 +14,5 @@ Presenter review:
 If the first rehearsal runs over 30 minutes, cut in this order:
 
 1. Present only one of the three Pedro Agentware language slides; keep the other two as appendix material.
-2. Combine “Hosted APIs Make Agents Look Simple” and “Agents Break the Illusion.”
+2. Combine “Effective Agents Are Token Engines” and “Success Creates Utilization.”
 3. Use the local benchmark video only and state the over-the-wire result verbally.

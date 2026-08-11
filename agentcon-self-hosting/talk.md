@@ -2,16 +2,16 @@
 marp: true
 theme: gaia
 paginate: true
-title: "Self-Hosting Agents: Small Dense Models Change the Math"
+title: "Self-Hosting Agents: Small Dense Models Change the Economics"
 backgroundImage: url('../images/soypete_background.png')
-description: What changes when fast, tool-trained dense models become local infrastructure
+description: When sustained agent token use makes efficient local inference a first-class infrastructure concern
 ---
 
 <!-- _class: lead -->
 
 # Self-Hosting Agents
 
-## Small Dense Models Change the Math
+## Small Dense Models Change the Economics
 
 Miriah Peterson · @Soypete<br>
 AI Builder Day · August 14, 2026
@@ -26,40 +26,43 @@ AI Builder Day · August 14, 2026
 - Building agent systems since 2022
 - Running open models on local and homelab infrastructure
 
-![bg right:40%](../images/SP_Logo-02.png)
-
 ---
 
-## Hosted APIs Make Agents Look Simple
+## Effective Agents Are Token Engines
 
 ```text
-request → model API → tool call → result
+observe → reason → tool call → result
+   ↑                              ↓
+   └──────────── repeat ──────────┘
 ```
 
-The API hides:
+Agents spend tokens on every:
 
-- model loading and memory pressure
-- GPU scheduling and concurrency
-- retries, routing, and failure recovery
-- latency, observability, and cost accounting
+- decision
+- tool result
+- retry and recovery
+- context refresh
+- verification step
 
-**Self-hosting makes the hidden system your system.**
+**The useful unit is not cost per prompt. It is cost per completed job.**
 
 ---
 
-## Agents Break the Illusion
+## Success Creates Utilization
 
-A chatbot can fail once.
+Once an agent reliably completes a job, you want more of it:
 
-An agent can fail 40 times in a loop.
+- more jobs
+- more frequent runs
+- longer workflows
+- more tools and verification
+- eventually: always available
 
-- malformed tool calls
-- invalid arguments
-- repeated retries
-- runaway context
-- partial side effects
+```text
+useful agent → more runtime → more tokens → recurring API spend
+```
 
-**The model is only one component in the reliability boundary.**
+**At sustained utilization, inference economics become architecture.**
 
 ---
 
@@ -343,12 +346,13 @@ I would not run either as my production serving layer.
 
 ### Pros
 
-- For long-term agent use, self-hosting is cheaper for **well-defined jobs**.
-- That is AI-native enablement: repeatable work, not a general intelligence tax.
+- A reliable agent creates sustained token demand.
+- For long-term use, self-hosting is cheaper for **well-defined jobs**.
+- Fixed infrastructure replaces recurring per-token rent.
 - Better context engineering makes the model infer less.
 - Smaller models become viable because the system carries more of the burden.
 
-**Known workload + high utilization + tight context = a compelling local case.**
+**Known workload + high utilization + efficient small model = a compelling local case.**
 
 ---
 
@@ -356,12 +360,12 @@ I would not run either as my production serving layer.
 
 ### Cons
 
-- A cloud-hosted, always-on GPU is unreasonable unless it is busy roughly **24 hours a day**.
+- A rented cloud GPU is unreasonable unless you can keep it busy roughly **24 hours a day**.
 - If utilization is bursty, you need a cycling story: start, warm, drain, and stop.
 - Cold starts and model loading become product latency.
 - GPU scheduling is hard: memory, queues, batching, priorities, and failure recovery all interact.
 
-**Owning inference means owning the idle time too.**
+**Make inference infrastructure a first priority—or keep paying someone else to.**
 
 ---
 
@@ -387,11 +391,11 @@ Train a LoRA on those successful trajectories:
 
 # Next Steps
 
-1. Pick one well-defined, repeated agent job.
-2. Serve a small dense model with vLLM or llama.cpp.
-3. Put policy enforcement around every tool call.
-4. Capture successful trajectories.
-5. Train and toggle a LoRA with Unsloth Studio.
+1. Measure one reliable agent job: tokens, runtime, and frequency.
+2. Find the smallest efficient model that completes it.
+3. Serve it with vLLM or llama.cpp—and keep it busy.
+4. Put policy enforcement around every tool call.
+5. Capture successful trajectories and train a toggleable LoRA.
 
 ---
 
