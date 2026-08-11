@@ -218,6 +218,64 @@ messages + tool results + token budget
 
 ---
 
+## Real Agent #1: Pedro Tag in Discord
+
+```python
+async def start_game_tool(
+    context: RunContext[AgentDeps], game_type: str
+) -> str:
+    """Start an interactive game with the user."""
+    if game_type == "20_questions":
+        game_lookup_id = context.deps.thread_id \
+            or context.deps.channel_id
+        # Create and persist the game state...
+```
+
+The agent receives `start_game_tool`; Discord supplies the conversation and thread state.
+
+**LIVE: `@Pedro, play 20 Questions.`**
+
+<!-- Real source: ~/code/pedro/pedro-tag/src/pedro_service/agent.py and
+src/pedro_service/games/twenty_questions.py -->
+
+---
+
+## Real Agent #2: Reddit Recommendations
+
+```python
+def build_suggestion_agent():
+    tools = [
+        get_interesting_posts,
+        get_trending_subreddits,
+        send_discord_message,
+    ]
+    mw, _ = build_middleware()
+    return create_react_agent(
+        model=get_llm(), tools=apply_middleware(tools, mw),
+        prompt=SystemMessage(content=SUGGESTION_SYSTEM_PROMPT),
+    )
+```
+
+Local inference analyzes the week's results, then sends ranked subreddit and author recommendations to Discord.
+
+<!-- Real source: ~/code/pedro/pedro-bots/src/core/agents/suggestion.py -->
+
+---
+
+## 📷 DISCORD OUTPUT PLACEHOLDER
+
+# RedditWatch Weekly Suggestions
+
+**DROP THE DISCORD RECOMMENDATIONS SCREENSHOT HERE**
+
+- subreddits to consider adding
+- authors to consider following
+- one-line evidence from the week's classified posts
+
+<!-- TODO: Replace with the real Discord output screenshot. -->
+
+---
+
 <!-- _class: lead -->
 
 # One GPU, Real Agents
@@ -262,58 +320,35 @@ The delta tells us what is inference—and what is the network.
 
 ---
 
-## PydanticAI: Point the Agent Home
+## Production Hosting: vLLM
 
-```python
-provider = OpenAIProvider(
-    base_url="https://home.example/v1",
-    api_key="local",
-)
-model = OpenAIModel("Qwen/Qwen3.6-27B", provider=provider)
-agent = Agent(model, tools=[read_repo, run_tests])
+Reach for vLLM when **GPU throughput and concurrency** matter.
 
-result = agent.run_sync("Fix the failing test")
-```
+- continuous batching
+- request scheduling
+- production metrics
+- OpenAI-compatible API
+- model-native tool parsing
 
-Typed tools and outputs; local inference behind a familiar API.
+**This is my default for a dedicated NVIDIA inference server.**
 
-<!-- API shape: https://ai.pydantic.dev/models/openai/ -->
+<!-- Source: https://docs.vllm.ai -->
 
 ---
 
-## LangChain DeepAgents: Same Endpoint, Longer Loop
+## Production Hosting: llama.cpp
 
-```python
-model = init_chat_model(
-    "openai:Qwen/Qwen3.6-27B",
-    base_url="https://home.example/v1",
-    api_key="local",
-)
-agent = create_deep_agent(
-    model=model,
-    tools=[read_repo, run_tests],
-)
+Reach for llama.cpp when **portability and hardware flexibility** matter.
 
-agent.invoke({"messages": [{"role": "user", "content": task}]})
-```
+- GGUF quantizations
+- NVIDIA, AMD, Apple Silicon, CPU, and more
+- lightweight server
+- parallel decoding
+- OpenAI-compatible function calling
 
-Planning changes the workload—not the serving contract.
+**This is my default when the hardware or model format drives the decision.**
 
-<!-- API shape: https://docs.langchain.com/oss/python/deepagents/overview -->
-
----
-
-## Production Inference Hosting
-
-| | **vLLM** | **llama.cpp** |
-|---|---|---|
-| Reach for it when | GPU throughput and concurrency matter | GGUF portability and hardware flexibility matter |
-| Production strengths | batching, scheduling, metrics | small footprint, broad backends, parallel decoding |
-| Agent interface | OpenAI-compatible API + tool parsing | OpenAI-compatible API + function calling |
-
-**These are the two production-grade defaults I would start from.**
-
-<!-- Sources: https://docs.vllm.ai and https://github.com/ggml-org/llama.cpp -->
+<!-- Source: https://github.com/ggml-org/llama.cpp -->
 
 ---
 
@@ -353,9 +388,21 @@ I would not run either as my production serving layer.
 - A rented cloud GPU is unreasonable unless you can keep it busy roughly **24 hours a day**.
 - If utilization is bursty, you need a cycling story: start, warm, drain, and stop.
 - Cold starts and model loading become product latency.
-- GPU scheduling is hard: memory, queues, batching, priorities, and failure recovery all interact.
 
 **Make inference infrastructure a first priority—or keep paying someone else to.**
+
+---
+
+## GPU Scheduling Is Hard
+
+Everything interacts:
+
+- model weights and KV cache compete for VRAM
+- batching improves throughput but delays individual requests
+- queues need priorities, limits, and backpressure
+- failures can strand work or GPU capacity
+
+**A fast model does not make a reliable serving system.**
 
 ---
 
