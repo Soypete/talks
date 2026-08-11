@@ -369,6 +369,26 @@ I would not run either as my production serving layer.
 
 ---
 
+## Keep the Control Plane on CPU
+
+Pay for inexpensive, always-on CPU to handle:
+
+- API, authentication, and policy
+- queues, context assembly, and scheduling
+- health checks and GPU lifecycle
+
+```text
+request → CPU queue → wake GPU → batch inference → drain → stop GPU
+```
+
+**Keep the agent available without paying GPU rates while it waits.**
+
+The tradeoff: model loading becomes a cold-start budget you must design around.
+
+<!-- Further reading: https://northflank.com/blog/runpod-vs-modal -->
+
+---
+
 ## LoRAs Are the Natural Extension of Tool Calls
 
 Once agents run long enough, they produce labeled data:
@@ -393,7 +413,7 @@ Train a LoRA on those successful trajectories:
 
 1. Measure one reliable agent job: tokens, runtime, and frequency.
 2. Find the smallest efficient model that completes it.
-3. Serve it with vLLM or llama.cpp—and keep it busy.
+3. Keep the control plane on CPU; cycle and saturate the GPU.
 4. Put policy enforcement around every tool call.
 5. Capture successful trajectories and train a toggleable LoRA.
 
