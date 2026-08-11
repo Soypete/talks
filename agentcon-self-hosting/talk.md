@@ -53,6 +53,15 @@ Once an agent reliably completes a job, you want more of it:
 
 - more jobs
 - more frequent runs
+
+**The reward for making an agent effective is a larger workload.**
+
+---
+
+## Utilization Changes the Economics
+
+Then each job grows:
+
 - longer workflows
 - more tools and verification
 - eventually: always available
@@ -71,22 +80,9 @@ useful agent → more runtime → more tokens → recurring API spend
 
 ---
 
-## Why We Hosted MoE
+## Before: Local Capability Meant MoE
 
-For frontier-ish capability, large dense models were a GPU economics problem:
-
-- every weight had to be available for every token
-- the full model needed enough fast memory
-- consumer VRAM imposed a hard ceiling
-- adding GPUs added cost and operational complexity
-
-**MoE was the practical consumer path to big-model capacity.**
-
----
-
-## What MoE Bought Us
-
-A router selects only a subset of experts for each token:
+**Big capacity. Consumer economics. Sparse compute.**
 
 ```text
 397B total parameters
@@ -94,33 +90,17 @@ A router selects only a subset of experts for each token:
  17B active parameters
 ```
 
-That means less active compute per token.
+**Only the routed experts compute each token.**
 
-With expert offloading, inactive experts can live in CPU memory while selected experts move to the GPU.
-
-**The full model still lives somewhere; CPU↔GPU transfer becomes the tradeoff.**
-
-<!-- Speaker note: MoE does not mean fewer transformer layers. The tradeoff is
-sparse expert activation: fewer parameters participate in each token. Offloading is
-an inference implementation choice and introduces transfer latency. Sources:
-https://arxiv.org/abs/2101.03961 and https://arxiv.org/abs/2603.19289 -->
-
----
-
-## Now: Small, Dense, and Actually Local
-
-With a dense model, **every model parameter participates in every token**.
-
-Qwen3.6-27B is:
-
-- 27B dense parameters
-- post-trained for agentic coding
-- trained for structured tool use
-- small enough to run on one high-end consumer GPU when quantized
-
-We genuinely do not know the ceiling yet.
-
-<!-- Source: https://huggingface.co/Qwen/Qwen3.6-27B -->
+<!-- Large dense models were a GPU economics problem: every weight had to be
+available for every token, the full model needed enough fast memory, consumer VRAM
+imposed a hard ceiling, and adding GPUs added cost and operational complexity.
+MoE was the practical consumer path to big-model capacity. A router selects a subset
+of experts per token, reducing active compute. Expert offloading can keep inactive
+experts in CPU memory and move selected experts to GPU, but the full model still lives
+somewhere and CPU-to-GPU transfer adds latency. MoE routes experts, not ordinary
+transformer layers. Sources: https://arxiv.org/abs/2101.03961 and
+https://arxiv.org/abs/2603.19289 -->
 
 ---
 
@@ -142,6 +122,21 @@ We genuinely do not know the ceiling yet.
 
 ---
 
+<!-- _class: lead -->
+
+# Now: Small, Dense, and Actually Local
+
+## 27B parameters · all active · one RTX 5090
+
+**We genuinely do not know the ceiling yet.**
+
+<!-- Qwen3.6-27B is a 27B dense model, post-trained for agentic coding and
+structured tool use, and small enough to run on one high-end consumer GPU when
+quantized. With a dense model, every model parameter participates in every token.
+Source: https://huggingface.co/Qwen/Qwen3.6-27B -->
+
+---
+
 ## What We Know Today
 
 These models are:
@@ -149,9 +144,6 @@ These models are:
 1. **trained on tool calls** — not merely prompted into them
 2. **fast** — fast enough for iterative agent loops
 3. **available** — the weights and serving stack are ours to operate
-
-Model-quality comparisons are not the point of this talk.<br>
-**TODO: confirm that this one-line aside is the right framing.**
 
 ---
 
@@ -162,10 +154,14 @@ Good context engineering supplies:
 - the exact task
 - the smallest relevant context
 - narrow tool schemas
-- explicit policy and workflow state
+- explicit workflow state
 - machine-checkable success criteria
 
 **Less ambiguity means less inference—which is exactly how a smaller model can do the job.**
+
+Pedro Agentware is based on this premise—and on Forge's reliability pattern.
+
+<!-- Forge: https://github.com/antoinezambelli/forge -->
 
 ---
 
@@ -173,74 +169,52 @@ Good context engineering supplies:
 
 # Pedro Agentware
 
-## Policy enforcement at the tool-call boundary
+## Forge, ported beyond Python
 
 ---
 
-## The Boundary, Not Another Agent
+## 1. Preserve Native Tool Calling
 
 ```text
-agent proposes tool call
-          ↓
- Pedro Agentware evaluates policy
-      ↙ allow     deny ↘
- execute        explain + recover
+model-native tools → normalized call → your agent framework
 ```
 
-- deterministic controls outside the model
-- the same policy idea across Go, Python, and TypeScript
-- audit the decision before a side effect occurs
+- use the model's trained tool-call format
+- preserve structured tool schemas
+- normalize backend differences at the boundary
 
-**The model proposes. Policy disposes.**
+**Do not prompt a model to imitate a capability it already has.**
 
 ---
 
-## Go: Wrap the Dangerous Tool
+## 2. Port Zambelli's Guardrails
 
-```go
-// Conceptual API sketch
-guardedShell := agentware.Protect(shellTool,
-    agentware.DenyArgs("rm", "--force"),
-    agentware.RequireWorkspacePath(),
-)
+Forge makes self-hosted tool calls reliable with:
 
-result, err := guardedShell.Call(ctx, toolCall)
-```
+- **response validation** — reject unknown or malformed calls
+- **rescue parsing** — recover structured calls emitted in the wrong format
+- **corrective retries** — tell the model what failed and try again
+- **step enforcement** — constrain ordering when a workflow needs it
 
-Same pedagogical shape: one tool call in, one result out.<br>
-New subject: **policy is checked before execution.**
+Pedro Agentware ports that reliability pattern to **Go, Python, and TypeScript**.
+
+<!-- Antoine Zambelli's Forge: https://github.com/antoinezambelli/forge -->
 
 ---
 
-## Python: Make Policy Composable
+## 3. Abstract Context Compaction
 
-```python
-# Conceptual API sketch
-guarded_write = protect(
-    write_file,
-    policies=[workspace_only(), deny_secrets()],
-)
-
-result = await guarded_write(tool_call)
+```text
+messages + tool results + token budget
+                    ↓
+       compact while preserving the job
 ```
 
-Framework adapters can change. The enforcement point does not.
+- keep recent decisions and necessary tool state
+- summarize or drop stale intermediate data
+- fit the context to the model and hardware budget
 
----
-
-## TypeScript: Keep the Audit Trail
-
-```ts
-// Conceptual API sketch
-const guardedFetch = protect(fetchTool, {
-  policies: [allowHosts(["api.internal"]), denyPrivateIPs()],
-  audit: true,
-});
-
-const result = await guardedFetch(toolCall);
-```
-
-For long-running agents, **why a call ran** matters as much as what ran.
+**The harness manages the window so the smaller model can stay focused.**
 
 ---
 
@@ -296,7 +270,7 @@ provider = OpenAIProvider(
     api_key="local",
 )
 model = OpenAIModel("Qwen/Qwen3.6-27B", provider=provider)
-agent = Agent(model, tools=[guarded_write, guarded_shell])
+agent = Agent(model, tools=[read_repo, run_tests])
 
 result = agent.run_sync("Fix the failing test")
 ```
@@ -317,7 +291,7 @@ model = init_chat_model(
 )
 agent = create_deep_agent(
     model=model,
-    tools=[guarded_write, guarded_shell],
+    tools=[read_repo, run_tests],
 )
 
 agent.invoke({"messages": [{"role": "user", "content": task}]})
@@ -389,7 +363,7 @@ I would not run either as my production serving layer.
 
 Pay for inexpensive, always-on CPU to handle:
 
-- API, authentication, and policy
+- API, authentication, and request routing
 - queues, context assembly, and scheduling
 - health checks and GPU lifecycle
 
@@ -441,7 +415,7 @@ Train a LoRA on those successful trajectories:
 1. Measure one reliable agent job: tokens, runtime, and frequency.
 2. Find the smallest efficient model that completes it.
 3. Keep the control plane on CPU; cycle and saturate the GPU.
-4. Put policy enforcement around every tool call.
+4. Put validation, rescue, and corrective retries around tool calls.
 5. Capture successful trajectories and train a toggleable LoRA.
 
 ---
@@ -453,3 +427,15 @@ Train a LoRA on those successful trajectories:
 ## CEO & founder, stealth startup
 
 ## Co-host, **Domesticating AI** podcast
+
+---
+
+<!-- _class: lead -->
+
+# If Asked: What About Model Quality?
+
+## Model-quality comparisons are not the focus of this talk.
+
+The question here is whether the smallest reliable model can complete **your defined job** at the utilization and cost you need.
+
+<!-- Use this appendix slide only if the question comes up after the outro. -->
