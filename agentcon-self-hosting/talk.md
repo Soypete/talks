@@ -3,7 +3,6 @@ marp: true
 theme: gaia
 paginate: true
 title: "Self-Hosting Agents: Small Dense Models Change the Economics"
-backgroundImage: url('../images/soypete_background.png')
 description: When sustained agent token use makes efficient local inference a first-class infrastructure concern
 ---
 
@@ -377,13 +376,24 @@ Pay for inexpensive, always-on CPU to handle:
 - queues, context assembly, and scheduling
 - health checks and GPU lifecycle
 
+**Keep the agent available without paying GPU rates while it waits.**
+
+<!-- Further reading: https://northflank.com/blog/runpod-vs-modal -->
+
+---
+
+## Cycle the GPU Around the Work
+
 ```text
 request → CPU queue → wake GPU → batch inference → drain → stop GPU
 ```
 
-**Keep the agent available without paying GPU rates while it waits.**
+- queue enough work to justify the start
+- batch requests to raise utilization
+- drain cleanly before shutdown
+- release the expensive capacity when idle
 
-The tradeoff: model loading becomes a cold-start budget you must design around.
+**Model loading becomes a cold-start budget you must design around.**
 
 <!-- Further reading: https://northflank.com/blog/runpod-vs-modal -->
 
