@@ -218,7 +218,7 @@ messages + tool results + token budget
 
 ---
 
-## Real Agent #1: Pedro Tag in Discord
+## Discord Bot: Pedro Tag in Discord
 
 ```python
 async def start_game_tool(
