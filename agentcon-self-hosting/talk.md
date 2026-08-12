@@ -109,6 +109,8 @@ https://arxiv.org/abs/2603.19289 -->
 # “We Are Kids in a Candy Store”
 
 > “We are kids in a candy store.”
+>
+> — Chris Brousseau
 
 ## [▶ Watch the short on YouTube](https://youtube.com/shorts/ljxaBcd5zx8)
 
