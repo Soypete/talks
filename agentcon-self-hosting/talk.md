@@ -361,7 +361,8 @@ Reach for llama.cpp when **portability and hardware flexibility** matter.
 
 I would not run either as my production serving layer.
 
-**Unsloth Studio desktop** is also not production serving—but keep it nearby. We will come back to it.
+<!-- Speaker note: Unsloth Studio desktop is also not production serving, but
+keep it nearby. We will come back to it when we discuss LoRAs. -->
 
 ---
 
@@ -449,7 +450,9 @@ Train a LoRA on those successful trajectories:
 - reduce the context shipped with every request
 - toggle the adapter on and off—no separate always-on model cost
 
-**Unsloth Studio is the on-ramp from agent traces to the first adapter.**
+<!-- Speaker note: Unsloth Studio is the on-ramp from agent traces to the first
+adapter. It makes the fine-tuning workflow approachable without positioning it
+as a production inference server. -->
 
 ---
 
