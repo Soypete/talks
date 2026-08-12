@@ -149,19 +149,19 @@ These models are:
 
 ## The Bet: Ask the Model to Infer Less
 
-Good context engineering supplies:
+| Give the model | So it does not guess about |
+|---|---|
+| one exact task | intent |
+| scoped context | relevance |
+| narrow tools + workflow state | available actions |
+| machine-checkable success | whether the job is done |
 
-- the exact task
-- the smallest relevant context
-- narrow tool schemas
-- explicit workflow state
-- machine-checkable success criteria
+## Less ambiguity → less inference
 
-**Less ambiguity means less inference—which is exactly how a smaller model can do the job.**
+**That is what lets a smaller model do the job.**
 
-Pedro Agentware is based on this premise—and on Forge's reliability pattern.
-
-<!-- Forge: https://github.com/antoinezambelli/forge -->
+<!-- Pedro Agentware is based on this premise and on Forge's reliability pattern.
+Forge: https://github.com/antoinezambelli/forge -->
 
 ---
 
