@@ -108,17 +108,13 @@ https://arxiv.org/abs/2603.19289 -->
 
 # “We Are Kids in a Candy Store”
 
-<iframe
-  width="315"
-  height="560"
-  src="https://www.youtube.com/embed/ljxaBcd5zx8"
-  title="We are kids in a candy store"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen>
-</iframe>
+> “We are kids in a candy store.”
+
+## [▶ Watch the short on YouTube](https://youtube.com/shorts/ljxaBcd5zx8)
 
 **Small dense models have opened a new design space.**
+
+<!-- Open the link in a browser during the talk, then return to the deck. -->
 
 ---
 
