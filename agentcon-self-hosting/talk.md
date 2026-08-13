@@ -143,8 +143,6 @@ the emotional pivot: the old consumer constraint has changed. -->
 
 ## Small, dense, and actually local
 
-### Qwen3.6-27B · all parameters active · one RTX 5090
-
 **We genuinely do not know the ceiling yet.**
 
 <!-- Qwen3.6-27B is a 27B dense model, post-trained for agentic coding and
@@ -290,25 +288,48 @@ We need to prove **speed, tool use, and completed work**.
 
 ---
 
-## 🎬 Speed: Over the Wire + Local
+## Demo 1: Over the Wire
 
 ```text
-conference laptop → internet → home GPU
-
-agent → local endpoint → home GPU
+conference laptop → Tailscale → home inference server → RTX 5090
 ```
 
-**DROP MATCHED BENCHMARK VIDEO(S) HERE**
+## [Open the PedroGPT interface](https://ai.tail6fbc5.ts.net/)
 
-Compare:
+Use a real prompt and watch:
 
-- time to first token
-- prompt processing speed
-- generation speed
+- responsiveness over the network
+- streaming generation
+- whether local inference feels interactive
 
-<!-- Use the same prompt, quantization, context, and generation settings for both.
-The goal is not a model leaderboard. Separate network latency from inference speed
-and show that the loop is fast enough to feel interactive. -->
+<!-- Open https://ai.tail6fbc5.ts.net/ in a prepared browser tab. This is the
+experience demo: the request crosses the network to the RTX 5090 at home. Do not turn
+this into a quality comparison. The question is whether remote local inference is
+responsive enough to use as agent infrastructure. -->
+
+---
+
+## Demo 2: Measure the Local Server
+
+```bash
+cd ~/code/pedro/pedro-ops/scripts/pedrogpt/benchmark
+
+go run . -url http://pedrogpt:8000/v1 \
+  -model qwen3.6-27b-mtp -n 10
+
+go run . \
+  -prompt "Write a Go HTTP server with graceful shutdown." \
+  -max-tokens 512
+```
+
+**TTFT · prompt tok/s · generation tok/s · p50/p95 latency · MTP acceptance**
+
+<!-- Run the first command for ten comparable requests against llama-server. It
+discards a warmup by default, streams /v1/chat/completions, reads llama.cpp's own
+prompt and generation timings, and reports client-side TTFT and total latency. The
+second command demonstrates a longer, recognizable coding response. Explain that the
+browser demo includes network latency; this benchmark isolates the serving path more
+directly. Real source: ~/code/pedro/pedro-ops/scripts/pedrogpt/benchmark -->
 
 ---
 
