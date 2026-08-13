@@ -45,69 +45,56 @@ and the stopping condition. -->
 
 ---
 
-## Every Turn Has a Token Bill
+## What Do Agents Enable?
 
-```text
-instructions + tool schemas + history + new result → next decision
-```
+| Stage | Agent behavior |
+|---|---|
+| **One-off** | complete a task while I wait |
+| **Background** | run a workflow without me watching |
+| **Autonomous** | notice, decide, act, and recover |
+| **Always on** | keep doing the job whenever work appears |
 
-The model repeatedly reads:
+**The value grows as the agent needs less of my attention.**
 
-- its instructions
-- every available tool definition
-- relevant conversation and workflow state
-- tool results from the previous turn
-
-**The useful unit is cost per completed job—not cost per prompt.**
-
-<!-- Tool schemas are input tokens. Tool arguments are output tokens. Tool results
-return as more input tokens. In a naive agent, the same instructions, schemas, and
-history are sent again on every turn. A ten-turn job does not merely pay for ten
-short answers; it repeatedly pays to reconstruct the model's working state. -->
+<!-- Start with the familiar one-off coding or research agent. Background agents
+run on a schedule or queue. Autonomous agents decide which actions to take and how
+to recover. The end state is not one magical run; it is a dependable worker that is
+available whenever new work arrives. -->
 
 ---
 
-## Reliability Multiplies the Bill
+## From One-Off to Always On
 
 ```text
-bad tool call → error result → retry → corrected call → verification
+prompted once → scheduled → event-driven → continuously available
 ```
 
-One mistake can add several turns:
+An always-on agent needs:
 
-- malformed arguments
-- the wrong tool
-- a repeated action
-- a failed verification
+- durable state between runs
+- tools it can call without supervision
+- recovery when a step fails
+- inference whenever new work arrives
 
-**A failure late in the loop wastes the most accumulated context.**
+**The agent stops being a feature and becomes infrastructure.**
 
-<!-- Explain that an agent failure is rarely isolated. The malformed call consumes
-output tokens; the error becomes input; the retry replays context; verification adds
-another turn. If the harness gives up and restarts, it may repay the entire job. This
-is why reliable tool calling is also a cost optimization. -->
+<!-- Do not discuss cost yet. Establish the operational change: one-off agents can
+borrow an endpoint for a moment; always-on agents depend on inference as a persistent
+part of the system. Availability, state, recovery, and scheduling now matter. -->
 
 ---
 
-## Success Creates Utilization
+<!-- _class: lead -->
 
-Once an agent reliably completes a job, you want:
+# Always Means Always
 
-- more jobs
-- more frequent runs
-- longer workflows
-- more tools and verification
-- eventually: always available
+![width:620px](https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NjBuM3NmdnhlMzIybW45YWJmbHRhbDV4NHZvcHphaTNvOW9pN2czbiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/TdwziQPhbNAzK/giphy.gif)
 
-```text
-useful agent → more runtime → more tokens → recurring API spend
-```
+## What happens when the agent never clocks out?
 
-**At sustained utilization, inference economics become architecture.**
-
-<!-- This is the central problem. Agents are not easy, hosted or otherwise. But
-once the system is effective, the natural response is to maximize its use. The cost
-curve changes from occasional API calls to a persistent compute workload. -->
+<!-- Let the GIF breathe. The point is not that every agent must run in a hot loop.
+It is that useful automation creates demand for an agent that is ready continuously,
+whether triggered by a message, schedule, queue, webhook, or new data. -->
 
 ---
 
@@ -115,11 +102,15 @@ curve changes from occasional API calls to a persistent compute workload. -->
 
 # The Problem
 
-## Useful agents become recurring token workloads
+## Always-on agents need always-available inference
 
-The question is no longer “Which API is cheapest?”
+The model is now a dependency of the automation.
 
-## It is “Where should this compute live?”
+## Where should that inference live?
+
+<!-- This is the pivot to self-hosting. Cost will come later, after we show the
+technical alternative and prove it works. First explain why earlier local hosting
+meant accepting the MoE tradeoff. -->
 
 ---
 
@@ -367,6 +358,49 @@ dedicated NVIDIA server where concurrency matters. Use llama.cpp when hardware o
 GGUF portability drives the decision. I would not use Ollama or LM Studio as my
 production serving layer. Sources: https://docs.vllm.ai and
 https://github.com/ggml-org/llama.cpp -->
+
+---
+
+## Every Turn Has a Token Bill
+
+```text
+instructions + tools + history + result → next decision
+```
+
+Every turn carries forward:
+
+- instructions and tool schemas
+- relevant conversation and workflow state
+- tool results from the previous turn
+
+**A ten-turn job repeatedly pays to reconstruct the model's working state.**
+
+<!-- Now introduce cost, after the audience has seen what always-on automation can
+do and watched the local model perform. Tool schemas are input tokens. Tool arguments
+are output tokens. Tool results return as more input tokens. In a naive agent, the
+same instructions, schemas, and history are sent again on every turn. The useful unit
+is cost per completed job, not cost per prompt. -->
+
+---
+
+## Reliability Multiplies the Bill
+
+```text
+bad call → error → retry → corrected call → verification
+```
+
+One mistake can add several turns—or restart the job.
+
+- rescue parsing reuses output already generated
+- corrective nudges avoid blind retries
+- compaction reduces every remaining turn
+
+**Reliability guardrails are also token controls.**
+
+<!-- A malformed call consumes output tokens; the error becomes input; the retry
+replays context; verification adds another turn. A late failure carries the most
+accumulated context. If the harness gives up and restarts, it may repay the entire
+job. Tie this back to why Forge does seemingly crazy recovery work. -->
 
 ---
 
