@@ -394,6 +394,25 @@ https://github.com/ggml-org/llama.cpp -->
 
 ---
 
+<!-- _class: lead -->
+
+# Back to the Problem
+
+## Agents are expensive.
+
+One response becomes many turns.<br>
+One task becomes an always-on workload.
+
+## Useful agents maximize inference.
+
+<!-- The demos prove that small local models can be fast and can do real work.
+Now return explicitly to the opening problem. The value of an agent comes from the
+loop, but every trip through that loop invokes inference again. When the agent becomes
+useful, we deliberately give it more work and keep it available. That is why the cost
+problem grows with success. -->
+
+---
+
 ## Every Turn Has a Token Bill
 
 ```text
