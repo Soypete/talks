@@ -20,8 +20,7 @@ AI Builder Day · August 14, 2026</p>
 <li>CEO &amp; founder of a stealth startup</li>
 <li>Co-host of the <strong>Domesticating AI</strong> podcast</li>
 <li>Creator of Pedro Agentware</li>
-<li>Building agent systems since 2022</li>
-<li>Running open models on local and homelab infrastructure</li>
+<li>Building AI systems since 2022</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-class="lead" data-theme="gaia" lang="C" class="lead" data-marpit-pagination="3" style="--paginate:true;--class:lead;--theme:gaia;" data-marpit-pagination-total="30">
@@ -82,18 +81,40 @@ AI Builder Day · August 14, 2026</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-class="lead" data-theme="gaia" lang="C" class="lead" data-marpit-pagination="7" style="--paginate:true;--class:lead;--theme:gaia;" data-marpit-pagination-total="30">
 <h1 id="the-problem">The Problem</h1>
-<h2 id="always-on-agents-need-always-available-inference">Always-on agents need always-available inference</h2>
-<p>The model is now a dependency of the automation.</p>
-<h2 id="where-should-that-inference-live">Where should that inference live?</h2>
+<h2 id="always-on-means-a-model-is-running-somewhere">“Always on” means a model is running somewhere</h2>
+<table>
+<thead>
+<tr>
+<th>You pay</th>
+<th>The provider pays</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tokens on every turn</td>
+<td>compute for every token</td>
+</tr>
+<tr>
+<td>repeated agent loops</td>
+<td>accelerators and memory</td>
+</tr>
+<tr>
+<td>availability</td>
+<td>idle capacity and scheduling</td>
+</tr>
+</tbody>
+</table>
+<h2 id="someone-is-always-paying-for-the-inference">Someone is always paying for the inference.</h2>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="gaia" lang="C" data-marpit-pagination="8" style="--paginate:true;--theme:gaia;" data-marpit-pagination-total="30">
-<h2 id="before-local-capability-meant-moe">Before: Local Capability Meant MoE</h2>
-<p><strong>Big capacity. Consumer economics. Sparse compute.</strong></p>
+<h2 id="moe-more-capacity-less-compute-per-token">MoE: More Capacity, Less Compute per Token</h2>
+<p>Instead of using every parameter for every token, a router selects a few experts:</p>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-text">397B total parameters
        ↓ route each token
  17B active parameters
 </code></pre>
-<p><strong>Only the routed experts compute each token.</strong></p>
+<p><strong>Providers serve a more capable model without activating the whole model each time.</strong></p>
+<p><strong>Local hosts can keep inactive experts in system RAM and move selected experts through the GPU.</strong></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-class="lead" data-theme="gaia" lang="C" class="lead" data-marpit-pagination="9" style="--paginate:true;--class:lead;--theme:gaia;" data-marpit-pagination-total="30">
 <h1 id="we-are-kids-in-a-candy-store">“We Are Kids in a Candy Store”</h1>
@@ -368,15 +389,17 @@ available whenever new work arrives.</p></div><div class="bespoke-marp-note" dat
 borrow an endpoint for a moment; always-on agents depend on inference as a persistent
 part of the system. Availability, state, recovery, and scheduling now matter.</p></div><div class="bespoke-marp-note" data-index="5" tabindex="0"><p>Let the GIF breathe. The point is not that every agent must run in a hot loop.
 It is that useful automation creates demand for an agent that is ready continuously,
-whether triggered by a message, schedule, queue, webhook, or new data.</p></div><div class="bespoke-marp-note" data-index="6" tabindex="0"><p>This is the pivot to self-hosting. Cost will come later, after we show the
-technical alternative and prove it works. First explain why earlier local hosting
-meant accepting the MoE tradeoff.</p></div><div class="bespoke-marp-note" data-index="7" tabindex="0"><p>Large dense models were a GPU economics problem: every weight had to be
-available for every token, the full model needed enough fast memory, consumer VRAM
-imposed a hard ceiling, and adding GPUs added cost and operational complexity.
-MoE was the practical consumer path to big-model capacity. Expert offloading can
-keep inactive experts in CPU memory and move selected experts to GPU, but the full
-model still lives somewhere and CPU-to-GPU transfer adds latency. MoE routes experts,
-not ordinary transformer layers. Sources: https://arxiv.org/abs/2101.03961 and
+whether triggered by a message, schedule, queue, webhook, or new data.</p></div><div class="bespoke-marp-note" data-index="6" tabindex="0"><p>This is the pivot. For the customer, metered tokens turn agent activity into
+recurring spend. For the provider, each token consumes accelerator time, memory
+bandwidth, capacity, cooling, and power. Providers therefore have the same incentive
+we do: reduce the compute required per token. That incentive helped push MoE models
+into the mainstream.</p></div><div class="bespoke-marp-note" data-index="7" tabindex="0"><p>MoE expands total capacity without making every token pay for every expert.
+This lowers active compute, which matters at provider scale. It also made surprisingly
+powerful models accessible to local hosts: the complete quantized model can live in
+larger, cheaper CPU memory while only routed experts are staged through limited GPU
+VRAM. The tradeoff is CPU-to-GPU transfer latency and bandwidth. Shared attention and
+other non-expert layers still run; MoE routes expert feed-forward blocks, not arbitrary
+transformer layers. Sources: https://arxiv.org/abs/2101.03961 and
 https://arxiv.org/abs/2603.19289</p></div><div class="bespoke-marp-note" data-index="8" tabindex="0"><p>Open the link in a browser during the talk, then return to the deck. This is
 the emotional pivot: the old consumer constraint has changed.</p></div><div class="bespoke-marp-note" data-index="9" tabindex="0"><p>Qwen3.6-27B is a 27B dense model, post-trained for agentic coding and
 structured tool use, and small enough to run on one high-end consumer GPU when

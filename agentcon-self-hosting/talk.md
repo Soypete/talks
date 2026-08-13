@@ -22,8 +22,7 @@ AI Builder Day · August 14, 2026
 - CEO & founder of a stealth startup
 - Co-host of the **Domesticating AI** podcast
 - Creator of Pedro Agentware
-- Building agent systems since 2022
-- Running open models on local and homelab infrastructure
+- Building AI systems since 2022
 
 ---
 
@@ -102,21 +101,27 @@ whether triggered by a message, schedule, queue, webhook, or new data. -->
 
 # The Problem
 
-## Always-on agents need always-available inference
+## “Always on” means a model is running somewhere
 
-The model is now a dependency of the automation.
+| You pay | The provider pays |
+|---|---|
+| tokens on every turn | compute for every token |
+| repeated agent loops | accelerators and memory |
+| availability | idle capacity and scheduling |
 
-## Where should that inference live?
+## Someone is always paying for the inference.
 
-<!-- This is the pivot to self-hosting. Cost will come later, after we show the
-technical alternative and prove it works. First explain why earlier local hosting
-meant accepting the MoE tradeoff. -->
+<!-- This is the pivot. For the customer, metered tokens turn agent activity into
+recurring spend. For the provider, each token consumes accelerator time, memory
+bandwidth, capacity, cooling, and power. Providers therefore have the same incentive
+we do: reduce the compute required per token. That incentive helped push MoE models
+into the mainstream. -->
 
 ---
 
-## Before: Local Capability Meant MoE
+## MoE: More Capacity, Less Compute per Token
 
-**Big capacity. Consumer economics. Sparse compute.**
+Instead of using every parameter for every token, a router selects a few experts:
 
 ```text
 397B total parameters
@@ -124,15 +129,17 @@ meant accepting the MoE tradeoff. -->
  17B active parameters
 ```
 
-**Only the routed experts compute each token.**
+**Providers serve a more capable model without activating the whole model each time.**
 
-<!-- Large dense models were a GPU economics problem: every weight had to be
-available for every token, the full model needed enough fast memory, consumer VRAM
-imposed a hard ceiling, and adding GPUs added cost and operational complexity.
-MoE was the practical consumer path to big-model capacity. Expert offloading can
-keep inactive experts in CPU memory and move selected experts to GPU, but the full
-model still lives somewhere and CPU-to-GPU transfer adds latency. MoE routes experts,
-not ordinary transformer layers. Sources: https://arxiv.org/abs/2101.03961 and
+**Local hosts can keep inactive experts in system RAM and move selected experts through the GPU.**
+
+<!-- MoE expands total capacity without making every token pay for every expert.
+This lowers active compute, which matters at provider scale. It also made surprisingly
+powerful models accessible to local hosts: the complete quantized model can live in
+larger, cheaper CPU memory while only routed experts are staged through limited GPU
+VRAM. The tradeoff is CPU-to-GPU transfer latency and bandwidth. Shared attention and
+other non-expert layers still run; MoE routes expert feed-forward blocks, not arbitrary
+transformer layers. Sources: https://arxiv.org/abs/2101.03961 and
 https://arxiv.org/abs/2603.19289 -->
 
 ---
