@@ -62,27 +62,6 @@ available whenever new work arrives. -->
 
 ---
 
-## From One-Off to Always On
-
-```text
-prompted once → scheduled → event-driven → continuously available
-```
-
-An always-on agent needs:
-
-- durable state between runs
-- tools it can call without supervision
-- recovery when a step fails
-- inference whenever new work arrives
-
-**The agent stops being a feature and becomes infrastructure.**
-
-<!-- Do not discuss cost yet. Establish the operational change: one-off agents can
-borrow an endpoint for a moment; always-on agents depend on inference as a persistent
-part of the system. Availability, state, recovery, and scheduling now matter. -->
-
----
-
 <!-- _class: lead -->
 
 # Always Means Always
@@ -101,7 +80,7 @@ whether triggered by a message, schedule, queue, webhook, or new data. -->
 
 # The Problem
 
-## “Always on” means a model is running somewhere
+## “Always on” is expensive for Everyone
 
 | You pay | The provider pays |
 |---|---|
@@ -109,13 +88,12 @@ whether triggered by a message, schedule, queue, webhook, or new data. -->
 | repeated agent loops | accelerators and memory |
 | availability | idle capacity and scheduling |
 
-## Someone is always paying for the inference.
-
 <!-- This is the pivot. For the customer, metered tokens turn agent activity into
 recurring spend. For the provider, each token consumes accelerator time, memory
 bandwidth, capacity, cooling, and power. Providers therefore have the same incentive
 we do: reduce the compute required per token. That incentive helped push MoE models
-into the mainstream. -->
+into the mainstream.  Also remember that we are using so mcuh copute for inference that we are having to build
+data centers to get more training-->
 
 ---
 
@@ -161,7 +139,7 @@ the emotional pivot: the old consumer constraint has changed. -->
 
 <!-- _class: lead -->
 
-# The Solution
+# Can we make Cheaper Agents more effective?
 
 ## Small, dense, and actually local
 
@@ -179,20 +157,25 @@ and available for us to operate. Source: https://huggingface.co/Qwen/Qwen3.6-27B
 
 ## Ask the Model to Infer Less
 
-| Give the model | So it does not guess about |
+| Ambiguous | Scoped |
 |---|---|
-| one exact task | intent |
-| scoped context | relevance |
-| narrow tools + workflow state | available actions |
-| machine-checkable success | whether the job is done |
+| “What even does an AI agent do, anyway?” | “Search Wikipedia for information about AI agents and return a sourced, five-bullet summary.” |
+| infer the intent | explicit action |
+| decide whether to search | named source |
+| invent a stopping condition | defined output |
 
 ## Less ambiguity → less inference
 
-**That is what lets a smaller model do the job.**
+**Scope gives the loop somewhere to start—and a reason to stop.**
 
-<!-- Good context engineering transfers work from probabilistic inference into the
-harness. But even a well-scoped small model has less margin for malformed outputs,
-bad recovery, and context growth. That creates the next problem. -->
+<!-- ReAct-style agents interleave reasoning with actions and observations. With the
+ambiguous prompt, the harness may spend tokens reasoning about intent, choosing among
+tools, making an unnecessary over-the-wire search, reading the result, and deciding
+whether it is finished. It can still choose the wrong action. The scoped prompt names
+the tool/source, deliverable, and stopping condition. That reduces turns, latency,
+network calls, token spend, and opportunities for failure. Good context engineering
+moves work from probabilistic inference into the harness. Source: Yao et al., “ReAct:
+Synergizing Reasoning and Acting in Language Models,” https://arxiv.org/abs/2210.03629 -->
 
 ---
 
@@ -221,7 +204,27 @@ Antoine Zambelli's Forge adds:
 <!-- Forge is a reliability layer for self-hosted tool calling, not another agent
 or planner. It preserves model-native tool calls, catches unknown or malformed calls,
 rescues structured calls emitted in fences/XML/vendor formats, and feeds actionable
-errors back to the model. Repo: https://github.com/antoinezambelli/forge -->
+errors back to the model. Sources:
+Repo: https://github.com/antoinezambelli/forge
+CAIS 2026 demo/paper: https://www.caisconf.org/program/2026/demos/forge-agentic-reliability/
+Author discussion and results context: https://news.ycombinator.com/item?id=48192383 -->
+
+---
+
+## Guardrails Change Completion Rates
+
+![width:1050px](../images/forge-guardrails-results.png)
+
+Selected bare vs. Reforged results across the evaluation suite.
+
+[CAIS 2026 demo and paper](https://www.caisconf.org/program/2026/demos/forge-agentic-reliability/) · [Author discussion on Hacker News](https://news.ycombinator.com/item?id=48192383)
+
+<!-- Read the chart as workflow completion, not general intelligence. The same model
+becomes dramatically more reliable when the harness validates calls, rescues malformed
+formats, returns useful errors, and retries. Zambelli notes that 90% per-step accuracy
+across five required steps yields roughly a 41% chance of at least one failure:
+1 - 0.9^5 ≈ 0.41. This is why small per-turn weaknesses compound in agents. The
+figure was supplied from the Forge CAIS material. -->
 
 ---
 
@@ -249,7 +252,9 @@ reduces the repeated input cost on every remaining turn. Forge reports taking an
 local model from single digits to 84% across its 26-scenario v0.7.0 evaluation suite;
 use the paper for the methodology and ablations: Zambelli, “Forge: Closing the Agentic
 Reliability Gap Between Self-Hosted and Frontier Language Models,”
-https://doi.org/10.1145/3786335.3813193 -->
+https://doi.org/10.1145/3786335.3813193. Additional sources:
+https://www.caisconf.org/program/2026/demos/forge-agentic-reliability/
+https://news.ycombinator.com/item?id=48192383 -->
 
 ---
 
@@ -515,3 +520,24 @@ https://northflank.com/blog/runpod-vs-modal -->
 Model-quality comparisons are not the focus of this talk.
 
 The relevant question is whether the smallest reliable model can complete **your defined job** at the utilization and cost you need.
+
+---
+
+## From One-Off to Always On
+
+```text
+prompted once → scheduled → event-driven → continuously available
+```
+
+An always-on agent needs:
+
+- durable state between runs
+- tools it can call without supervision
+- recovery when a step fails
+- inference whenever new work arrives
+
+**The agent stops being a feature and becomes infrastructure.**
+
+<!-- Do not discuss cost yet. Establish the operational change: one-off agents can
+borrow an endpoint for a moment; always-on agents depend on inference as a persistent
+part of the system. Availability, state, recovery, and scheduling now matter. -->

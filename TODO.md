@@ -6,7 +6,7 @@ Items Miriah still needs before AI Builder Day:
 - [ ] Include time to first token, prompt tokens/sec, and generation tokens/sec in the benchmark recording or presenter notes.
 - [ ] Capture the real RedditWatch weekly recommendations in Discord for the completed-work demo.
 - [ ] Confirm the live demo prompt: `@Pedro, play 20 Questions.`
-- [ ] Run a timed rehearsal with the YouTube short and demos. The main narrative is 25 slides; protect at least 8–10 minutes for the clip and demonstrations.
+- [ ] Run a timed rehearsal with the YouTube short and demos. The main narrative is 26 slides; protect at least 8–10 minutes for the clip and demonstrations.
 
 Demo fallback plan:
 
