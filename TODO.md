@@ -1,23 +1,22 @@
 # Self-Hosting Agents Talk TODOs
 
-Items Miriah still needs to supply or confirm before the Friday talk:
+Items Miriah still needs before AI Builder Day:
 
-- [ ] Supply the over-the-wire Qwen3.6-27B / RTX 5090 benchmark video. Include latency, prompt tokens/sec, and generation tokens/sec if available.
-- [ ] Supply the local Qwen3.6-27B / RTX 5090 benchmark video using the same prompt and generation settings as the over-the-wire recording.
-- [ ] Supply a screenshot of the RedditWatch weekly recommendations in Discord.
+- [ ] Supply matched Qwen3.6-27B / RTX 5090 benchmark recording(s): over-the-wire and local, using the same prompt, quantization, context, and generation settings.
+- [ ] Include time to first token, prompt tokens/sec, and generation tokens/sec in the benchmark recording or presenter notes.
+- [ ] Capture the real RedditWatch weekly recommendations in Discord for the completed-work demo.
+- [ ] Confirm the live demo prompt: `@Pedro, play 20 Questions.`
+- [ ] Run a timed rehearsal with the YouTube short and demos. The main narrative is 23 slides; protect at least 8–10 minutes for the clip and demonstrations.
 
-Presenter review:
+Demo fallback plan:
 
-- [ ] Confirm whether the live Twenty Questions prompt should remain `@Pedro, play 20 Questions.`
+- [ ] Keep a recorded Pedro Tag Twenty Questions run in case Discord, networking, or the home endpoint fails.
+- [ ] Keep a static screenshot of the RedditWatch Discord result in the deck directory.
+- [ ] Open the Chris Brousseau short in a browser tab before presenting.
 
-If the first rehearsal runs over 30 minutes, cut in this order:
+Optional appendix slides after the contact slide:
 
-1. Combine Pedro Agentware's three responsibilities into one summary slide.
-2. Combine “Success Creates Utilization” and “Utilization Changes the Economics.”
-3. Use the local benchmark video only and state the over-the-wire result verbally.
-4. Present the RedditWatch code and Discord screenshot as one slide.
-5. Skip “What We Know Today” and make its three points verbally on the dense-model slide.
-
-Current fit warning: 33 narrative slides plus one post-outro appendix slide. With the
-short, live Twenty Questions, Discord output, and benchmark videos, expect to cut
-roughly 6–8 slides after the first timed rehearsal.
+- LoRAs and Unsloth Studio
+- CPU control plane and GPU cycling
+- GPU scheduling details
+- model-quality discussion

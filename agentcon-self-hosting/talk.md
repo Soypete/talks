@@ -27,41 +27,74 @@ AI Builder Day · August 14, 2026
 
 ---
 
-## Effective Agents Are Token Engines
+<!-- _class: lead -->
+
+# What Is an Agent?
 
 ```text
-observe → reason → tool call → result
-   ↑                              ↓
-   └──────────── repeat ──────────┘
+observe → decide → call a tool → inspect the result
+   ↑                                      ↓
+   └──────────────── repeat ──────────────┘
 ```
 
-Agents spend tokens on every:
+## A model running inside a loop
 
-- decision
-- tool result
-- retry and recovery
-- context refresh
-- verification step
+<!-- A chat response is usually one inference. An agent keeps returning to the
+model between actions. The harness—not the model alone—owns tools, state, retries,
+and the stopping condition. -->
 
-**The useful unit is not cost per prompt. It is cost per completed job.**
+---
+
+## Every Turn Has a Token Bill
+
+```text
+instructions + tool schemas + history + new result → next decision
+```
+
+The model repeatedly reads:
+
+- its instructions
+- every available tool definition
+- relevant conversation and workflow state
+- tool results from the previous turn
+
+**The useful unit is cost per completed job—not cost per prompt.**
+
+<!-- Tool schemas are input tokens. Tool arguments are output tokens. Tool results
+return as more input tokens. In a naive agent, the same instructions, schemas, and
+history are sent again on every turn. A ten-turn job does not merely pay for ten
+short answers; it repeatedly pays to reconstruct the model's working state. -->
+
+---
+
+## Reliability Multiplies the Bill
+
+```text
+bad tool call → error result → retry → corrected call → verification
+```
+
+One mistake can add several turns:
+
+- malformed arguments
+- the wrong tool
+- a repeated action
+- a failed verification
+
+**A failure late in the loop wastes the most accumulated context.**
+
+<!-- Explain that an agent failure is rarely isolated. The malformed call consumes
+output tokens; the error becomes input; the retry replays context; verification adds
+another turn. If the harness gives up and restarts, it may repay the entire job. This
+is why reliable tool calling is also a cost optimization. -->
 
 ---
 
 ## Success Creates Utilization
 
-Once an agent reliably completes a job, you want more of it:
+Once an agent reliably completes a job, you want:
 
 - more jobs
 - more frequent runs
-
-**The reward for making an agent effective is a larger workload.**
-
----
-
-## Utilization Changes the Economics
-
-Then each job grows:
-
 - longer workflows
 - more tools and verification
 - eventually: always available
@@ -72,11 +105,21 @@ useful agent → more runtime → more tokens → recurring API spend
 
 **At sustained utilization, inference economics become architecture.**
 
+<!-- This is the central problem. Agents are not easy, hosted or otherwise. But
+once the system is effective, the natural response is to maximize its use. The cost
+curve changes from occasional API calls to a persistent compute workload. -->
+
 ---
 
 <!-- _class: lead -->
 
-# The Local Model Just Changed
+# The Problem
+
+## Useful agents become recurring token workloads
+
+The question is no longer “Which API is cheapest?”
+
+## It is “Where should this compute live?”
 
 ---
 
@@ -95,11 +138,10 @@ useful agent → more runtime → more tokens → recurring API spend
 <!-- Large dense models were a GPU economics problem: every weight had to be
 available for every token, the full model needed enough fast memory, consumer VRAM
 imposed a hard ceiling, and adding GPUs added cost and operational complexity.
-MoE was the practical consumer path to big-model capacity. A router selects a subset
-of experts per token, reducing active compute. Expert offloading can keep inactive
-experts in CPU memory and move selected experts to GPU, but the full model still lives
-somewhere and CPU-to-GPU transfer adds latency. MoE routes experts, not ordinary
-transformer layers. Sources: https://arxiv.org/abs/2101.03961 and
+MoE was the practical consumer path to big-model capacity. Expert offloading can
+keep inactive experts in CPU memory and move selected experts to GPU, but the full
+model still lives somewhere and CPU-to-GPU transfer adds latency. MoE routes experts,
+not ordinary transformer layers. Sources: https://arxiv.org/abs/2101.03961 and
 https://arxiv.org/abs/2603.19289 -->
 
 ---
@@ -114,38 +156,30 @@ https://arxiv.org/abs/2603.19289 -->
 
 ## [▶ Watch the short on YouTube](https://youtube.com/shorts/ljxaBcd5zx8)
 
-**Small dense models have opened a new design space.**
-
-<!-- Open the link in a browser during the talk, then return to the deck. -->
+<!-- Open the link in a browser during the talk, then return to the deck. This is
+the emotional pivot: the old consumer constraint has changed. -->
 
 ---
 
 <!-- _class: lead -->
 
-# Now: Small, Dense, and Actually Local
+# The Solution
 
-## 27B parameters · all active · one RTX 5090
+## Small, dense, and actually local
+
+### Qwen3.6-27B · all parameters active · one RTX 5090
 
 **We genuinely do not know the ceiling yet.**
 
 <!-- Qwen3.6-27B is a 27B dense model, post-trained for agentic coding and
 structured tool use, and small enough to run on one high-end consumer GPU when
 quantized. With a dense model, every model parameter participates in every token.
-Source: https://huggingface.co/Qwen/Qwen3.6-27B -->
+What we know: these models are trained for tools, fast enough for iterative loops,
+and available for us to operate. Source: https://huggingface.co/Qwen/Qwen3.6-27B -->
 
 ---
 
-## What We Know Today
-
-These models are:
-
-1. **trained on tool calls** — not merely prompted into them
-2. **fast** — fast enough for iterative agent loops
-3. **available** — the weights and serving stack are ours to operate
-
----
-
-## The Bet: Ask the Model to Infer Less
+## Ask the Model to Infer Less
 
 | Give the model | So it does not guess about |
 |---|---|
@@ -158,313 +192,215 @@ These models are:
 
 **That is what lets a smaller model do the job.**
 
-<!-- Pedro Agentware is based on this premise and on Forge's reliability pattern.
-Forge: https://github.com/antoinezambelli/forge -->
+<!-- Good context engineering transfers work from probabilistic inference into the
+harness. But even a well-scoped small model has less margin for malformed outputs,
+bad recovery, and context growth. That creates the next problem. -->
 
 ---
 
 <!-- _class: lead -->
 
-# Pedro Agentware
+# The Subproblem
 
-## Forge, ported beyond Python
+## Small models have less margin for ambiguity and recovery
+
+One bad turn can become three expensive turns—or a complete restart.
 
 ---
 
-## 1. Preserve Native Tool Calling
+## Forge: Reliability Outside the Model
+
+Antoine Zambelli's Forge adds:
+
+1. **response validation**
+2. **rescue parsing**
+3. **corrective retry nudges**
+4. **optional workflow enforcement**
+5. **context compaction**
+
+**The model proposes the next action; the harness makes the loop survivable.**
+
+<!-- Forge is a reliability layer for self-hosted tool calling, not another agent
+or planner. It preserves model-native tool calls, catches unknown or malformed calls,
+rescues structured calls emitted in fences/XML/vendor formats, and feeds actionable
+errors back to the model. Repo: https://github.com/antoinezambelli/forge -->
+
+---
+
+## Why Forge Does “Crazy” Stuff
 
 ```text
-model-native tools → normalized call → your agent framework
+wrong format
+    ↓
+rescue the call ──or── explain the error and retry
+    ↓
+continue the same job with compacted context
 ```
 
-- use the model's trained tool-call format
-- preserve structured tool schemas
-- normalize backend differences at the boundary
+- rescue avoids paying for another inference
+- precise nudges prevent blind retries
+- step enforcement stops repeated or premature actions
+- compaction stops every turn from carrying the whole past
 
-**Do not prompt a model to imitate a capability it already has.**
+**Reliability guardrails are token controls.**
 
----
-
-## 2. Port Zambelli's Guardrails
-
-Forge makes self-hosted tool calls reliable with:
-
-- **response validation** — reject unknown or malformed calls
-- **rescue parsing** — recover structured calls emitted in the wrong format
-- **corrective retries** — tell the model what failed and try again
-- **step enforcement** — constrain ordering when a workflow needs it
-
-Pedro Agentware ports that reliability pattern to **Go, Python, and TypeScript**.
-
-<!-- Antoine Zambelli's Forge: https://github.com/antoinezambelli/forge -->
+<!-- Connect each mechanism to the bill. Rescue parsing converts already-paid-for
+output into a usable call. A corrective retry is more expensive than rescue but much
+cheaper than restarting without guidance. Step enforcement prevents loops. Compaction
+reduces the repeated input cost on every remaining turn. Forge reports taking an 8B
+local model from single digits to 84% across its 26-scenario v0.7.0 evaluation suite;
+use the paper for the methodology and ablations: Zambelli, “Forge: Closing the Agentic
+Reliability Gap Between Self-Hosted and Frontier Language Models,”
+https://doi.org/10.1145/3786335.3813193 -->
 
 ---
 
-## 3. Abstract Context Compaction
+## Pedro Agentware
+
+### Forge's reliability pattern, ported beyond Python
 
 ```text
-messages + tool results + token budget
-                    ↓
-       compact while preserving the job
+native tool calling
+      +
+validation, rescue, retries
+      +
+context compaction
+      ↓
+Go · Python · TypeScript
 ```
 
-- keep recent decisions and necessary tool state
-- summarize or drop stale intermediate data
-- fit the context to the model and hardware budget
+**The same harness idea around whichever agent framework you already use.**
 
-**The harness manages the window so the smaller model can stay focused.**
+<!-- Pedro Agentware is a port of Forge's pattern to other languages. Do not discuss
+policy enforcement; that belongs to the unmerged Kei plugin and is not part of this
+talk. -->
 
 ---
 
-## Discord Bot: Pedro Tag in Discord
+<!-- _class: lead -->
+
+# Demo: One GPU, Real Agents
+
+## Qwen3.6-27B · RTX 5090 · my house
+
+We need to prove **speed, tool use, and completed work**.
+
+---
+
+## 🎬 Speed: Over the Wire + Local
+
+```text
+conference laptop → internet → home GPU
+
+agent → local endpoint → home GPU
+```
+
+**DROP MATCHED BENCHMARK VIDEO(S) HERE**
+
+Compare:
+
+- time to first token
+- prompt processing speed
+- generation speed
+
+<!-- Use the same prompt, quantization, context, and generation settings for both.
+The goal is not a model leaderboard. Separate network latency from inference speed
+and show that the loop is fast enough to feel interactive. -->
+
+---
+
+## Tool Calls: Pedro Tag in Discord
 
 ```python
 async def start_game_tool(
     context: RunContext[AgentDeps], game_type: str
 ) -> str:
-    """Start an interactive game with the user."""
     if game_type == "20_questions":
-        game_lookup_id = context.deps.thread_id \
+        game_id = context.deps.thread_id \
             or context.deps.channel_id
-        # Create and persist the game state...
+        # Create and persist game state...
 ```
-
-The agent receives `start_game_tool`; Discord supplies the conversation and thread state.
 
 **LIVE: `@Pedro, play 20 Questions.`**
 
 <!-- Real source: ~/code/pedro/pedro-tag/src/pedro_service/agent.py and
-src/pedro_service/games/twenty_questions.py -->
+src/pedro_service/games/twenty_questions.py. Call out the turns: tool schema in,
+tool call out, game state and user answer back in, repeated until success. This is
+exactly the token multiplication described at the beginning. -->
 
 ---
 
-## Real Agent #2: Reddit Recommendations
+## Completed Work: Reddit Recommendations
 
 ```python
-def build_suggestion_agent():
-    tools = [
-        get_interesting_posts,
-        get_trending_subreddits,
-        send_discord_message,
-    ]
-    mw, _ = build_middleware()
-    return create_react_agent(
-        model=get_llm(), tools=apply_middleware(tools, mw),
-        prompt=SystemMessage(content=SUGGESTION_SYSTEM_PROMPT),
-    )
+tools = [
+    get_interesting_posts,
+    get_trending_subreddits,
+    send_discord_message,
+]
+agent = create_react_agent(model=get_llm(), tools=tools)
 ```
 
-Local inference analyzes the week's results, then sends ranked subreddit and author recommendations to Discord.
+**SHOW THE REDDITWATCH RECOMMENDATIONS IN DISCORD**
 
-<!-- Real source: ~/code/pedro/pedro-bots/src/core/agents/suggestion.py -->
+Local inference reads the week's results, recommends communities and authors, and delivers the result.
 
----
-
-## 📷 DISCORD OUTPUT PLACEHOLDER
-
-# RedditWatch Weekly Suggestions
-
-**DROP THE DISCORD RECOMMENDATIONS SCREENSHOT HERE**
-
-- subreddits to consider adding
-- authors to consider following
-- one-line evidence from the week's classified posts
-
-<!-- TODO: Replace with the real Discord output screenshot. -->
+<!-- Real source: ~/code/pedro/pedro-bots/src/core/agents/suggestion.py. This is the
+proof of a defined recurring job, not a toy prompt. Point out the chain of tool turns
+and why reliable completion matters more than one impressive response. -->
 
 ---
 
-<!-- _class: lead -->
+## Production Serving
 
-# One GPU, Real Agents
+| **vLLM** | **llama.cpp** |
+|---|---|
+| NVIDIA throughput | hardware portability |
+| continuous batching | GGUF quantizations |
+| scheduling + metrics | lightweight server |
+| OpenAI-compatible tools | OpenAI-compatible tools |
 
-## Qwen3.6-27B · RTX 5090 · my house
+**Ollama and LM Studio are excellent development tools.**
 
-The experiment is operational: **can ordinary agent stacks use this as infrastructure?**
-
----
-
-## 🎬 BENCHMARK VIDEO PLACEHOLDER
-
-### Over the wire
-
-```text
-conference laptop
-      ↓ internet
-home inference endpoint
-      ↓
-Qwen3.6-27B on RTX 5090
-```
-
-**DROP OVER-THE-WIRE BENCHMARK VIDEO HERE**
-
-<!-- TODO: Include latency, prompt tokens/sec, and generation tokens/sec overlay. -->
+<!-- I would start production evaluation with vLLM or llama.cpp. Use vLLM for a
+dedicated NVIDIA server where concurrency matters. Use llama.cpp when hardware or
+GGUF portability drives the decision. I would not use Ollama or LM Studio as my
+production serving layer. Sources: https://docs.vllm.ai and
+https://github.com/ggml-org/llama.cpp -->
 
 ---
 
-## 🎬 BENCHMARK VIDEO PLACEHOLDER
-
-### Local network / on-box
-
-```text
-agent → OpenAI-compatible endpoint → local GPU
-```
-
-**DROP LOCAL BENCHMARK VIDEO HERE**
-
-The delta tells us what is inference—and what is the network.
-
-<!-- TODO: Use the same prompt and generation settings as over-the-wire. -->
-
----
-
-## Production Hosting: vLLM
-
-Reach for vLLM when **GPU throughput and concurrency** matter.
-
-- continuous batching
-- request scheduling
-- production metrics
-- OpenAI-compatible API
-- model-native tool parsing
-
-**This is my default for a dedicated NVIDIA inference server.**
-
-<!-- Source: https://docs.vllm.ai -->
-
----
-
-## Production Hosting: llama.cpp
-
-Reach for llama.cpp when **portability and hardware flexibility** matter.
-
-- GGUF quantizations
-- NVIDIA, AMD, Apple Silicon, CPU, and more
-- lightweight server
-- parallel decoding
-- OpenAI-compatible function calling
-
-**This is my default when the hardware or model format drives the decision.**
-
-<!-- Source: https://github.com/ggml-org/llama.cpp -->
-
----
-
-## Development Tools Deserve Their Place
-
-**Ollama** and **LM Studio** are great for development:
-
-- download a model quickly
-- compare quantizations
-- test prompts and tool templates
-- give a team a friendly local on-ramp
-
-I would not run either as my production serving layer.
-
-<!-- Speaker note: Unsloth Studio desktop is also not production serving, but
-keep it nearby. We will come back to it when we discuss LoRAs. -->
-
----
-
-## The Economics Work—For the Right Job
+## When the Economics Work
 
 ### Pros
 
-- A reliable agent creates sustained token demand.
-- For long-term use, self-hosting is cheaper for **well-defined jobs**.
-- Fixed infrastructure replaces recurring per-token rent.
-- Better context engineering makes the model infer less.
-- Smaller models become viable because the system carries more of the burden.
+- recurring per-token rent becomes fixed infrastructure
+- well-defined jobs fit smaller, efficient models
+- high utilization amortizes the GPU
+- good context engineering reduces inference and tokens
 
-**Known workload + high utilization + efficient small model = a compelling local case.**
+### Costs
 
----
+- idle GPU time is still your bill
+- model loading creates cold starts
+- scheduling, queues, memory, and failures become your problem
 
-## The GPU Is Still Infrastructure
-
-### Cons
-
-- A rented cloud GPU is unreasonable unless you can keep it busy roughly **24 hours a day**.
-- If utilization is bursty, you need a cycling story: start, warm, drain, and stop.
-- Cold starts and model loading become product latency.
-
-**Make inference infrastructure a first priority—or keep paying someone else to.**
-
----
-
-## GPU Scheduling Is Hard
-
-Everything interacts:
-
-- model weights and KV cache compete for VRAM
-- batching improves throughput but delays individual requests
-- queues need priorities, limits, and backpressure
-- failures can strand work or GPU capacity
-
-**A fast model does not make a reliable serving system.**
-
----
-
-## Keep the Control Plane on CPU
-
-Pay for inexpensive, always-on CPU to handle:
-
-- API, authentication, and request routing
-- queues, context assembly, and scheduling
-- health checks and GPU lifecycle
-
-**Keep the agent available without paying GPU rates while it waits.**
-
-<!-- Further reading: https://northflank.com/blog/runpod-vs-modal -->
-
----
-
-## Cycle the GPU Around the Work
-
-```text
-request → CPU queue → wake GPU → batch inference → drain → stop GPU
-```
-
-- queue enough work to justify the start
-- batch requests to raise utilization
-- drain cleanly before shutdown
-- release the expensive capacity when idle
-
-**Model loading becomes a cold-start budget you must design around.**
-
-<!-- Further reading: https://northflank.com/blog/runpod-vs-modal -->
-
----
-
-## LoRAs Are the Natural Extension of Tool Calls
-
-Once agents run long enough, they produce labeled data:
-
-```text
-task + context + tool calls → successful result
-```
-
-Train a LoRA on those successful trajectories:
-
-- improve accuracy on the job you actually run
-- reduce the context shipped with every request
-- toggle the adapter on and off—no separate always-on model cost
-
-<!-- Speaker note: Unsloth Studio is the on-ramp from agent traces to the first
-adapter. It makes the fine-tuning workflow approachable without positioning it
-as a production inference server. -->
+**Known job + reliable harness + high utilization = a compelling local case.**
 
 ---
 
 <!-- _class: lead -->
 
-# Next Steps
+# The Takeaway
 
-1. Measure one reliable agent job: tokens, runtime, and frequency.
-2. Find the smallest efficient model that completes it.
-3. Keep the control plane on CPU; cycle and saturate the GPU.
-4. Put validation, rescue, and corrective retries around tool calls.
-5. Capture successful trajectories and train a toggleable LoRA.
+## Find the smallest model that reliably completes the job.
+
+1. Measure tokens, turns, runtime, and completion rate.
+2. Reduce ambiguity with context engineering.
+3. Put validation, rescue, retries, and compaction around the loop.
+4. Keep the inference infrastructure utilized.
+
+**Optimize the system—not just the model.**
 
 ---
 
@@ -480,10 +416,61 @@ as a production inference server. -->
 
 <!-- _class: lead -->
 
-# If Asked: What About Model Quality?
+# Appendix
 
-## Model-quality comparisons are not the focus of this talk.
+## Optional discussion after the outro
 
-The question here is whether the smallest reliable model can complete **your defined job** at the utilization and cost you need.
+---
 
-<!-- Use this appendix slide only if the question comes up after the outro. -->
+## Where This Goes Next: LoRAs
+
+Long-running agents create labeled trajectories:
+
+```text
+task + context + tool calls → successful result
+```
+
+- specialize the model for the repeated job
+- improve accuracy
+- reduce context shipped per request
+- toggle adapters without another always-on model
+
+<!-- Unsloth Studio is an approachable on-ramp from captured trajectories to a
+first LoRA. It is not the production inference server. -->
+
+---
+
+## Keep the Control Plane on CPU
+
+```text
+request → CPU queue → wake GPU → batch → drain → stop GPU
+```
+
+Use inexpensive, always-on CPU for:
+
+- API, authentication, and routing
+- queues, context assembly, and scheduling
+- health checks and GPU lifecycle
+
+<!-- Keep the agent available without paying GPU rates while it waits. The tradeoff
+is that model loading becomes a cold-start budget. Further reading:
+https://northflank.com/blog/runpod-vs-modal -->
+
+---
+
+## GPU Scheduling Is Hard
+
+- model weights and KV cache compete for VRAM
+- batching improves throughput but adds request latency
+- queues require priorities, limits, and backpressure
+- failures can strand work or GPU capacity
+
+**A fast model does not make a reliable serving system.**
+
+---
+
+## If Asked: What About Model Quality?
+
+Model-quality comparisons are not the focus of this talk.
+
+The relevant question is whether the smallest reliable model can complete **your defined job** at the utilization and cost you need.
