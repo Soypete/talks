@@ -2,25 +2,26 @@
 marp: true
 theme: gaia
 paginate: true
-title: "Your AI Agent Does Not Have Memory"
+title: "Your AI Agent Does Not Have Memory: Personalization Is Governed Data Access"
 backgroundImage: url('../images/soypete_background.png')
-description: Building reliable agent context infrastructure with structured state, governed retrieval, and validation
+description: "AI memory" systems are usually built from chat history, vector search, summaries, and larger context windows. This talk argues that personalization is not something the model should "remember." Personalization is governed data access.
 ---
 
 <!-- _class: lead -->
 
 # Your AI Agent Does Not Have Memory
 
-## Building Reliable Agent Context Infrastructure
+## Personalization Is Governed Data Access
 
-by Miriah Peterson  
+by Miriah Peterson
+@Soypete
 
 ---
 
 ## Who Am I?
 
-- Data Engineer at SchoolAI
-- Creator:  Ontology-go
+- AI/ML Infrastructure Engineer at SchoolAI
+- Creator: kei, Pedro-agentware, Graphify, MemPalace
 - Building production agent systems since 2023
 - Organizer: Utah Data Engineering & MLOps Meetups
 
@@ -334,26 +335,22 @@ This makes retrieval smaller and easier to test.
 
 ---
 
-### Example: MemPalace
+### Example: kei — Task-Based Scoped Retrieval
 
-Structured Context for User Data
+Harness Tokens Define Context Scope
 
 ```
-Wing
-  Person or project
-
-Room
-  Topic within that wing
-
-Drawer
-  Specific scoped context
+Harness token: kh_live_abc123
+  → identifies org + permissions
+  → defines what tools are available
+  → scopes retrieval to authorized resources
 ```
 
-The point is not the metaphor.
+The token is not just authentication.
 
-The point is scoped state.
+It is a context boundary that governs what the agent can access.
 
-Context should have a home, a boundary, and a retrieval path.
+Every request carries its scope with it.
 
 ---
 
@@ -415,46 +412,47 @@ Agents should not get ambient access to everything.
 
 ---
 
-### Example: Pedro Middleware
+### Example: kei-proxy — Authorization Before Execution
 
 Context Control in Production
 
 ```
 Agent / LLM
-  ↓ tool call
-Agent middleware
+  ↓ tool call (e.g., github.create_pr)
+kei-proxy authorize
   ↓
-context policy
+ABAC Engine: authorize(user, action, resource, service)
   ↓
-tool policy
+permit/deny + scoped credential injection
   ↓
-allowed or blocked execution
+Tool executes with only authorized context
 ```
 
-The middleware owns the boundary.
+The proxy owns the boundary.
 
-The model can request context.
+The model can request tools.
 
-The system decides whether that request is valid.
+The system decides whether that request is valid and what credentials to provide.
 
 ---
 
-### Middleware Code
+### kei-proxy Authorize Flow
 
-```go
-func (m *Middleware) CallTool(
-    ctx context.Context,
-    name string,
-    args map[string]interface{},
-) (*ToolResult, error) {
-    callerCtx := m.extractCallerContext(ctx)
+```bash
+# Agent requests tool
+kei-proxy authorize \
+  --user U1234 \
+  --tool github.create_pr \
+  --action github:write \
+  --resource repo:schoolai/frontend
 
-    decision := m.policy.Evaluate(callerCtx, name, args)
-    if decision.Action == Deny {
-        return nil, fmt.Errorf("denied: %s", decision.Reason)
-    }
-
-    return m.executor.CallTool(ctx, name, args)
+# Returns (if permitted):
+{
+  "decision": "permit",
+  "credential": {
+    "value": "ghp_xxxxx",
+    "injection": {"type": "bearer", "header": "Authorization"}
+  }
 }
 ```
 
@@ -477,32 +475,47 @@ Examples:
 
 ---
 
-### Example: Ontology-go
+### Context Engineering Needs Three Things
 
-Semantic Models as Guardrails
+Reliable agent behavior requires:
 
 ```
-TBOX
-(schema / ontology)
-
-Person
-  worksAt → Organization
-  knows   → Person
-
-        ↓ validates
-
-ABOX
-(instance data)
-
-miriah worksAt SchoolAI
-miriah knows john
+┌─────────────────────────────────────────────────┐
+│  PRAGMATICS                                     │
+│  What is the user trying to accomplish?         │
+│  (task classification, intent detection)        │
+├─────────────────────────────────────────────────┤
+│  SEMANTICS                                      │
+│  What does the data mean?                       │
+│  (knowledge graphs, relationships, provenance)  │
+├─────────────────────────────────────────────────┤
+│  DATA                                           │
+│  What information is available and allowed?     │
+│  (scoped retrieval, ABAC policies, credentials) │
+└─────────────────────────────────────────────────┘
 ```
 
-An ontology is a schema for language.
+Without all three, you get vibes instead of reliability.
 
-It does not make language smarter.
+---
 
-It makes language checkable.
+### Example: Graphify — Knowledge Graphs
+
+Knowledge Graphs Provide Semantic Structure
+
+```
+┌─────────────────────────────────────────────────┐
+│  Input                                          │
+│  (files, docs, code, conversations)             │
+│    ↓                                            │
+│  Graph extraction                               │
+│  (entities + relationships + provenance)        │
+│    ↓                                            │
+│  Queryable knowledge graph                      │
+└─────────────────────────────────────────────────┘
+```
+
+Graph traversal answers: "What does this user care about, and how do those facts relate?"
 
 ---
 
@@ -571,9 +584,10 @@ The point is that retrieval behavior became measurable.
 
 | Need | Control | Example |
 |---|---|---|
-| Personalization | Relationship model | Graphify |
-| User/task context | Scoped retrieval | MemPalace |
-| Tool access | Policy boundary | Pedro Middleware |
+| Pragmatics | Task classification | Intent routing |
+| Semantics | Relationship model | Graphify / knowledge graphs |
+| Data | Scoped retrieval + policies | kei harness tokens + ABAC |
+| Tool access | Policy boundary | kei-proxy + ABAC |
 | Output checking | Semantic constraints | Ontology-go |
 | Regression safety | Evaluation harness | Agent tests |
 
@@ -598,7 +612,7 @@ Reliable long-running agents need:
 - context data contracts
 - audit logs for context injection
 - durable workflow state
-- permissioned write-back
+- permissioned write-back (via ABAC)
 - shared governed state for multi-agent systems
 
 Not shared chat logs.
@@ -671,13 +685,24 @@ scoped retrieval, durable state, provenance, permissions, and validation.
 
 ## Open Source
 
+kei — governance and authorization for agent systems
+
+Pedro-agentware — agent middleware
+
 MemPalace — scoped semantic memory
 
 Graphify — knowledge graph extraction
 
-Ontology-go — RDF/OWL modeling
+---
 
-Pedro-agentware — agent middleware
+## In Production
+
+We apply these principles at SchoolAI:
+
+- **Task classification**: routing to scoped knowledge stores
+- **Governed retrieval**: ABAC policy before vector search
+- **Scoped context**: agents only see authorized data
+- **Provenance tracking**: audit trail on all context usage
 
 ---
 
@@ -699,6 +724,6 @@ AI Isn't Getting Smarter
 
 # Questions?
 
-Miriah Peterson
+## Miriah Peterson
 
-@Soypete
+### @Soypete
