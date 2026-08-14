@@ -6,7 +6,7 @@ Items Miriah still needs before AI Builder Day:
 - [ ] Run the local PedroGPT benchmark once before the talk and save representative TTFT, prompt tok/s, generation tok/s, p50/p95 latency, and MTP acceptance results.
 - [ ] Capture the real RedditWatch weekly recommendations in Discord for the completed-work demo.
 - [ ] Confirm the live demo prompt: `@Pedro, play 20 Questions.`
-- [ ] Run a timed rehearsal with the YouTube short and demos. The main narrative is 28 slides; protect at least 8–10 minutes for the clip and demonstrations.
+- [ ] Run a timed rehearsal with the YouTube short and demos. The main narrative is 29 slides; protect at least 8–10 minutes for the clip and demonstrations.
 
 Demo fallback plan:
 

@@ -68,8 +68,6 @@ available whenever new work arrives. -->
 
 ![width:620px](https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NjBuM3NmdnhlMzIybW45YWJmbHRhbDV4NHZvcHphaTNvOW9pN2czbiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/TdwziQPhbNAzK/giphy.gif)
 
-## What happens when the agent never clocks out?
-
 <!-- Let the GIF breathe. The point is not that every agent must run in a hot loop.
 It is that useful automation creates demand for an agent that is ready continuously,
 whether triggered by a message, schedule, queue, webhook, or new data. -->
@@ -106,8 +104,6 @@ Instead of using every parameter for every token, a router selects a few experts
        ↓ route each token
  17B active parameters
 ```
-
-**Providers serve a more capable model without activating the whole model each time.**
 
 **Local hosts can keep inactive experts in system RAM and move selected experts through the GPU.**
 
@@ -153,7 +149,35 @@ and available for us to operate. Source: https://huggingface.co/Qwen/Qwen3.6-27B
 
 ---
 
-## Ask the Model to Infer Less
+## What Does “Reasoning” Mean Here?
+
+The harness asks the model to repeatedly choose the next step:
+
+```text
+interpret the request
+        ↓
+choose an action or tool
+        ↓
+observe the result
+        ↓
+decide: continue, recover, or stop
+```
+
+**Ambiguity creates decisions before the real work even begins.**
+
+<!-- “Thinking” is not magic and this talk does not depend on seeing a model's
+private chain of thought. Operationally, reasoning means the model must infer enough
+about the user's intent and current state to choose the next action. ReAct makes this
+structure explicit by interleaving reasoning, actions, and observations. Every choice
+is another opportunity to be wrong; in many harnesses, another model turn or tool call
+also means more latency and tokens. Source: Yao et al., “ReAct: Synergizing Reasoning
+and Acting in Language Models,” https://arxiv.org/abs/2210.03629 -->
+
+---
+
+## Start with Pragmatics
+
+**Pragmatics:** meaning supplied by context and implied intent—not only literal words.
 
 | Ambiguous | Scoped |
 |---|---|
@@ -162,18 +186,18 @@ and available for us to operate. Source: https://huggingface.co/Qwen/Qwen3.6-27B
 | decide whether to search | named source |
 | invent a stopping condition | defined output |
 
-## Less ambiguity → less inference
+## Better prompting makes implied intent explicit
 
 **Scope gives the loop somewhere to start—and a reason to stop.**
 
-<!-- ReAct-style agents interleave reasoning with actions and observations. With the
-ambiguous prompt, the harness may spend tokens reasoning about intent, choosing among
-tools, making an unnecessary over-the-wire search, reading the result, and deciding
-whether it is finished. It can still choose the wrong action. The scoped prompt names
-the tool/source, deliverable, and stopping condition. That reduces turns, latency,
-network calls, token spend, and opportunities for failure. Good context engineering
-moves work from probabilistic inference into the harness. Source: Yao et al., “ReAct:
-Synergizing Reasoning and Acting in Language Models,” https://arxiv.org/abs/2210.03629 -->
+<!-- The first way to improve a model is not a bigger model or more guardrails: ask
+more pragmatically complete questions. With the ambiguous prompt, the model must infer
+whether the speaker wants a definition, opinion, example, history, or web research.
+The harness may reason about intent, choose among tools, make an unnecessary
+over-the-wire search, read the result, and invent a stopping condition. The scoped
+prompt supplies the action, source, deliverable, and definition of done. This reduces
+turns, latency, network calls, token spend, and opportunities for failure. Good context
+engineering moves work from probabilistic inference into the prompt and harness. -->
 
 ---
 
