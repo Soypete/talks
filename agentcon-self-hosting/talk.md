@@ -257,28 +257,6 @@ https://news.ycombinator.com/item?id=48192383 -->
 
 ---
 
-## Pedro Agentware
-
-### Forge's reliability pattern, ported beyond Python
-
-```text
-native tool calling
-      +
-validation, rescue, retries
-      +
-context compaction
-      ↓
-Go · Python · TypeScript
-```
-
-**The same harness idea around whichever agent framework you already use.**
-
-<!-- Pedro Agentware is a port of Forge's pattern to other languages. Do not discuss
-policy enforcement; that belongs to the unmerged Kei plugin and is not part of this
-talk. -->
-
----
-
 <!-- _class: lead -->
 
 # Demo: One GPU, Real Agents
@@ -355,27 +333,6 @@ exactly the token multiplication described at the beginning. -->
 
 ---
 
-## Completed Work: Reddit Recommendations
-
-```python
-tools = [
-    get_interesting_posts,
-    get_trending_subreddits,
-    send_discord_message,
-]
-agent = create_react_agent(model=get_llm(), tools=tools)
-```
-
-**SHOW THE REDDITWATCH RECOMMENDATIONS IN DISCORD**
-
-Local inference reads the week's results, recommends communities and authors, and delivers the result.
-
-<!-- Real source: ~/code/pedro/pedro-bots/src/core/agents/suggestion.py. This is the
-proof of a defined recurring job, not a toy prompt. Point out the chain of tool turns
-and why reliable completion matters more than one impressive response. -->
-
----
-
 ## Production Serving
 
 | **vLLM** | **llama.cpp** |
@@ -384,8 +341,6 @@ and why reliable completion matters more than one impressive response. -->
 | continuous batching | GGUF quantizations |
 | scheduling + metrics | lightweight server |
 | OpenAI-compatible tools | OpenAI-compatible tools |
-
-**Ollama and LM Studio are excellent development tools.**
 
 <!-- I would start production evaluation with vLLM or llama.cpp. Use vLLM for a
 dedicated NVIDIA server where concurrency matters. Use llama.cpp when hardware or
@@ -509,6 +464,73 @@ job. Tie this back to why Forge does seemingly crazy recovery work. -->
 
 ---
 
+## Pedro CLI: I Rolled My Own Harness
+
+```go
+type Phase struct {
+    Name         string
+    SystemPrompt string
+    Tools        []string
+    MaxRounds    int
+    Validator    func(*PhaseResult) error
+}
+```
+
+**Each phase scopes the prompt, tools, budget, and definition of done.**
+
+<!-- This is the useful Pedro CLI story for the abstract: I did not merely point a
+coding model at a shell. I built the orchestration layer. The phased executor owns
+analyze/plan/implement/validate-style workflows, per-phase tool availability, round
+limits, validation, callbacks, subagents, artifacts, and telemetry. Source:
+~/code/pedro/PedroCLI/pkg/agents/phased_executor.go -->
+
+---
+
+## Context Is an Operational Resource
+
+```text
+save prompts + responses + tool calls + full tool results
+                          ↓ 75% of context window
+summarize old rounds + keep recent rounds + measure the reduction
+```
+
+- truncate what goes over the wire
+- preserve full tool output for retrieval
+- record tokens before and after compaction
+
+**Context management is part of the runtime—not prompt decoration.**
+
+<!-- Pedro CLI's context manager persists every step, caches full tool results while
+allowing aggressive prompt truncation, and triggers compaction at 75% of the model's
+context window. It measures tokens before/after, rounds compacted/kept, and compaction
+latency. This backs up the abstract's context-management claim with a real harness.
+Source: ~/code/pedro/PedroCLI/pkg/llmcontext/manager.go -->
+
+---
+
+## Observe and Evaluate the Whole Job
+
+```text
+job → phases → rounds → inference + tool calls
+```
+
+Measure:
+
+- prompt, completion, and total tokens
+- model latency and tokens per second
+- tool calls, failures, rounds, and exit reason
+- completion score across repeated trials
+
+**The unit of reliability is the completed workflow.**
+
+<!-- The telemetry summary reports tokens, tool calls, rounds, phases, duration, and
+estimated cost per job. The eval harness saves full transcripts, supports repeated
+trials and concurrency, and records latency, throughput, and grading results. This is
+how to expose evaluation variance instead of trusting one demo run. Sources:
+~/code/pedro/PedroCLI/pkg/telemetry/types.go and pkg/evals/types.go -->
+
+---
+
 ## Where This Goes Next: LoRAs
 
 Long-running agents create labeled trajectories:
@@ -582,3 +604,27 @@ An always-on agent needs:
 <!-- Do not discuss cost yet. Establish the operational change: one-off agents can
 borrow an endpoint for a moment; always-on agents depend on inference as a persistent
 part of the system. Availability, state, recovery, and scheduling now matter. -->
+
+---
+
+## Pedro Agentware
+
+### Forge's reliability pattern, ported beyond Python
+
+```text
+native tool calling
+      +
+validation, rescue, retries
+      +
+context compaction
+      ↓
+Go · Python · TypeScript
+```
+
+**The same harness idea around whichever agent framework you already use.**
+
+<!-- Pedro Agentware is a port of Forge's pattern to other languages. Do not discuss
+policy enforcement; that belongs to the unmerged Kei plugin and is not part of this
+talk. -->
+
+---
