@@ -118,6 +118,26 @@ https://arxiv.org/abs/2603.19289 -->
 
 ---
 
+## “Local Model” Covers Two Different Bets
+
+| Large local model | Small local model |
+|---|---|
+| capacity through MoE | efficiency through dense weights |
+| weights spill into system RAM | weights fit on one GPU |
+| fewer parameters active per token | every parameter active per token |
+| maximize capability | minimize cost per completed job |
+
+**Choose for the workload—not for the leaderboard.**
+
+<!-- This distinction was missing in the first version of the talk. “Running
+locally” can mean making an enormous MoE model possible with CPU RAM and partial GPU
+offload, or making a small dense model extremely fast by keeping it entirely in VRAM.
+The large-model bet buys more capacity but accepts memory traffic and operational
+complexity. The small-model bet only works when the task and harness are constrained
+enough, but it gives the agent fast, cheap turns. -->
+
+---
+
 <!-- _class: lead -->
 
 # “We Are Kids in a Candy Store”
@@ -185,6 +205,31 @@ https://arxiv.org/abs/2210.03629 -->
 ## Small models have less margin for ambiguity and recovery
 
 One bad turn can become three expensive turns—or a complete restart.
+
+---
+
+## The Harness Is the Agent System
+
+```text
+request
+  ↓
+workflow + scoped tools + state
+  ↓
+model chooses one next action
+  ↓
+validate → execute → observe → retry or stop
+  ↓
+telemetry + durable result
+```
+
+**The model supplies judgment. The harness supplies reliability.**
+
+<!-- Slow down here. A harness is not merely the library that sends a prompt. It
+owns the loop around the model: task decomposition, which tools are visible, durable
+state, context assembly, validation, execution, retry policy, stopping conditions,
+and observability. This is why a smaller model can succeed: more of the job is made
+deterministic outside inference. Pedro CLI is my hand-rolled example; Forge and Pedro
+Agentware package the reliability mechanisms for other harnesses. -->
 
 ---
 
@@ -267,24 +312,26 @@ We need to prove **speed, tool use, and completed work**.
 
 ---
 
-## Demo 1: Over the Wire
+## Demo 1: A Multistep Agent Over the Wire
 
 ```text
 conference laptop → Tailscale → home inference server → RTX 5090
 ```
 
-## [Open the PedroGPT interface](https://ai.tail6fbc5.ts.net/)
+## **BUILD: multistep agent web UI**
 
-Use a real prompt and watch:
+The UI must expose the loop:
 
-- responsiveness over the network
-- streaming generation
-- whether local inference feels interactive
+- task and current step
+- tool call and arguments
+- tool result
+- retries, token counts, and final verification
 
-<!-- Open https://ai.tail6fbc5.ts.net/ in a prepared browser tab. This is the
-experience demo: the request crosses the network to the RTX 5090 at home. Do not turn
-this into a quality comparison. The question is whether remote local inference is
-responsive enough to use as agent infrastructure. -->
+<!-- Replace the chat-shaped PedroGPT demo. A single streamed response proves model
+speed but not an agent. Use one bounded job requiring at least three visible tool
+calls and a machine-checkable final result. The request still travels from the venue
+over Tailscale to the home RTX 5090. Keep a recorded run as the primary conference
+fallback. -->
 
 ---
 
@@ -428,6 +475,30 @@ job. Tie this back to why Forge does seemingly crazy recovery work. -->
 - scheduling, queues, memory, and failures become your problem
 
 **Known job + reliable harness + high utilization = a compelling local case.**
+
+---
+
+## Compute Cost Is Not Token Cost
+
+```text
+compute cost per job = GPU $/second × occupied seconds ÷ completed jobs
+```
+
+| Example capacity | Current rate |
+|---|---:|
+| RunPod RTX 5090 Pod | $0.99 / GPU-hour |
+| RunPod RTX 5090 Serverless | $1.58 / active GPU-hour |
+| Modal L40S | $0.000542 / second ≈ $1.95 / GPU-hour |
+
+**Scale-to-zero wins when idle. A dedicated GPU wins only when you keep it busy.**
+
+<!-- Rates checked August 14, 2026; refresh them before every talk. These are not an
+apples-to-apples hardware benchmark. They illustrate purchasing models: RunPod Pods
+reserve a GPU; RunPod Serverless and Modal meter active compute and can avoid idle
+time, with cold-start and warm-container tradeoffs. At 730 hours, an always-on $0.99
+GPU is about $723/month before storage and networking. Do not compare this directly
+to API token prices until the benchmark provides throughput and completed-job rate.
+Sources: https://www.runpod.io/pricing and https://modal.com/pricing -->
 
 ---
 

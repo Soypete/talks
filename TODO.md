@@ -1,24 +1,34 @@
 # Self-Hosting Agents Talk TODOs
 
-Items Miriah still needs before AI Builder Day:
+Post–AI Builder Day revision work:
 
-- [ ] Open `https://ai.tail6fbc5.ts.net/` in a browser tab and verify Tailscale access before presenting.
-- [ ] Run the local PedroGPT benchmark once before the talk and save representative TTFT, prompt tok/s, generation tok/s, p50/p95 latency, and MTP acceptance results.
-- [ ] Capture the real RedditWatch weekly recommendations in Discord for the completed-work demo.
-- [ ] Confirm the live demo prompt: `@Pedro, play 20 Questions.`
-- [ ] Run a timed rehearsal with the YouTube short and demos. The main narrative is 28 slides; protect at least 8–10 minutes for the clip and demonstrations.
+- [ ] Build a multistep agent web UI; a streamed chat response is not enough.
+- [ ] Pick one bounded demo job with at least three tool calls and a machine-checkable result.
+- [ ] Show task state, tool arguments, tool results, retries, token counts, and verification in the UI.
+- [ ] Record the full web-agent run over Tailscale to the home RTX 5090.
+- [ ] Record a clean Pedro Tag Discord agent run; the live Discord demo worked and should stay.
+- [ ] Save representative benchmark output; the benchmark demo worked and should stay.
+- [ ] Calculate cost per completed demo job from measured GPU time and successful completions.
+- [ ] Refresh Modal and RunPod rates immediately before the next talk.
+- [ ] Add one real Pedro CLI harness trace showing phases, scoped tools, retries, compaction, and telemetry.
+- [ ] Rehearse the harness explanation separately; distinguish the model, agent loop, and harness responsibilities.
+
+Proven demo elements:
+
+- Pedro Tag in Discord
+- local llama.cpp benchmark: TTFT, prompt tok/s, generation tok/s, p50/p95 latency, and MTP acceptance
 
 Demo fallback plan:
 
-- [ ] Keep a recorded Pedro Tag Twenty Questions run in case Discord, networking, or the home endpoint fails.
-- [ ] Keep screenshots or terminal output for both inference demos in case the home endpoint or Tailscale is unavailable.
-- [ ] Keep a static screenshot of the RedditWatch Discord result in the deck directory.
-- [ ] Open the Chris Brousseau short in a browser tab before presenting.
-- [ ] Confirm the “Always Means Always” Giphy animation loads on the presentation network, or download a local copy before the event.
+- [ ] Keep recorded runs for the multistep web agent and Pedro Tag.
+- [ ] Keep static screenshots of every tool-call transition and the final verified result.
+- [ ] Keep saved benchmark output in the deck directory.
+- [ ] Download external video/GIF assets locally before the next conference.
 
-Optional appendix slides after the contact slide:
+Optional appendix topics:
 
 - LoRAs and Unsloth Studio
 - CPU control plane and GPU cycling
 - GPU scheduling details
 - model-quality discussion
+- detailed Modal/RunPod cost calculations
