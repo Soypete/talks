@@ -165,39 +165,16 @@ decide: continue, recover, or stop
 
 **Ambiguity creates decisions before the real work even begins.**
 
-<!-- “Thinking” is not magic and this talk does not depend on seeing a model's
-private chain of thought. Operationally, reasoning means the model must infer enough
-about the user's intent and current state to choose the next action. ReAct makes this
-structure explicit by interleaving reasoning, actions, and observations. Every choice
-is another opportunity to be wrong; in many harnesses, another model turn or tool call
-also means more latency and tokens. Source: Yao et al., “ReAct: Synergizing Reasoning
-and Acting in Language Models,” https://arxiv.org/abs/2210.03629 -->
-
----
-
-## Start with Pragmatics
-
-**Pragmatics:** meaning supplied by context and implied intent—not only literal words.
-
-| Ambiguous | Scoped |
-|---|---|
-| “What even does an AI agent do, anyway?” | “Search Wikipedia for information about AI agents and return a sourced, five-bullet summary.” |
-| infer the intent | explicit action |
-| decide whether to search | named source |
-| invent a stopping condition | defined output |
-
-## Better prompting makes implied intent explicit
-
-**Scope gives the loop somewhere to start—and a reason to stop.**
-
-<!-- The first way to improve a model is not a bigger model or more guardrails: ask
-more pragmatically complete questions. With the ambiguous prompt, the model must infer
-whether the speaker wants a definition, opinion, example, history, or web research.
-The harness may reason about intent, choose among tools, make an unnecessary
-over-the-wire search, read the result, and invent a stopping condition. The scoped
-prompt supplies the action, source, deliverable, and definition of done. This reduces
-turns, latency, network calls, token spend, and opportunities for failure. Good context
-engineering moves work from probabilistic inference into the prompt and harness. -->
+<!-- OpenCode makes this loop easy to see. Give it a request and watch it interpret
+the task, inspect files or search for context, choose a tool, read the result, and
+decide whether it has enough information to act or stop. “Thinking” is not magic and
+this talk does not depend on exposing private chain of thought. Operationally,
+reasoning is the model inferring enough about intent and state to choose the next
+action. ReAct describes the same pattern as interleaved reasoning, actions, and
+observations. Ambiguity adds decisions before the real work begins; every choice is
+another opportunity for a wrong tool, extra turn, or over-the-wire call. Source: Yao
+et al., “ReAct: Synergizing Reasoning and Acting in Language Models,”
+https://arxiv.org/abs/2210.03629 -->
 
 ---
 
