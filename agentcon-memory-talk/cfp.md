@@ -1,14 +1,14 @@
-# Beyond AI Memory: Why Semantic Context Is the Missing Layer in Agentic Infrastructure
+# Beyond AI Memory: Why Agents Need Engineered Context
 
 ## Sessionize Description
 
 Agents do not need more memory. They need the right context for the task in front of them.
 
-Memory is stored history. Context is the minimum set of information, meaning, state, and authority required to handle a specific request. It changes with the user, task, time, and action—so it cannot be solved by dumping chat history into a prompt or retrieving the nearest vectors. Context must be engineered.
+Memory is stored history. Context is the minimum information, meaning, state, and authority required to handle a specific request. It changes with the user, task, time, and action—so it cannot be solved by dumping chat history into a prompt or retrieving the nearest vectors. Context must be engineered.
 
-This talk uses real-world failure patterns to show what happens when it is not: coding agents update the wrong file, assistants expose information outside the user’s purpose, and coaching agents turn a plausible inference into an unsafe action. We will trace each failure back to missing reference, meaning, permission, or action boundaries.
+This talk uses real-world failure patterns to show what happens when it is not: coding agents update the wrong file, assistants expose information outside the user’s purpose, and coaching agents turn plausible inferences into unsafe actions. We will trace each failure to missing references, meaning, permissions, or action boundaries.
 
-Attendees will leave with a vendor-neutral context-assembly pipeline: classify the task, retrieve identity-scoped data from its system of record, resolve domain meaning, constrain possible actions, validate before execution, and evaluate every stage. The result is agent infrastructure that remains reliable even when the model, framework, or data store changes.
+Attendees will leave with a vendor-neutral context-assembly pipeline: classify the task, retrieve identity-scoped data, resolve domain meaning, constrain possible actions, validate before execution, and evaluate every stage. The result is agent infrastructure that remains reliable even when the model, framework, or data store changes.
 
 ## Why Reviewers Should Choose This Talk
 

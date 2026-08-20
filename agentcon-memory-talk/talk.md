@@ -2,7 +2,7 @@
 marp: true
 theme: gaia
 paginate: true
-title: "Beyond AI Memory: Why Semantic Context Is the Missing Layer in Agentic Infrastructure"
+title: "Beyond AI Memory: Why Agents Need Engineered Context"
 backgroundImage: url('../images/soypete_background.png')
 description: Why production agents need engineered context, not more memory
 ---

@@ -8,7 +8,7 @@
 
 ### Title
 
-Beyond AI Memory: Why Semantic Context is the Missing Layer in Agentic Infrastructure
+Beyond AI Memory: Why Agents Need Engineered Context
 
 ### Description
 
