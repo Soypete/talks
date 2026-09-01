@@ -83,7 +83,7 @@ Kubernetes (control plane, service accounts, RBAC, scheduling, and ephemeral wor
 
 ## Speaker bio
 
-Miriah Peterson is an engineer and educator specializing in data engineering, AI infrastructure, and agentic systems. She has built production data platforms and AI systems at SchoolAI, Agility Ads, Weave, Tailscale, MX, and Nav. Miriah is the creator of SoyPete Tech, a Boot.dev and O'Reilly instructor, co-host of Domesticating AI, and organizer of GoWest Conference and Utah technology meetups.
+Miriah Peterson is an engineer and educator focused on data engineering, AI infrastructure, and context engineering. She has built production data and AI systems at SchoolAI, Agility Ads, Weave, Tailscale, MX, and Nav. She created SoyPete Tech, teaches for Boot.dev and O'Reilly, hosts Domesticating AI, and organizes GoWest, Utah Data Engineering, and Machine Learning Utah. Her work helps teams build reliable AI systems.
 
 ## Optional diversity questions
 
