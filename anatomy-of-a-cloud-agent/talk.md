@@ -20,7 +20,7 @@ KubeCon + CloudNativeCon Europe 2027
 
 ## Who Am I?
 
-- CEO & founder of a stealth startup
+- CEO & founder of Haikai Labs
 - Co-host of the **Domesticating AI** podcast
 - Creator of Pedro Agentware
 - Building AI systems since 2022
