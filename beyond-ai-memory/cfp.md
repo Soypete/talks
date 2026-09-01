@@ -95,3 +95,90 @@ Miriah Peterson is CEO of Haikai Labs, where she is building a Sovereign Context
 - Speaker profile: [Add confirmed URL]
 - Talk repository: [Add public repository URL]
 
+## Proceedings contribution
+
+- Willing to contribute insights to the official conference proceedings?: Yes
+
+### Before → After State
+
+Before, agents treated memory as unscoped retrieval: older conversations and semantically similar documents could be mixed with current context, even when they were stale or operationally incorrect. After, context is resolved through task classification, ontology, identity-aware retrieval, and validated tool calls. We evaluate the change through stale-context scenarios, retrieval comparisons, and action-validation tests rather than claiming production metrics we do not yet have.
+
+### Core Building Blocks
+
+- Task classification and intent resolution
+- Federated data access
+- Ontologies and entity definitions
+- Scoped retrieval and provenance
+- Attribute-based access control
+- Structured tool definitions
+- Pre-execution action validation
+- Agentware / Neural Proxy
+- Model routing and model abstraction
+- Tracing, evaluation, and audit logs
+
+### Concrete Takeaways
+
+- Treat personalization as governed data access, not simply model memory.
+- Do not assume vector similarity means operational relevance.
+- Track which definitions, sources, and versions informed an answer.
+- Inject structured ontology only when it is relevant to the current task.
+- Treat tool calls as actions that require identity, purpose, and authorization.
+- Keep policy enforcement outside the prompt and model reasoning.
+- Evaluate the full context-to-action pipeline, not only generated text.
+- Use model-agnostic middleware so semantics and policies survive model changes.
+
+### Architecture / Workflow Description
+
+```text
+User request
+     ↓
+Task classification
+     ↓
+Ontology and entity resolution
+     ↓
+Identity-aware data retrieval
+     ↓
+Context assembly
+     ↓
+Model reasoning
+     ↓
+Tool-call validation
+     ↓
+ABAC / policy decision
+     ↓
+API execution
+     ↓
+Trace, evaluation, and audit
+```
+
+Agentware—the Neural Proxy or agentic middleware—sits between the agent and enterprise systems. It supplies relevant semantic context and memory, routes calls to approved data sources and tools, validates structured tool calls, and records outcomes.
+
+### Failures, Trade-offs, or What Didn’t Work
+
+- Treating conversation history as authoritative memory allowed stale decisions to resurface.
+- Vector similarity alone retrieved related but operationally incorrect context.
+- Putting all business rules into prompts made behavior difficult to test and enforce.
+- Broad tools and unrestricted connectors increased the action surface unnecessarily.
+- Centralizing all enterprise data into one memory store created governance and freshness concerns.
+- Ontologies improve precision but require ongoing ownership, versioning, and maintenance.
+- Stronger validation adds latency and implementation cost, but reduces the risk of incorrect actions.
+
+### Tools / Models / Methods Used
+
+- Lo Agent as a local agent-harness example
+- LLM tool/function calling
+- Retrieval-augmented generation
+- Ontologies and semantic schemas
+- Attribute-based access control
+- API-based data connectors
+- Agentware / Neural Proxy
+- Structured tool calls for context retrieval and action execution
+- Evaluation scenarios for stale context and unauthorized actions
+- OpenTelemetry-style tracing and audit events
+- Model-agnostic model routing
+
+### Links to Repositories, Docs, or Write-ups
+
+- Lo Agent: https://github.com/IMJONEZZ/lo-agent
+- Haikai Labs website: [Add confirmed URL]
+- Public write-up: [Add blog URL when published]
