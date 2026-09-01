@@ -20,7 +20,7 @@ KubeCon + CloudNativeCon Europe 2027
 
 ## Who Am I?
 
-- Independent engineer and educator
+- CEO of Haikai Labs
 - Co-host of the **Domesticating AI** podcast
 - Building local and cloud-native agent harnesses
 - Building AI systems since 2022

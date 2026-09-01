@@ -83,7 +83,7 @@ Kubernetes (control plane, service accounts, RBAC, scheduling, and ephemeral wor
 
 ## Speaker bio
 
-Miriah Peterson is an engineer and educator focused on data engineering, AI infrastructure, and context engineering. She has built production data and AI systems at SchoolAI, Agility Ads, Weave, Tailscale, MX, and Nav. She created SoyPete Tech, teaches for Boot.dev and O'Reilly, hosts Domesticating AI, and organizes GoWest, Utah Data Engineering, and Machine Learning Utah. Her work helps teams build reliable AI systems.
+Miriah Peterson is CEO of Haikai Labs, where she is building a Sovereign Context Layer for reliable AI. An engineer and educator focused on data engineering and AI infrastructure, she has built production systems at SchoolAI, Agility Ads, Weave, Tailscale, MX, and Nav. She created SoyPete Tech, teaches for Boot.dev and O'Reilly, and hosts Domesticating AI.
 
 ## Optional diversity questions
 
