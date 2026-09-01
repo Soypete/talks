@@ -13,9 +13,9 @@ The goal is not to put Claude Code in a container. It is to understand the archi
 ## What attendees will learn
 
 - How a local agent harness quietly depends on the operating system for identity, credentials, filesystem permissions, process isolation, networking, and state.
-- How to separate workload identity from the human identity that authorizes an action.
+- How to separate workload identity from the human identity that authorizes an action, and when an agent needs to use each one.
 - How to design delegated authorization, OAuth and token lifecycles, secret delivery, and external state for ephemeral agent workloads.
-- Why typed, purpose-built tools are safer and more auditable than unrestricted shell access.
+- Why domain-scoped, purpose-built tools are safer, more scalable, and more auditable than unrestricted shell access.
 - How to place policy enforcement and audit logging outside the model's context window.
 
 ## Who this talk is for
@@ -48,7 +48,7 @@ No. This is a new session for KubeCon + CloudNativeCon Europe 2027. [Confirm bef
 
 # Relevant CNCF / Open Source Projects
 
-Kubernetes (workload identity, service accounts, RBAC, and ephemeral workloads); Open Policy Agent (policy concepts and enforcement patterns); OAuth 2.0 and OpenID Connect (delegated identity and authorization flows). No CNCF project is presented as a product endorsement.
+Kubernetes (control plane, service accounts, RBAC, scheduling, and ephemeral workloads); OCI containers; OpenTelemetry (agent tracing and audit signals); Envoy (service-to-service policy boundaries); Open Policy Agent (policy concepts and enforcement patterns); OAuth 2.0 and OpenID Connect (delegated identity and authorization flows); Model Context Protocol (tool and context interfaces). No project is presented as a product endorsement.
 
 # Additional resources
 

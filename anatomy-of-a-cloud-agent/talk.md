@@ -29,13 +29,50 @@ KubeCon + CloudNativeCon Europe 2027
 
 <!-- _class: lead -->
 
-# We Already Have World-Class Agents
+# We Already Have Powerful Agent Harnesses
 
 Cursor. Claude Code. OpenCode. Hermes.
 
 They can write code, run commands, search files, call APIs, use tools, and operate software.
 
-## So why can't we just put them in the cloud?
+Many teams are now trying to run these harnesses in Docker containers and sandboxes.
+
+## What does one agent per employee look like in the cloud?
+
+---
+
+# The Scaling Question
+
+One employee can run one harness on one laptop.
+
+But an enterprise needs to answer:
+
+- How do we run more than one task at a time?
+- How do we prevent agents from editing the same file?
+- How do agents connect to external systems?
+- Does work continue while the employee is in a meeting?
+
+These are familiar software scaling problems—now with an autonomous decision-maker inside.
+
+---
+
+# From Laptop to Cloud-Native Harness
+
+```text
+Kubernetes control plane
+  schedules, scales, and isolates workloads
+            ↓
+Agent harness pod
+  filesystem, tools, task coordinator
+            ↓
+Ephemeral agent task
+  one bounded unit of work
+            ↓
+Explicit APIs and data sources
+  GitHub · Drive · databases · internal services
+```
+
+The control plane becomes the foundation. The harness becomes a workload. Agent tasks can start, stop, and run concurrently.
 
 ---
 
@@ -57,7 +94,7 @@ Filesystem + Processes + Credentials + Network
 
 ---
 
-# Anatomy of a Local Agent
+# Anatomy of a Local Agent Harness
 
 The harness gets:
 
@@ -68,8 +105,6 @@ The harness gets:
 - network access
 - persistent state
 - user-installed tools
-
-Most of this infrastructure existed **before the agent did.**
 
 ---
 
@@ -213,7 +248,7 @@ DELEGATED IDENTITY
 "Who authorized this action?"
 ```
 
-These identities answer different security questions.
+These identities answer different security questions. The workload identity tells the platform which agent is running; the delegated identity tells the agent which human authority applies to this task.
 
 ---
 
@@ -753,6 +788,20 @@ The missing piece is understanding how they map onto **delegated autonomous acto
 
 ---
 
+# The Open Source Agent Stack
+
+```text
+Kubernetes       schedule and isolate agent workloads
+OCI containers   package the harness and its dependencies
+Envoy            mediate service-to-service traffic
+OpenTelemetry    trace decisions, tools, and external calls
+MCP              describe tools and context interfaces
+```
+
+These projects solve different layers of the problem. The architecture still needs a policy boundary that connects them to a user, a task, and a purpose.
+
+---
+
 <!-- _class: lead -->
 
 # Stop Deploying Laptops to Kubernetes
@@ -792,7 +841,7 @@ That difference changes almost everything.
 
 # What's Next?
 
-My startup is working on exactly these problems:
+Haikai Labs is working on exactly these problems:
 
 **identity, authorization, context, and policy for autonomous agents.**
 
