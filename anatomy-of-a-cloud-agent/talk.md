@@ -20,7 +20,7 @@ KubeCon + CloudNativeCon Europe 2027
 
 ## Who Am I?
 
-- CEO & founder of Haikai Labs
+- Independent engineer and educator
 - Co-host of the **Domesticating AI** podcast
 - Creator of Pedro Agentware
 - Building AI systems since 2022
@@ -76,6 +76,43 @@ The control plane becomes the foundation. The harness becomes a workload. Agent 
 
 ---
 
+# The Data Access Pivot
+
+On a workstation, an agent finds information through:
+
+```text
+files + shell + local skills
+```
+
+In a cloud-native system, most enterprise data is already exposed through:
+
+```text
+APIs + queues + databases + service interfaces
+```
+
+The harness must pivot from navigating one machine to coordinating explicit data sources across many services.
+
+---
+
+# Agentic Middleware
+
+```text
+Agent task
+    ↓
+Agentic middleware
+  routes context
+  selects tools
+  coordinates state
+  enforces access
+  records actions
+    ↓
+APIs and cloud-native services
+```
+
+Middleware is the translation layer between probabilistic decisions and the deterministic interfaces of the cloud.
+
+---
+
 <!-- _class: lead -->
 
 # Because the Laptop Is Part of the Agent
@@ -105,6 +142,27 @@ The harness gets:
 - network access
 - persistent state
 - user-installed tools
+
+---
+
+# Pedro Agentware: A Bare-Metal Harness
+
+Pedro is a concrete example of the local model:
+
+```text
+User
+  ↓
+Pedro Agentware
+  ├── prompt and skills
+  ├── local files
+  ├── processes and shell
+  ├── credentials
+  └── model provider
+```
+
+The harness is powerful because the machine provides the workspace. The challenge is preserving useful capabilities when that workspace becomes a distributed cloud workload.
+
+[Pedro Agentware](https://github.com/soypetetech/IAM_pedro)
 
 ---
 
@@ -841,7 +899,7 @@ That difference changes almost everything.
 
 # What's Next?
 
-Haikai Labs is working on exactly these problems:
+These are the problems agentic middleware must solve:
 
 **identity, authorization, context, and policy for autonomous agents.**
 

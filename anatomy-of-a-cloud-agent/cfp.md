@@ -6,7 +6,7 @@ Anatomy of a Cloud-Native Agent: What Happens When the Harness Leaves Your Lapto
 
 AI agent harnesses were designed around workstations, where the operating system supplies identity, filesystem permissions, credentials, shell access, networking, and state. Move the harness into the cloud and those assumptions break.
 
-This talk maps a local agent's implicit capabilities to a cloud-native architecture. We examine workload identity versus delegated user authority, OAuth and token lifecycles, secrets, shell access, typed tools, external state, policy enforcement, and auditability. We ask why a job-specific agent with narrow capabilities is a stronger foundation than unrestricted user impersonation.
+This talk maps a bare-metal agent harness to a CNCF architecture. We examine how a control plane, harness workload, and ephemeral agent tasks support concurrency, shared-file coordination, external APIs, and work that continues while a user is away. We then follow the transition from local files and skills to API-based data sources and agentic middleware.
 
 The goal is not to put Claude Code in a container. It is to understand the architecture for software that acts like a user—and how to make that action scoped, explicit, and auditable.
 
@@ -15,7 +15,7 @@ The goal is not to put Claude Code in a container. It is to understand the archi
 - How a local agent harness quietly depends on the operating system for identity, credentials, filesystem permissions, process isolation, networking, and state.
 - How to separate workload identity from the human identity that authorizes an action, and when an agent needs to use each one.
 - How to design delegated authorization, OAuth and token lifecycles, secret delivery, and external state for ephemeral agent workloads.
-- Why domain-scoped, purpose-built tools are safer, more scalable, and more auditable than unrestricted shell access.
+- Why cloud agents need API-based data access and agentic middleware instead of direct dependence on local files and skills.
 - How to place policy enforcement and audit logging outside the model's context window.
 
 ## Who this talk is for
@@ -34,7 +34,7 @@ The session is vendor-neutral, does not require access to a commercial product, 
 
 AI agents are moving from local developer workstations into shared cloud environments, but many designs still assume that the operating system will provide a human user's identity, permissions, secrets, filesystem, and audit trail. Those assumptions do not transfer automatically to ephemeral workloads.
 
-This talk gives the cloud-native community a concrete vocabulary and architecture for the transition: workload identity plus delegated authority, short-lived credentials, explicit tools, external state, policy enforcement outside the model, and end-to-end auditability. It connects familiar platform primitives—service accounts, RBAC, secret managers, queues, and APIs—to the new problem of software acting on behalf of a person.
+This talk gives the cloud-native community a concrete vocabulary and architecture for the transition: the control plane, harness workload, ephemeral agent task, workload identity, external state, API-based data access, and agentic middleware. It connects familiar platform primitives—containers, pods, service accounts, queues, and APIs—to the new problem of moving a filesystem-oriented agent into a distributed, cloud-native environment.
 
 The topic is timely because teams are adopting agents faster than they are establishing safe boundaries. The session is useful even for teams that never deploy a general-purpose coding agent: the same design questions apply to support, operations, data, and internal automation agents.
 
@@ -70,8 +70,8 @@ Kubernetes (control plane, service accounts, RBAC, scheduling, and ephemeral wor
 
 - Speaker: Miriah Peterson
 - Email: captainnobody1@gmail.com
-- Speaker title: CEO and Founder
-- Company: Haikai Labs
+- Speaker title: Independent Engineer and Educator
+- Company: SoyPete Tech
 - Company website: [Confirm and add URL]
 - End-user organization?: No / [Confirm based on CFP definition]
 - Country of residence: [Confirm]
@@ -81,7 +81,7 @@ Kubernetes (control plane, service accounts, RBAC, scheduling, and ephemeral wor
 
 ## Speaker bio
 
-Miriah Peterson is the CEO and founder of Haikai Labs, where she builds data governance, context engineering, and secure AI infrastructure for reliable agentic systems. She has built production data platforms and AI systems at SchoolAI, Agility Ads, Weave, Tailscale, MX, and Nav. Miriah is the creator of SoyPete Tech, a Boot.dev and O'Reilly instructor, co-host of Domesticating AI, and organizer of GoWest Conference and Utah technology meetups.
+Miriah Peterson is an engineer and educator specializing in data engineering, AI infrastructure, and agentic systems. She has built production data platforms and AI systems at SchoolAI, Agility Ads, Weave, Tailscale, MX, and Nav. Miriah is the creator of SoyPete Tech, a Boot.dev and O'Reilly instructor, co-host of Domesticating AI, and organizer of GoWest Conference and Utah technology meetups.
 
 ## Optional diversity questions
 
@@ -97,7 +97,3 @@ Miriah Peterson is the CEO and founder of Haikai Labs, where she builds data gov
 - Speaker Gender Representation: Not applicable to one speaker; agree
 - Speaker submission limit acknowledgement: Agree, provided this remains within the three-submission limit
 - Consent to share session and personal data with the organizer: Agree
-
-# Positioning notes for Haikai Labs
-
-Haikai Labs should be named as the speaker's current company by the time of the conference. The talk itself should remain vendor-neutral and should not present Kei, the Haikai middleware, or the Sovereign Context Layer as required solutions. If a brief company disclosure is useful, use: “I’m the CEO and founder of Haikai Labs, a company working on governed context infrastructure for reliable AI systems.”
