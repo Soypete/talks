@@ -85,7 +85,7 @@ APIs and cloud-native services
 
 It is the layer that lets us move from a harness that manipulates files to a system that coordinates APIs, queues, databases, and other services. It also gives the platform a place to handle identity, retries, concurrency, and auditability.
 
-The open source [Pedro Agentware](https://github.com/soypetech/IAM_pedro) repository provides a concrete starting point for examining the bare-metal harness model and asking what must change when its workspace becomes a cloud-native workload.
+The open source [Lo Agent](https://github.com/IMJONEZZ/lo-agent) repository provides a concrete starting point for examining the bare-metal harness model and asking what must change when its workspace becomes a cloud-native workload.
 
 ## From model capability to governed velocity
 
@@ -97,4 +97,4 @@ The answer depends on architecture. Compute should be replaceable. Credentials s
 
 That is how agents move from impressive demonstrations to dependable infrastructure.
 
-The goal is to make the path from a local, filesystem-oriented harness to a scalable, API-oriented cloud-native agent understandable and buildable.
+The goal is to make the path from a local, filesystem-oriented harness to a scalable, API-oriented cloud-native agent understandable and buildable. Agentware is the next step: the middleware and runtime that turns the local harness pattern into elastic, concurrent cloud workloads.

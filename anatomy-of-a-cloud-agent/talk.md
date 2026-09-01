@@ -2,13 +2,13 @@
 marp: true
 theme: gaia
 paginate: true
-title: "Anatomy of a Cloud-Native Agent"
+title: "Anatomy of a Cloud-Native Agent Harness"
 description: "What happens when the harness leaves your laptop?"
 ---
 
 <!-- _class: lead -->
 
-# Anatomy of a Cloud-Native Agent
+# Anatomy of a Cloud-Native Agent Harness
 
 ## What happens when the harness leaves your laptop?
 
@@ -22,37 +22,87 @@ KubeCon + CloudNativeCon Europe 2027
 
 - Independent engineer and educator
 - Co-host of the **Domesticating AI** podcast
-- Creator of Pedro Agentware
+- Building local and cloud-native agent harnesses
 - Building AI systems since 2022
 
 ---
 
 <!-- _class: lead -->
 
-# We Already Have Powerful Agent Harnesses
+# We Love Agents
 
-Cursor. Claude Code. OpenCode. Hermes.
+Since Claude Code's release in February 2025, developers have invested heavily in human-enabling agent harnesses.
 
-They can write code, run commands, search files, call APIs, use tools, and operate software.
+They let language models use files, skills, shells, processes, and tools to operate computers on our behalf.
 
-Many teams are now trying to run these harnesses in Docker containers and sandboxes.
+The result is software that can help us write, research, debug, automate, and build.
 
-## What does one agent per employee look like in the cloud?
+## What is the next step in their evolution?
 
 ---
 
-# The Scaling Question
+# The Harness Is More Than the Model
 
-One employee can run one harness on one laptop.
+An agent is not just an LLM. The harness is the software around the model that provides:
 
-But an enterprise needs to answer:
+- tools and function calls
+- files and skills
+- process execution
+- credentials and network access
+- memory and task state
+- model interaction
 
-- How do we run more than one task at a time?
-- How do we prevent agents from editing the same file?
-- How do agents connect to external systems?
-- Does work continue while the employee is in a meeting?
+The harness turns model output into useful computer action.
 
-These are familiar software scaling problems—now with an autonomous decision-maker inside.
+---
+
+# A Bare-Metal Agent Harness
+
+```text
+User
+  ↓
+Agent harness
+  ↓
+Operating system
+  ↓
+CPU · memory · filesystem · processes · network · credentials
+```
+
+The harness is powerful because the machine provides the workspace.
+
+---
+
+# Lo Agent: A Concrete Local Harness
+
+Lo Agent is a useful example because it exposes the local model directly:
+
+```text
+Lo Agent
+  ├── model client
+  ├── tools and function calls
+  ├── grammar-based skills
+  ├── local state and event log
+  ├── process and filesystem access
+  └── local or self-hosted model server
+```
+
+[github.com/IMJONEZZ/lo-agent](https://github.com/IMJONEZZ/lo-agent)
+
+The question is not whether this works locally. It does. The question is what each component becomes in the cloud.
+
+---
+
+# The Next Evolution
+
+One employee can run one harness on one laptop. A cloud-native system must support:
+
+- multiple tasks at the same time
+- compute that starts when work arrives
+- coordination around shared files and resources
+- connections to external systems
+- work that continues while the user is away
+
+These are familiar distributed-systems problems—with an autonomous decision-maker inside.
 
 ---
 
@@ -145,14 +195,14 @@ The harness gets:
 
 ---
 
-# Pedro Agentware: A Bare-Metal Harness
+# Lo Agent: A Bare-Metal Harness
 
-Pedro is a concrete example of the local model:
+Lo Agent is a concrete example of the local model:
 
 ```text
 User
   ↓
-Pedro Agentware
+Lo Agent
   ├── prompt and skills
   ├── local files
   ├── processes and shell
@@ -162,7 +212,7 @@ Pedro Agentware
 
 The harness is powerful because the machine provides the workspace. The challenge is preserving useful capabilities when that workspace becomes a distributed cloud workload.
 
-[Pedro Agentware](https://github.com/soypetetech/IAM_pedro)
+[Lo Agent](https://github.com/IMJONEZZ/lo-agent)
 
 ---
 
@@ -899,7 +949,7 @@ That difference changes almost everything.
 
 # What's Next?
 
-These are the problems agentic middleware must solve:
+These are the problems agentic middleware—or Agentware—must solve:
 
 **identity, authorization, context, and policy for autonomous agents.**
 
