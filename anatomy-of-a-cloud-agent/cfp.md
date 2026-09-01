@@ -4,11 +4,9 @@ Anatomy of a Cloud-Native Agent: What Happens When the Harness Leaves Your Lapto
 
 # Session Description
 
-AI agent harnesses were designed around workstations, where the operating system supplies identity, filesystem permissions, credentials, shell access, networking, and state. Move the harness into the cloud and those assumptions break.
+Agent harnesses work remarkably well on laptops because the operating system quietly provides their architecture: a user, filesystem, processes, credentials, network, and persistent local state. Cloud-native infrastructure provides something fundamentally different: a control plane, ephemeral pods, explicit identities, external state, and services connected through APIs. Simply putting a local harness in a container does not bridge that mismatch.
 
-This talk maps a bare-metal agent harness to a CNCF architecture. We examine how a control plane, harness workload, and ephemeral agent tasks support concurrency, shared-file coordination, external APIs, and work that continues while a user is away. We then follow the transition from local files and skills to API-based data sources and agentic middleware.
-
-The goal is not to put Claude Code in a container. It is to understand the architecture for software that acts like a user—and how to make that action scoped, explicit, and auditable.
+This talk explains what must change when a filesystem-oriented agent becomes a cloud-native workload. We decompose the harness into the control plane, runtime, agent tasks, data sources, and agentic middleware, then examine how to scale from one employee and one machine to concurrent tasks that coordinate shared resources, call external APIs, and continue while the user is away. Pedro Agentware provides a concrete local-harness example.
 
 ## What attendees will learn
 
