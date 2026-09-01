@@ -83,7 +83,7 @@ Lo Agent
   ├── grammar-based skills
   ├── local state and event log
   ├── process and filesystem access
-  └── local or self-hosted model server
+  └── model server for all model interactions
 ```
 
 [github.com/IMJONEZZ/lo-agent](https://github.com/IMJONEZZ/lo-agent)
