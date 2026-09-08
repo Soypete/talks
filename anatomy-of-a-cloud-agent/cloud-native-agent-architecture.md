@@ -1,4 +1,6 @@
-# When the Agent Leaves the Laptop, Context Becomes Infrastructure
+# Anatomy of a Cloud Agent Harness
+
+> What happens when the harness leaves your laptop?
 
 AI agents were born on workstations.
 
@@ -15,7 +17,58 @@ The laptop is not just where the agent runs. It is part of the agent's security 
 
 When the harness moves into the cloud, those answers stop being implicit. Compute becomes ephemeral. Identity becomes a workload identity. Secrets arrive through explicit delivery mechanisms. Access is mediated through APIs, connectors, and policies. State must be externalized. Every action needs an accountable subject.
 
-That is the architectural shift from a bare-metal agent harness to a cloud-native agent architecture.
+That is the architectural shift from a bare-metal agent harness to a cloud agent harness.
+
+This article uses the locally available Lo Agent checkout as the concrete reference
+for the local side of that transition. The checkout was last observed at version
+`0.2.23`, commit `b421f60`; it has not been refreshed for this article. The point is
+not to claim that this snapshot is the latest Lo release, but to name the seams a
+cloud design must preserve.
+
+## The actual anatomy of a local harness
+
+Lo makes the “harness around the model” concrete. Its important layers are:
+
+```text
+model client / inference adapters
+              ↓
+agent loop: decide → call → observe → continue or stop
+              ↓
+tools, skills, permissions, and sandbox
+              ↓
+memory, compaction, events, and replay
+              ↓
+sessions, coordinator, web UI, integrations, and telemetry
+```
+
+The model is only one component. The harness owns the loop, decides which tools are
+visible, validates and executes calls, manages context, records events, and exposes a
+durable result. Lo’s repository makes these boundaries visible in code: inference
+adapters, `agent/loop.py`, skills and tools, permissions and sandboxing, event logging
+and replay, MCP/UTCP integrations, session coordination, and the web interface.
+
+This is the anatomy to carry into the cloud—not a laptop-shaped process copied into a
+container.
+
+## Guidelines for designing the harness
+
+1. **Separate the model, loop, and harness.** The model proposes an action; the loop
+   advances the task; the harness supplies reliability and policy.
+2. **Give every job a contract.** Define allowed tools, inputs, outputs, stop condition,
+   and machine-checkable definition of done before inference starts.
+3. **Scope tools by phase.** Do not expose every capability to every turn.
+4. **Validate outside the model.** Check tool names, arguments, schemas, authorization,
+   and final results in deterministic code.
+5. **Make recovery explicit.** Handle malformed calls, useful error feedback, bounded
+   retries, backoff, and a clear exhausted-retry state.
+6. **Treat context as runtime state.** Persist events and results; compact old rounds
+   deliberately; measure what was removed and retained.
+7. **Keep policy outside the prompt.** Permissions, secrets, network access, and
+   authorization must be enforced by tools and services.
+8. **Carry two identities.** Record workload identity and delegated human identity.
+9. **Externalize state; make compute replaceable.** A task should survive a pod restart.
+10. **Observe the completed job.** Measure phases, rounds, tools, retries, tokens,
+    latency, exit reason, verification, and cost—not just streamed text.
 
 ## From one laptop to an agent workforce
 
@@ -85,7 +138,7 @@ APIs and cloud-native services
 
 It is the layer that lets us move from a harness that manipulates files to a system that coordinates APIs, queues, databases, and other services. It also gives the platform a place to handle identity, retries, concurrency, and auditability.
 
-The open source [Lo Agent](https://github.com/IMJONEZZ/lo-agent) repository provides a concrete starting point for examining the bare-metal harness model and asking what must change when its workspace becomes a cloud-native workload.
+The open source [Lo Agent](https://github.com/IMJONEZZ/lo-agent) repository provides a concrete starting point for examining the bare-metal harness model and asking what must change when its workspace becomes a cloud-native workload. Use the locally pinned checkout as a snapshot for discussion, not as a substitute for checking the current upstream implementation.
 
 ## From model capability to governed velocity
 
@@ -97,4 +150,4 @@ The answer depends on architecture. Compute should be replaceable. Credentials s
 
 That is how agents move from impressive demonstrations to dependable infrastructure.
 
-The goal is to make the path from a local, filesystem-oriented harness to a scalable, API-oriented cloud-native agent understandable and buildable. Agentware is the next step: the middleware and runtime that turns the local harness pattern into elastic, concurrent cloud workloads.
+The goal is to make the path from a local, filesystem-oriented harness to a scalable, API-oriented cloud agent understandable and buildable. Agentware is the next step: the middleware and runtime that turns the local harness pattern into elastic, concurrent cloud workloads.
