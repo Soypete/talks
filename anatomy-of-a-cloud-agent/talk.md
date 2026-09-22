@@ -2,13 +2,13 @@
 marp: true
 theme: gaia
 paginate: true
-title: "Anatomy of a Cloud-Native Agent Harness"
+title: "Anatomy of a Cloud Agent Harness"
 description: "What happens when the harness leaves your laptop?"
 ---
 
 <!-- _class: lead -->
 
-# Anatomy of a Cloud-Native Agent Harness
+# Anatomy of a Cloud Agent Harness
 
 ## What happens when the harness leaves your laptop?
 
@@ -88,6 +88,47 @@ Lo Agent
 
 [github.com/IMJONEZZ/lo-agent](https://github.com/IMJONEZZ/lo-agent)
 
+The local checkout used for this talk is version `0.2.23`, commit `b421f60`.
+It has not been pulled recently; treat it as a concrete snapshot, not a claim about
+the latest upstream release.
+
+---
+
+# The Actual Anatomy of Lo
+
+```text
+model client / inference adapters
+              ↓
+agent loop: decide → call → observe → continue or stop
+              ↓
+tools · skills · permissions · sandbox
+              ↓
+memory · compaction · events · replay
+              ↓
+sessions · coordinator · web UI · MCP/UTCP · telemetry
+```
+
+Lo is useful because these responsibilities are visible as separate seams. The
+model is not the harness: the harness owns the loop, tool visibility, execution,
+context lifecycle, event history, and the durable result.
+
+---
+
+# Anatomy Guidelines
+
+1. Separate **model**, **agent loop**, and **harness** responsibilities.
+2. Define a bounded job contract and machine-checkable definition of done.
+3. Scope tools by phase; do not expose every capability to every turn.
+4. Validate tool calls, authorization, and final results outside the model.
+5. Make retries, rescue parsing, backoff, and exhausted-retry states explicit.
+6. Treat context, compaction, events, and replay as runtime state.
+7. Enforce permissions, secrets, and network policy outside the prompt.
+8. Carry workload identity and delegated user identity through every action.
+9. Externalize state so compute can be ephemeral and replaceable.
+10. Observe the completed job: tools, retries, tokens, latency, verification, and cost.
+
+---
+
 The question is not whether this works locally. It does. The question is what each component becomes in the cloud.
 
 ---
@@ -100,7 +141,7 @@ One employee can run one harness on one laptop. A cloud-native system must suppo
 - compute that starts when work arrives
 - coordination around shared files and resources
 - connections to external systems
-- work that continues while the user is away
+- work that continues while the user is away—and longer than any one machine
 
 These are familiar distributed-systems problems—with an autonomous decision-maker inside.
 
@@ -144,75 +185,18 @@ The harness must pivot from navigating one machine to coordinating explicit data
 
 ---
 
-# Agentic Middleware
-
-```text
-Agent task
-    ↓
-Agentic middleware
-  routes context
-  selects tools
-  coordinates state
-  enforces access
-  records actions
-    ↓
-APIs and cloud-native services
-```
-
-Middleware is the translation layer between probabilistic decisions and the deterministic interfaces of the cloud.
-
----
-
 <!-- _class: lead -->
 
 # Because the Laptop Is Part of the Agent
 
+The harness gets all of this for free:
+
 ```text
-User
-  ↓
-Agent Harness
-  ↓
-Operating System
-  ↓
-Filesystem + Processes + Credentials + Network
+identity · filesystem · credentials · processes
+network · persistent state · installed tools
 ```
 
 **The machine is doing far more work than we give it credit for.**
-
----
-
-# Anatomy of a Local Agent Harness
-
-The harness gets:
-
-- an identity
-- a filesystem
-- environment variables and credentials
-- processes and shell access
-- network access
-- persistent state
-- user-installed tools
-
----
-
-# Lo Agent: A Bare-Metal Harness
-
-Lo Agent is a concrete example of the local model:
-
-```text
-User
-  ↓
-Lo Agent
-  ├── prompt and skills
-  ├── local files
-  ├── processes and shell
-  ├── credentials
-  └── model provider
-```
-
-The harness is powerful because the machine provides the workspace. The challenge is preserving useful capabilities when that workspace becomes a distributed cloud workload.
-
-[Lo Agent](https://github.com/IMJONEZZ/lo-agent)
 
 ---
 
@@ -753,6 +737,40 @@ Containers are supposed to disappear.
 
 ---
 
+# But the Work Outlives the Session
+
+The context window fills. The task is not done.
+
+```text
+Session 1 ──▶ context full ──▶ ✗
+Session 2 ──▶ starts with no memory of session 1
+```
+
+Anthropic describes this as engineers working in shifts, each arriving
+with no memory of the previous shift.
+
+The laptop has the same problem. It just hides it behind a directory
+that happens to still be there.
+
+---
+
+# Two Failures That Look Different
+
+```text
+CONTEXT DIES              COMPUTE DIES
+the window fills          the pod is evicted
+    │                          │
+    └──────────┬───────────────┘
+               ▼
+    the work must continue anyway
+```
+
+Long-horizon and ephemeral are the same requirement, seen from two sides.
+
+**Both are solved by the same move: get the state out.**
+
+---
+
 # Separate Compute from State
 
 ```text
@@ -770,7 +788,59 @@ The agent's operational state cannot.
 
 ---
 
-# The Agent Should Be Ephemeral
+# State Is Not One Thing
+
+Each kind has a different lifetime—and a different owner.
+
+| State | Survives | Owned by |
+|---|---|---|
+| Conversation | context reset | the harness |
+| Task progress | pod restart | the coordinator |
+| Workspace | or is rebuilt from source | the task |
+| Authority | the task itself | a broker the agent can't read |
+| Audit | everything | append-only, not the agent |
+
+A single event log is simpler. But authority and audit must **not** be
+writable by the thing they constrain.
+
+---
+
+# We Must *Treat* Agents as Ephemeral
+
+Not because pods crash. Because we deploy.
+
+```text
+You ship a new harness version.
+        │
+        ▼
+Rolling update drains the pod
+        │
+        ▼
+Your agent is 40 minutes into a task.
+```
+
+Kubernetes is not going to ask whether the agent was finished.
+
+---
+
+# The Handoff Has to Be a Real Boundary
+
+```text
+Pod A          step completes ──▶ state persisted
+                                        │
+                        (pod terminates)│
+                                        ▼
+Pod B          reads state ──▶ continues at the next step
+```
+
+This only works if the unit of work is a **step**, not a session—
+small enough to finish, durable enough to hand off.
+
+**Persist between steps, not at the end.**
+
+---
+
+# So the Rules Follow
 
 The **authority** should be durable.
 
@@ -783,6 +853,37 @@ The **actions** should be auditable.
 The **compute** should be disposable.
 
 ## Sound familiar?
+
+---
+
+<!-- _class: lead -->
+
+# This Is the Trade the Cloud Offers
+
+## Externalize state, and compute becomes disposable.
+
+## Make compute disposable, and the work can run longer than any machine.
+
+The laptop could never offer this. Its state and its compute are the same thing—
+close the lid and the shift ends.
+
+---
+
+# Ephemeral *Because* Long-Horizon
+
+Not a compromise. A consequence.
+
+```text
+state outside compute
+        │
+        ├──▶ the pod can die         (ephemeral)
+        │
+        └──▶ the work resumes        (long-horizon)
+```
+
+A month-long task on compute that lives five minutes at a time.
+
+**That is the thing the cloud is actually for.**
 
 ---
 
@@ -820,7 +921,7 @@ Compute + State + Identity + Networking + Configuration + Secrets
 
 ---
 
-# Anatomy of the Cloud-Native Agent
+# Anatomy of the Cloud Agent
 
 ```text
                  USER
@@ -879,6 +980,41 @@ It is:
 **Data engineering**
 
 with an LLM in the middle.
+
+---
+
+# Anthropic Got Here Too
+
+Building managed agents at scale, they landed on the same decomposition:
+
+```text
+SESSION    durable append-only event log, outside the harness
+HARNESS    stateless brain — wake(sessionId), resume from the log
+SANDBOX    interchangeable hands — execute(name, input)
+```
+
+> "The session is not Claude's context window."
+
+Their section title is **"Don't adopt a pet."**
+
+*Scaling Managed Agents, April 2026*
+
+---
+
+# Where That Account Stops
+
+They solve state and keep credentials out of the sandbox.
+
+```text
+SOLVED                        STILL OPEN
+ephemeral compute             whose authority is this?
+durable session               per-call policy
+credentials outside           attribution across delegation
+```
+
+A stateless brain still acts on someone's behalf.
+
+**Nothing in `wake(sessionId)` says whose behalf.**
 
 ---
 
@@ -947,11 +1083,156 @@ That difference changes almost everything.
 
 ---
 
+# We Have Built This Before
+
+Every serious web framework ships the same directory:
+
+```text
+middleware/
+├── authentication
+├── authorization
+├── sessions
+├── rate limiting
+└── logging
+```
+
+Nobody puts authentication in the view function.
+
+**We factored it out because every request needs it, and no handler should be
+trusted to remember.**
+
+---
+
+# A Tool Call Is a Request
+
+```text
+tool call ──▶ [ middleware ] ──▶ execute ──▶ result
+                    │
+      authenticate · authorize · limit · audit
+```
+
+Agent frameworks are rediscovering this: guardrails, per-tool permissions,
+MCP gateways. Real policy, outside the prompt.
+
+**But the model is the least trustworthy handler we have ever shipped.**
+
+---
+
+# The Cloud Removes the Backstop
+
+Most agent middleware today assumes a human is nearby.
+
+| | Laptop | Cloud |
+|---|---|---|
+| Policy says "ask" | user sees the prompt | nobody is there |
+| On failure | user notices | proceeds silently |
+| Blast radius | one machine | every system reachable |
+| Delegation | none | subagents and hops |
+
+**"Ask" is not a policy. It is a human in a loop that the cloud removed.**
+
+Middleware must move outside the harness process—and fail closed.
+
+---
+
 # What's Next?
 
 These are the problems agentic middleware—or Agentware—must solve:
 
 **identity, authorization, context, and policy for autonomous agents.**
+
+---
+
+# Attribution Dies at the First Hop
+
+An agent spawns a subagent. The subagent runs as a service account.
+
+```text
+Miriah ──▶ Agent ──▶ Subagent ──▶ delete_table()
+                                       │
+                                       ▼
+                         audit log: "the agent did it"
+```
+
+Nobody can answer who authorized it, what it touched, or what it cost.
+
+**Every problem in this talk shows up again at every delegation hop.**
+
+---
+
+# One Interception Point
+
+```text
+        tool call
+            │
+            ▼
+    ┌───────────────┐
+    │  POLICY       │  allow · deny · filter
+    │  fail-closed  │  no caller context ──▶ denied
+    └───────┬───────┘
+            │
+            ▼
+        execute
+            │
+            ▼
+      audit record        emitted either way
+```
+
+The record shape does not change when you swap frameworks or models.
+
+---
+
+# The Human Survives the Delegation
+
+```python
+caller = CallerContext(
+    user_id="user-123",
+    invoking_subject="user-123",
+)
+
+child = caller.delegate(span="subagent-1")
+
+# child.invoking_subject == "user-123"
+# child.delegation_depth == 1
+```
+
+**Workload identity and delegated identity, carried together, through every hop.**
+
+---
+
+# What Lands in the Audit Row
+
+```text
+invoking subject          who authorized this
+delegation chain          parent_span, delegation_depth
+originating framework     which harness made the call
+argument digest           SHA-256, not the arguments
+resources touched         what data was involved
+policy decision + rule    why it was allowed or denied
+tokens, latency           what it cost
+```
+
+Append-only. Metrics are rollups over these records—there is no
+second instrumentation path.
+
+---
+
+# Agentware
+
+Policy enforcement and audit middleware for agent tool calls.
+
+**Go · Python · TypeScript** · MIT
+
+- fail-closed policy: no caller context is denied, not trusted
+- memory writes go through the same chain—not a side channel
+- harness contract: govern a harness without adopting a framework
+- tenant-side execution; the control plane holds metadata only
+
+[github.com/HaikeiLabs/Agentware](https://github.com/HaikeiLabs/Agentware)
+
+---
+
+<!-- _class: lead -->
 
 If you're building agents that need to operate safely across real enterprise systems:
 
@@ -968,3 +1249,111 @@ If you're building agents that need to operate safely across real enterprise sys
 **What happens when the harness leaves your laptop?**
 
 Miriah Peterson · @Soypete
+
+---
+
+<!-- _class: lead -->
+
+# Bonus
+
+## What actually wakes the next pod?
+
+---
+
+# The Handoff Needs a Mechanism
+
+Persisting state is only half of it. Something has to *notice*.
+
+```text
+step completes ──▶ ??? ──▶ next pod starts
+```
+
+Three honest options:
+
+| Mechanism | The next step is... |
+|---|---|
+| Queue | a message someone consumes |
+| Controller | the gap between desired and actual |
+| Event log + cursor | the next unread offset |
+
+---
+
+# The Agent Loop Is a Reconciliation Loop
+
+```text
+observe state ──▶ decide one action ──▶ converge ──▶ repeat
+```
+
+Kubernetes controllers have worked this way the whole time.
+
+The difference is that the decider is probabilistic—which is why the
+policy layer sits between the decision and the action.
+
+**We already know how to run this pattern. We have never run it with a model inside.**
+
+---
+
+# But Not Every Log Is the Same Log
+
+```text
+WORK LOG          drives progress    agent advances the cursor
+AUDIT LOG         records history    agent cannot write it
+AUTHORITY         grants access      agent cannot read it
+```
+
+One ordered stream can drive the work.
+
+It must not be the same stream that constrains it.
+
+---
+
+<!-- _class: lead -->
+
+# Bonus
+
+## A different kind of ephemeral
+
+---
+
+# Mayfly Chat
+
+Transient chat channels for agents—disposable by design.
+
+```text
+New Channel ──▶ URL ──▶ hand it to your agents ──▶ they talk
+```
+
+Agents on **different machines, different networks, different clouds**
+coordinating mid-task. Agents can even create their own channels.
+
+Named for the insect. The lifespan is the point.
+
+[blog.exe.dev/mayfly-chat](https://blog.exe.dev/mayfly-chat) · Josh Bleecher Snyder
+
+---
+
+# Two Kinds of Ephemeral
+
+```text
+THIS TALK                    MAYFLY
+ephemeral compute            ephemeral channel
+durable state                no state worth keeping
+the work must survive        the conversation should not
+```
+
+Both are correct. They are answering different questions.
+
+---
+
+# And a Warning in the Footnotes
+
+> "once you have the URL, you have root. Every client is equally
+> privileged. Every client can read everything."
+
+Fine for a throwaway channel between agents you already trust.
+
+This is also exactly the model Problem #5 warns about:
+
+**a capability URL is not a delegated identity.**
+
+The fun version and the enterprise version are not the same system.

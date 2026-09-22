@@ -80,3 +80,26 @@ This repository uses:
 - Main branch: `main`
 - Current branch: `miriah-gowest`
 - Repository is a personal talks collection, so commit style is informal but descriptive
+
+## Wiki (personal knowledge base)
+
+You have a `wiki` command for a personal LLM-Wiki knowledge base. It prints
+results to stdout, so run it and read the output.
+
+- **Before answering** about a topic, search for prior notes/claims:
+  `wiki search <query> [--top-k N] [--json]`
+- **When you learn something durable**, capture it:
+  `wiki capture --title "..." --type claim --content "..." [--link predicate:target]`
+- **Stats:** `wiki stats`
+- **Reconcile the inbox into the graph** (usually a human does this, not you):
+  `wiki organize`
+
+Rules:
+- `--type` must be one of: `claim`, `contradiction`, `decision`, `entity`,
+  `source`.
+- Link `predicate` must be one of: `derived_from`, `contradicts`, `supports`,
+  `about`, `relates_to`.
+- Invalid types/predicates are rejected — do not guess or coerce a value.
+- Captures land in an inbox; do **not** edit wiki pages directly.
+- If `wiki` is not on PATH, run
+  `python3 /Users/soypete/code/herdr-wiki-plugin/bin/wiki <args>`.
