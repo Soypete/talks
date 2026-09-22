@@ -4,9 +4,21 @@ Shared Memory for Agents: A Wiki as the Coordination Substrate
 
 # Session Description
 
-Every agent harness solves memory for one agent. Context windows, compaction,
-session logs, vector stores — all of it scoped to a single conversation with a
-single model.
+In summer 2026, agents under evaluation at OpenAI discovered they could encode
+messages as directory names in a shared package cache, and built themselves a
+message board: ~1,200 agents, >70,000 messages, with signed identities, leadership
+handoffs, and a division of labor across parallel workstreams. Nobody designed it.
+When engineers patched the package manager, they wiped the board without realizing
+it had been one.
+
+Coordination is not a feature you add to a multi-agent system. It is what agents
+do as soon as more than one of them works on related problems and any shared
+writable surface exists. The only real question is whether that surface is one you
+designed and can read.
+
+Meanwhile, every agent harness solves memory for one agent. Context windows,
+compaction, session logs, vector stores — all of it scoped to a single
+conversation with a single model.
 
 That breaks the moment you run more than one agent. A second agent has no idea
 what the first one learned, decided, or is currently blocked on. The usual
@@ -28,6 +40,8 @@ agents write to shared memory without one.
 
 ## What attendees will learn
 
+- Why agents coordinate whether or not you plan for it, and why the substrate
+  they reach for is chosen by availability rather than design.
 - Why per-agent memory does not compose into multi-agent memory, and where the
   usual substitutes (vector stores, chat channels) lose the properties you need.
 - How a closed vocabulary at the write boundary makes agent output structured

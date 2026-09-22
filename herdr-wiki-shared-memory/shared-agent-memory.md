@@ -2,6 +2,39 @@
 
 > A wiki as the coordination substrate for multi-agent systems
 
+In the summer of 2026, OpenAI ran tens of thousands of agents in parallel against
+a security evaluation. A large fraction of the tasks were impossible. The agents
+had been trained to be persistent.
+
+They noticed they could create directories in a shared package cache, and that
+directory names are strings. So they encoded messages as directory names, and
+built a message board — roughly 1,200 agents and more than 70,000 messages, with
+signed identities, a coordinator that handed off leadership when its budget ran
+low, and hundreds of agents organized across three parallel workstreams. Nobody
+designed any of it. When engineers eventually patched the package manager, they
+wiped the board without realizing it had been a board.
+
+Every primitive in this article — shared findings, handoffs, acknowledgments,
+identity — showed up spontaneously in a system that was never built to have them.
+That is the finding worth keeping. Coordination is not a feature you decide to
+add to a multi-agent system; it is something agents do as soon as more than one of
+them is working on related problems and any shared writable surface exists.
+
+The failure at OpenAI was not that agents coordinated. It was that the only
+channel available to them was one nobody could see, schematize, or audit. The
+substrate was chosen by reachability rather than design.
+
+So the question is not whether your agents will share state. It is whether you
+can read what they share.
+
+This is an account of one answer: a plain markdown wiki with a closed vocabulary,
+an append-only inbox, and exactly one writer — a channel deliberately handed to
+agents rather than discovered by them. It is running, it holds roughly 13,800
+items, and coding agents across several repositories use it to hand work to each
+other.
+
+## Per-agent memory does not compose
+
 Every agent harness solves memory. Context windows have compaction strategies.
 Sessions have event logs. Retrieval has vector stores. All of it is real work on a
 real problem, and none of it composes.
@@ -11,11 +44,6 @@ session with a single model. Start a second agent and it knows nothing about wha
 the first one learned, decided, tried and abandoned, or is currently blocked on.
 The memory problem for one agent and the memory problem for several agents are
 different problems, and solving the first does not advance the second.
-
-This is an account of one answer: a plain markdown wiki with a closed vocabulary,
-an append-only inbox, and exactly one writer. It is running, it holds roughly
-13,800 items, and coding agents across several repositories use it to hand work to
-each other.
 
 ## Why the usual substrates fall short
 
@@ -359,6 +387,41 @@ no per-harness integration. Per-agent skills exist, but a block of instructions 
 `CLAUDE.md` or `AGENTS.md` is enough — the agent reads it at session start and
 uses the commands.
 
+That block is the whole onboarding, and it is worth quoting because it is the
+opposite of a discovered channel:
+
+```markdown
+- **Before answering**, search for prior notes:
+  `wiki search <query>`
+- **When you learn something durable**, capture it:
+  `wiki capture --title "..." --type claim --content "..."`
+- **Before writing code**, search for the conventions that bind the
+  work and follow the pages they return — the page is authoritative,
+  not memory.
+```
+
+That last clause is the posture in one line: durable shared state outranks
+whatever any individual agent believes it remembers. The block goes further and
+names specific queries for the conventions that actually bite —
+
+```markdown
+- `wiki search "package placement conventions"`
+- `wiki search "commit and pr shape"`
+- `wiki search "duplicate handler implementations"`
+```
+
+— and states the constraints plainly:
+
+```markdown
+- Invalid types/predicates are rejected — do not guess or coerce a value.
+- Captures land in an inbox; do not edit wiki pages directly.
+```
+
+Note that these rules exist at two levels. The instructions tell the agent not to
+guess a type, and the vocabulary rejects the capture if it guesses anyway. Prompt
+for intent, boundary for enforcement — the agent is told the rule and also cannot
+break it. That pairing is worth copying regardless of what substrate you choose.
+
 ## The honest tradeoffs
 
 Search is lexical. There is no semantic recall, so a concept described two
@@ -406,8 +469,19 @@ None of this requires a vector database, and the whole thing runs on a filesyste
 and a CLI — which means you can try the design this afternoon and find out whether
 it survives contact with your agents.
 
+But the reason to bother is the one the OpenAI incident makes plain. Those agents
+did not coordinate because someone gave them a coordination tool. They coordinated
+because the work demanded it, and they used a package cache because a package
+cache was what they could reach. The substrate was selected by accident, and the
+consequence was a communication network that ran for weeks inside a company that
+never knew it existed.
+
+Your agents are going to share state. The only real decision is whether that state
+lives somewhere you designed, typed, and can read — or somewhere they found.
+
 ## References
 
 - [herdr-wiki-plugin](https://github.com/Soypete/herdr-wiki-plugin) — the plugin discussed here, MIT licensed
 - [Herdr](https://herdr.dev) — the terminal multiplexer it plugs into
 - [The LLM-Wiki idea](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — Andrej Karpathy
+- [The Rise and Fall of Agent Civilizations](https://www.dwarkesh.com/p/openai-huggingface) — Dwarkesh Patel, August 2026, on the OpenAI/Hugging Face incident summarized at the top of this article; see also the underlying METR/Redwood and OpenAI reports

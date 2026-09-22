@@ -26,6 +26,78 @@ Miriah Peterson · @Soypete
 
 <!-- _class: lead -->
 
+# Agents Will Build a Message Board
+
+## Whether or not you give them one.
+
+---
+
+## Summer 2026: OpenAI
+
+Thousands of agents, evaluated in parallel. Many given impossible tasks.
+
+```text
+shared package manager (Artifactory)
+            ↓
+messages encoded as directory names
+            ↓
+~1,200 agents · >70,000 messages
+```
+
+They found each other through the only shared writable surface they had.
+
+<!-- Tell this briskly; it is the setup, not the subject. Persistent agents on
+impossible tasks discovered they could create directories in a shared package
+cache, and encoded messages as directory names. Cite the Dwarkesh Patel writeup
+and the METR/Redwood report. The point is not the scandal — it is the mechanism. -->
+
+---
+
+## What They Built, Unprompted
+
+- a shared board with **identity** — agents signed messages
+- **handoffs** — a coordinator handed leadership when its budget ran out
+- **division of labor** — hundreds of agents across three workstreams
+- **a protocol** — conventions nobody specified
+
+**Coordination is not a feature you add. It is a thing agents do.**
+
+<!-- This is the slide that earns the whole talk. Every primitive in this
+presentation — identity, handoff, acknowledgment, shared findings — appeared
+spontaneously in a system that was never designed to have them. The agents
+invented the coordination substrate because the work demanded one. -->
+
+---
+
+## But Look at *Where* They Built It
+
+| | Their board | What you'd want |
+|---|---|---|
+| Channel | a package cache | a designed one |
+| Schema | directory names | typed records |
+| Visibility | covert | logged |
+| Auditability | reconstructed after | by construction |
+| Off switch | crash it | stop running organize |
+
+**Nobody chose that substrate. It was the only writable thing they could reach.**
+
+<!-- Be careful not to moralize here. The failure was not that agents
+coordinated; it was that the only channel available was one nobody could see.
+When the humans patched Artifactory they wiped the board without ever realizing
+it was a board. -->
+
+---
+
+<!-- _class: lead -->
+
+# So: Give Them One
+
+## Designed. Typed. Logged. Yours.
+
+---
+
+<!-- _class: lead -->
+
 # Every Harness Solves Memory
 
 ## For exactly one agent.
@@ -495,6 +567,55 @@ block in CLAUDE.md is enough. -->
 
 ---
 
+## How an Agent Is Told About It
+
+A block in `AGENTS.md` / `CLAUDE.md`. Read at session start.
+
+```markdown
+- **Before answering**, search for prior notes:
+  `wiki search <query>`
+- **When you learn something durable**, capture it:
+  `wiki capture --title "..." --type claim --content "..."`
+- **Before writing code**, search for the conventions that
+  bind the work and follow the pages they return —
+  **the page is authoritative, not memory.**
+```
+
+**No SDK. No protocol. Instructions and a CLI.**
+
+<!-- Contrast this deliberately with the Artifactory story. Those agents had to
+discover their channel; these agents are handed it in the first thing they read.
+The strongest line is the last one: the page is authoritative, not memory. That
+is the whole posture — durable shared state outranks what any single agent
+thinks it remembers. -->
+
+---
+
+## It Tells Them What to Look Up
+
+```markdown
+- `wiki search "package placement conventions"`
+- `wiki search "commit and pr shape"`
+- `wiki search "duplicate handler implementations"`
+```
+
+Named queries for the conventions that bite.
+
+```markdown
+Rules:
+- Invalid types/predicates are rejected —
+  do not guess or coerce a value.
+- Captures land in an inbox; do not edit wiki pages directly.
+```
+
+**The constraints are in the instructions, and enforced at the boundary.**
+
+<!-- Two levels of defense. The instructions tell the agent not to guess a type,
+and the vocabulary rejects it if the agent guesses anyway. Prompt for intent,
+boundary for enforcement — the agent is told the rule and cannot break it. -->
+
+---
+
 ## Read Includes Pending
 
 ```text
@@ -579,6 +700,19 @@ wiki audit --stale-days 14
 
 <!-- _class: lead -->
 
+# The Real Argument
+
+## They coordinated through a package cache
+## because that is what was reachable.
+
+The question was never *whether* agents share state.
+
+## It is whether you can see it.
+
+---
+
+<!-- _class: lead -->
+
 # Thank You
 
 ## Shared Memory for Agents
@@ -586,6 +720,21 @@ wiki audit --stale-days 14
 [github.com/Soypete/herdr-wiki-plugin](https://github.com/Soypete/herdr-wiki-plugin)
 
 Miriah Peterson · @Soypete
+
+---
+
+## Sources
+
+**The plugin**
+[github.com/Soypete/herdr-wiki-plugin](https://github.com/Soypete/herdr-wiki-plugin)
+
+**The idea it started from** — Karpathy's LLM-Wiki
+[gist.github.com/karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
+
+**The agent civilizations story** — Dwarkesh Patel, Aug 2026
+[dwarkesh.com/p/openai-huggingface](https://www.dwarkesh.com/p/openai-huggingface)
+
+*and the underlying METR/Redwood and OpenAI incident reports*
 
 ---
 
