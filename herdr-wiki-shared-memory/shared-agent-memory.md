@@ -71,8 +71,33 @@ memory.
 
 **Exactly one operation writes the graph.** A separate `organize` step promotes
 inbox records into typed pages, updates the index, appends to the log, and moves
-each record to a processed directory. Because there is one writer, the graph is
-never in a partially-updated state, and every change is a reviewable batch.
+each record to a processed directory. A lock file serializes it, so single-writer
+is enforced in code rather than by convention, and the graph is never in a
+partially-updated state.
+
+Organize is worth being precise about, because it is where people assume the
+intelligence lives. It calls no model. It is a pure function of the record:
+
+```python
+vocab.check_capture(entity_type, links)   # reject, or continue
+page_content = content + rendered_links
+adapter.write_memory(page_content, {"category": entity_type})
+log_append(...)
+move(record, processed_dir)
+```
+
+A record whose type is not in the vocabulary goes to `inbox/rejected/`. Everything
+else is filed at `wiki/<entity_type>/` — the declared type *is* the directory.
+
+That means classification happens at capture time, by the agent, and nowhere else.
+The agent decides a finding is a `decision` rather than a `claim`; the boundary
+checks that `decision` is a real type; organize files it. The human's role is
+deciding when to run the promotion, not what anything is.
+
+This division is what makes the closed vocabulary load-bearing rather than
+decorative. If organize could reinterpret or normalize a bad type, rejecting at
+the boundary would accomplish nothing — the system would just fix things up later,
+and "later" is where structure goes to die.
 
 **Reads see pending writes.** Search reads the graph *and* the inbox, marking
 pending records. An agent that captures at 10:00 is visible to an agent searching
@@ -216,10 +241,11 @@ The closed vocabulary rejects captures. An agent that picks a type outside the
 list gets an error rather than a coerced page. That is intentional and it is still
 friction.
 
-Reconciliation needs a human. `organize` is not automatic, by design, because it
-is the step where judgment applies. The mitigation is that search reads the inbox,
-so a delayed organize costs tidiness rather than visibility — it behaves more like
-a garbage collector than a lock.
+Classification rests on the agent. `organize` calls no model and makes no
+judgment, so a capture filed under the wrong type produces a page under the wrong
+type. The vocabulary catches types that do not exist; it cannot catch a plausible
+type that is simply wrong. The mitigation is that pages are files — a
+misclassification is fixed by moving one.
 
 Markdown on disk means no transactions and no queries beyond grep and directory
 structure. In exchange:

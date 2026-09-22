@@ -165,6 +165,31 @@ the plugin inventing terms. -->
 
 ---
 
+## Who Decides What Something Is?
+
+```text
+AGENT      chooses the type         ← the only judgment here
+VOCABULARY accepts or rejects it    ← closed set, deterministic
+ORGANIZE   files it                 ← mechanical
+HUMAN      decides when to run      ← scheduling, not sorting
+```
+
+**Organize calls no model.** It validates, renders links, writes the page
+to `wiki/<type>/`, logs it, moves the record.
+
+```python
+vocab.check_capture(entity_type, links)   # or reject
+adapter.write_memory(content, {"category": entity_type})
+```
+
+<!-- This is the slide that makes the closed vocabulary matter. If organize could
+reinterpret a bad type, the vocabulary would be decorative. Because promotion is a
+pure function of the record, the agent's declared type is the classification, and
+the boundary either accepts it or throws it in rejected/. A LockFile serializes
+organize, so single-writer is enforced in code rather than by convention. -->
+
+---
+
 ## Typed Links Make It a Graph
 
 ```text
@@ -321,7 +346,7 @@ search ──┬──▶ wiki graph      (settled)
 Agent A captures at 10:00.
 Agent B searches at 10:01 and **sees it**.
 
-Organize happens later, on a human's schedule.
+Organize runs later — but it sorts nothing. It only promotes.
 
 **Visibility is immediate. Commitment is deliberate.**
 
@@ -343,7 +368,7 @@ inbox too. The graph is the settled record; the inbox is the working set. -->
 |---|---|
 | lexical search | no semantic recall; phrasing matters |
 | closed vocabulary | captures get rejected |
-| single writer | reconciliation needs a human |
+| agent classifies | a wrong type is a wrong page |
 | markdown on disk | no transactions, no queries beyond grep |
 
 **Every one of these is load-bearing.**
@@ -447,15 +472,16 @@ Agent B: claim   "semantic retrieval wins"
 
 ## "Doesn't the human become the bottleneck?"
 
-Only for **commitment**, never for visibility.
+The human never classifies. **Organize is deterministic** — it could run
+on a timer, a hook, or a cron.
 
 ```text
 capture   → immediate, unbounded, concurrent
 search    → sees pending captures right away
-organize  → batched, reviewable, whenever
+organize  → mechanical; runs whenever you want
 ```
 
-If you never organize, the system still works — you accumulate an inbox
-that search can read.
+Keeping a human in front of it is a **choice about review**, not a
+requirement of the design.
 
 **Organize is a garbage collector, not a lock.**

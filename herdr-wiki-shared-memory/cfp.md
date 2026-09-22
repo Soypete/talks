@@ -34,6 +34,8 @@ agents write to shared memory without one.
   enough to query without constraining what agents can say.
 - How single-writer discipline with an append-only inbox gives you concurrent
   agent writes without locks, conflicts, or a coordination protocol.
+- Why promotion from inbox to graph should be deterministic: the agent classifies
+  at capture time, the boundary validates, and nothing reinterprets it later.
 - How typed coordination primitives — handoff, blocker, ack, release — turn a
   knowledge base into a place agents hand work to each other.
 - Why human-readable storage is an operational advantage, not a compromise: the
@@ -67,8 +69,9 @@ answer, then discover they cannot audit it, cannot diff it, cannot tell which
 agent wrote what, and cannot express that one agent is blocked on another.
 
 This talk offers a substrate built from boring, inspectable parts, and is honest
-about the tradeoffs — retrieval is lexical rather than semantic, reconciliation
-needs a human in the loop, and a closed vocabulary means rejected captures. Those
+about the tradeoffs — retrieval is lexical rather than semantic, classification
+rests entirely on the capturing agent, and a closed vocabulary means rejected
+captures. Those
 constraints are the point, and the talk argues for them explicitly rather than
 presenting the design as free of cost.
 
