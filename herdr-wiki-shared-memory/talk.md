@@ -290,29 +290,25 @@ release can be published.
 
 ## A Worker Orienting Itself
 
-Real session. First thing it does is search:
+Real session. Ticket **HAI-123**. It has not written any code yet.
 
-```bash
-wiki search "HAI-123"    → no results
-wiki search "ADR-016"    → 6 results
-wiki search "ADR-020"    → ...
-```
+* **`wiki search "HAI-123"`**  →  *no results*
+* ↓ &nbsp; nobody has recorded this. widen.
+* **`wiki search "ADR-016"`**  →  *6 results*
+* ↓ &nbsp; adjacent work exists. read it.
+* **`default-policy-bootstrap-and-tool-catalog`**
+* &nbsp;&nbsp;&nbsp;PR #14 · branch `feat/default-policy-bootstrap`
+* &nbsp;&nbsp;&nbsp;migration 029 creates `abac.tool_catalog`
+* ↓
+* > "This is **highly relevant** to HAI-123!"
+* ## It found the branch it was about to duplicate.
 
-```text
-found: default-policy-bootstrap-and-tool-catalog
-       PR #14 · branch feat/default-policy-bootstrap
-       migration 029 creates abac.tool_catalog
-```
-
-> "This is highly relevant to HAI-123!"
-
-**It found the branch it was about to duplicate.**
-
-<!-- This is the retrieval half of the system, and it is worth showing as a
-transcript rather than describing. The worker is starting a task, searches for its
-own ticket, gets nothing, widens to adjacent ADR numbers, and discovers prior work
-including a branch name and a migration number. A miss is informative too: no
-results for HAI-123 means nobody has recorded anything about it yet. -->
+<!-- Advance one step at a time; the payoff only lands if the room follows the
+widening. Beat 1: the worker searches its own ticket and gets nothing. Beat 2: a
+miss is information — nobody has recorded this, so widen rather than stop. Beat 3:
+the adjacent ADR hits. Beats 4-6: what it found, including a branch that already
+exists on origin and a migration number. Beat 7: its own reaction, verbatim.
+Beat 8: the point. It discovered prior work before writing a line of code. -->
 
 ---
 
@@ -327,15 +323,17 @@ search the ticket, the ADR, the component
 └── miss ──▶ nobody has done this; proceed and capture
 ```
 
-Lexical search means **you search for identifiers**: ticket IDs, ADR
-numbers, branch names, migration numbers.
+**A miss is a result.** It means the work is genuinely new.
 
-**That is what agents actually have at the start of a task.**
+Lexical search means you search **identifiers** — ticket IDs, ADR numbers,
+branch names. That is what an agent actually has at the start of a task.
 
-<!-- This reframes the lexical-vs-semantic tradeoff honestly. Semantic search is
-better for fuzzy conceptual recall. But a worker beginning a ticket has exact
-tokens — HAI-123, ADR-016, a PR number — and lexical matching on those is precise
-and predictable. The tradeoff slide later stays, but this is the other side. -->
+<!-- Generalize the transcript into the pattern. The important half is the miss
+branch: an empty result is not a failure, it is permission to proceed, and it
+tells the agent to capture what it learns because it is first. Also reframes the
+lexical-vs-semantic tradeoff: semantic search wins for fuzzy conceptual recall,
+but a worker beginning a ticket has exact tokens, and lexical matching on those is
+precise and predictable. The tradeoffs slide later still stands. -->
 
 ---
 

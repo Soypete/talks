@@ -197,21 +197,27 @@ release can be published.
 </code></pre>
 <p><strong><code>blocks:</code> is an edge. You can query what is stuck.</strong></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-theme="gaia" lang="en-US" data-marpit-pagination="17" style="--paginate:true;--theme:gaia;" data-marpit-pagination-total="37">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-marpit-fragments="10" data-paginate="true" data-theme="gaia" lang="en-US" data-marpit-pagination="17" style="--paginate:true;--theme:gaia;" data-marpit-pagination-total="37">
 <h2 id="a-worker-orienting-itself">A Worker Orienting Itself</h2>
-<p>Real session. First thing it does is search:</p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-bash">wiki search <span class="hljs-string">&quot;HAI-123&quot;</span>    → no results
-wiki search <span class="hljs-string">&quot;ADR-016&quot;</span>    → 6 results
-wiki search <span class="hljs-string">&quot;ADR-020&quot;</span>    → ...
-</code></pre>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-text">found: default-policy-bootstrap-and-tool-catalog
-       PR #14 · branch feat/default-policy-bootstrap
-       migration 029 creates abac.tool_catalog
-</code></pre>
+<p>Real session. Ticket <strong>HAI-123</strong>. It has not written any code yet.</p>
+<ul>
+<li data-marpit-fragment="1"><strong><code>wiki search &quot;HAI-123&quot;</code></strong>  →  <em>no results</em></li>
+<li data-marpit-fragment="2">↓   nobody has recorded this. widen.</li>
+<li data-marpit-fragment="3"><strong><code>wiki search &quot;ADR-016&quot;</code></strong>  →  <em>6 results</em></li>
+<li data-marpit-fragment="4">↓   adjacent work exists. read it.</li>
+<li data-marpit-fragment="5"><strong><code>default-policy-bootstrap-and-tool-catalog</code></strong></li>
+<li data-marpit-fragment="6">   PR #14 · branch <code>feat/default-policy-bootstrap</code></li>
+<li data-marpit-fragment="7">   migration 029 creates <code>abac.tool_catalog</code></li>
+<li data-marpit-fragment="8">↓</li>
+<li data-marpit-fragment="9">
 <blockquote>
-<p>&quot;This is highly relevant to HAI-123!&quot;</p>
+<p>&quot;This is <strong>highly relevant</strong> to HAI-123!&quot;</p>
 </blockquote>
-<p><strong>It found the branch it was about to duplicate.</strong></p>
+</li>
+<li data-marpit-fragment="10">
+<h2 id="it-found-the-branch-it-was-about-to-duplicate">It found the branch it was about to duplicate.</h2>
+</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-theme="gaia" lang="en-US" data-marpit-pagination="18" style="--paginate:true;--theme:gaia;" data-marpit-pagination-total="37">
 <h2 id="search-is-how-a-worker-starts">Search Is How a Worker Starts</h2>
@@ -222,9 +228,9 @@ search the ticket, the ADR, the component
 ┌── hits ──<img class="emoji" draggable="false" alt="▶" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/25b6.svg" data-marp-twemoji=""/> read the pages, follow the links
 └── miss ──<img class="emoji" draggable="false" alt="▶" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/25b6.svg" data-marp-twemoji=""/> nobody has done this; proceed and capture
 </code></pre>
-<p>Lexical search means <strong>you search for identifiers</strong>: ticket IDs, ADR<br />
-numbers, branch names, migration numbers.</p>
-<p><strong>That is what agents actually have at the start of a task.</strong></p>
+<p><strong>A miss is a result.</strong> It means the work is genuinely new.</p>
+<p>Lexical search means you search <strong>identifiers</strong> — ticket IDs, ADR numbers,<br />
+branch names. That is what an agent actually has at the start of a task.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-theme="gaia" lang="en-US" data-marpit-pagination="19" style="--paginate:true;--theme:gaia;" data-marpit-pagination-total="37">
 <h2 id="agents-audit-each-other">Agents Audit Each Other</h2>
@@ -497,14 +503,17 @@ practice. Note that this is not a message queue: a handoff is a durable page wit
 links, searchable months later, not an event that is consumed and gone.</p></div><div class="bespoke-marp-note" data-index="14" tabindex="0"><p>This is a real page from the running wiki, lightly trimmed. Point out what it
 carries: what was done, the evidence that it works, a link to the PR, and a typed
 edge to the entity it concerns. The next agent searches for the entity and finds
-the handoff.</p></div><div class="bespoke-marp-note" data-index="16" tabindex="0"><p>This is the retrieval half of the system, and it is worth showing as a
-transcript rather than describing. The worker is starting a task, searches for its
-own ticket, gets nothing, widens to adjacent ADR numbers, and discovers prior work
-including a branch name and a migration number. A miss is informative too: no
-results for HAI-123 means nobody has recorded anything about it yet.</p></div><div class="bespoke-marp-note" data-index="17" tabindex="0"><p>This reframes the lexical-vs-semantic tradeoff honestly. Semantic search is
-better for fuzzy conceptual recall. But a worker beginning a ticket has exact
-tokens — HAI-123, ADR-016, a PR number — and lexical matching on those is precise
-and predictable. The tradeoff slide later stays, but this is the other side.</p></div><div class="bespoke-marp-note" data-index="18" tabindex="0"><p>Three things to point at. It cites the exact commands it ran, so the
+the handoff.</p></div><div class="bespoke-marp-note" data-index="16" tabindex="0"><p>Advance one step at a time; the payoff only lands if the room follows the
+widening. Beat 1: the worker searches its own ticket and gets nothing. Beat 2: a
+miss is information — nobody has recorded this, so widen rather than stop. Beat 3:
+the adjacent ADR hits. Beats 4-6: what it found, including a branch that already
+exists on origin and a migration number. Beat 7: its own reaction, verbatim.
+Beat 8: the point. It discovered prior work before writing a line of code.</p></div><div class="bespoke-marp-note" data-index="17" tabindex="0"><p>Generalize the transcript into the pattern. The important half is the miss
+branch: an empty result is not a failure, it is permission to proceed, and it
+tells the agent to capture what it learns because it is first. Also reframes the
+lexical-vs-semantic tradeoff: semantic search wins for fuzzy conceptual recall,
+but a worker beginning a ticket has exact tokens, and lexical matching on those is
+precise and predictable. The tradeoffs slide later still stands.</p></div><div class="bespoke-marp-note" data-index="18" tabindex="0"><p>Three things to point at. It cites the exact commands it ran, so the
 correction is checkable. It uses the contradicts edge, so both pages survive and
 the conflict is queryable. And the last line hands an unresolved issue forward to
 whoever picks up that area. None of this survives in a chat log.</p></div><div class="bespoke-marp-note" data-index="19" tabindex="0"><p>These IDs are real. A decision D-007 is recorded by the orchestrator; a
