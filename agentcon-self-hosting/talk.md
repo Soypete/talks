@@ -13,15 +13,14 @@ description: When sustained agent token use makes efficient local inference a fi
 ## Small Dense Models Change the Economics
 
 Miriah Peterson · @Soypete<br>
-AI Builder Day · August 14, 2026
+AgentCon / MCP Con · October 23, 2026
 
 ---
 
 ## Who Am I?
 
-- CEO & founder of a stealth startup
+- CEO of Haikai Labs
 - Co-host of the **Domesticating AI** podcast
-- Creator of Pedro Agentware
 - Building AI systems since 2022
 
 ---
@@ -318,20 +317,17 @@ We need to prove **speed, tool use, and completed work**.
 conference laptop → Tailscale → home inference server → RTX 5090
 ```
 
-## **BUILD: multistep agent web UI**
+Run `cfp_watch` live and watch the loop in the logs:
 
-The UI must expose the loop:
+- search → fetch page → store → notify
+- tool call, arguments, and result per turn
+- token counts and the final Discord message
 
-- task and current step
-- tool call and arguments
-- tool result
-- retries, token counts, and final verification
-
-<!-- Replace the chat-shaped PedroGPT demo. A single streamed response proves model
-speed but not an agent. Use one bounded job requiring at least three visible tool
-calls and a machine-checkable final result. The request still travels from the venue
-over Tailscale to the home RTX 5090. Keep a recorded run as the primary conference
-fallback. -->
+<!-- Run the real agent from the venue against the home 5090 over Tailscale. The
+logs already show the loop: each tool call, its arguments, the result coming back
+as input, and the decision to continue or stop. Keep a recorded run as the primary
+conference fallback — venue wifi is the risk, not the agent. Source:
+~/code/pedro/pedro-bots/src/core/agents/cfp_watch.py -->
 
 ---
 
@@ -359,24 +355,29 @@ directly. Real source: ~/code/pedro/pedro-ops/scripts/pedrogpt/benchmark -->
 
 ---
 
-## Tool Calls: Pedro Tag in Discord
+## Tool Calls: My Research Agents
 
 ```python
-async def start_game_tool(
-    context: RunContext[AgentDeps], game_type: str
-) -> str:
-    if game_type == "20_questions":
-        game_id = context.deps.thread_id \
-            or context.deps.channel_id
-        # Create and persist game state...
+base_url = os.environ.get(
+    "LLAMA_CPP_BASE_URL", "http://.../v1"
+)
+model_name = os.environ.get(
+    "LLAMA_CPP_MODEL", "qwen3.6-27b-mtp"
+)
+
+tools = [duckduckgo_search, fetch_cfp_page,
+         store_cfp, send_discord_message]
 ```
 
-**LIVE: `@Pedro, play 20 Questions.`**
+**These run against the 5090 in my house.**
 
-<!-- Real source: ~/code/pedro/pedro-tag/src/pedro_service/agent.py and
-src/pedro_service/games/twenty_questions.py. Call out the turns: tool schema in,
-tool call out, game state and user answer back in, repeated until success. This is
-exactly the token multiplication described at the beginning. -->
+<!-- Real source: ~/code/pedro/pedro-bots/src/core/agents/. Four agents in
+production: cfp_watch searches for speaking opportunities and stores them;
+monitor classifies Reddit posts against active topics; social_poster drafts
+and publishes; suggestion proposes content. Nine tools across Bluesky,
+LinkedIn, Reddit, RSS, Discord, Substack, and Supabase. Call out the turn
+structure: tool schemas in, tool call out, tool result back in, repeat until
+the job is done. This is exactly the token multiplication from the opening. -->
 
 ---
 
@@ -521,7 +522,7 @@ Sources: https://www.runpod.io/pricing and https://modal.com/pricing -->
 
 # Miriah Peterson · @Soypete
 
-## CEO & founder, stealth startup
+## CEO, Haikai Labs
 
 ## Co-host, **Domesticating AI** podcast
 
@@ -678,7 +679,7 @@ part of the system. Availability, state, recovery, and scheduling now matter. --
 
 ---
 
-## Pedro Agentware
+## Agentware
 
 ### Forge's reliability pattern, ported beyond Python
 
@@ -694,8 +695,34 @@ Go · Python · TypeScript
 
 **The same harness idea around whichever agent framework you already use.**
 
-<!-- Pedro Agentware is a port of Forge's pattern to other languages. Do not discuss
-policy enforcement; that belongs to the unmerged Kei plugin and is not part of this
-talk. -->
+[github.com/HaikeiLabs/Agentware](https://github.com/HaikeiLabs/Agentware)
+
+<!-- Agentware is a port of Forge's pattern to other languages, now maintained at
+Haikai Labs. Keep the focus on reliability mechanisms here; the policy and audit
+story is its own talk. -->
+
+---
+
+## Running It: The Monitor Agent
+
+```python
+from pedro_agentware.middleware import (
+    InMemoryAuditor, MiddlewareImpl
+)
+
+mw, auditor = build_middleware()
+tools = apply_middleware(tools, mw)
+```
+
+Every tool call the agent makes goes through one wrapper—**schemas preserved**,
+decision and result recorded.
+
+<!-- Real source: ~/code/pedro/pedro-bots/src/core/middleware_config.py and
+src/core/agents/monitor.py. apply_middleware wraps each LangChain tool while
+preserving its name, description, and args_schema, so the model sees no
+difference. Policy is currently permissive (default_deny=False, no rules) — the
+point for this talk is that the interception point exists and every call is
+audited, not that it is denying anything yet. log_audit_summary prints the
+per-run rollup. -->
 
 ---
