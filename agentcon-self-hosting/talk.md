@@ -331,6 +331,36 @@ conference fallback — venue wifi is the risk, not the agent. Source:
 
 ---
 
+## What MTP Buys You
+
+Multi-token prediction: the model drafts several tokens ahead, then verifies them
+in one pass.
+
+```text
+draft  →  the  quick  brown  fox
+verify →   ✓      ✓      ✓     ✗
+                              ↑ re-decode from here
+```
+
+**Acceptance rate is the whole story.**
+
+```text
+mtp accept = draft_n_accepted ÷ draft_n
+```
+
+High acceptance means tokens nearly free. Low acceptance means you paid to draft
+and threw it away.
+
+<!-- MTP is server-side speculative decoding, which is why llama-bench does not
+show it — llama-bench measures the model and kernels, not the serving feature. The
+API benchmark on the next slide reads llama.cpp's own timings and reports
+draft_n_accepted / draft_n. Predictable, templated output accepts well; surprising
+output accepts poorly. For agents this matters more than it looks, because tool
+calls are highly structured and therefore highly predictable. Source:
+~/code/pedro/pedro-ops/scripts/pedrogpt/benchmark -->
+
+---
+
 ## Demo 2: Measure the Local Server
 
 ```bash
@@ -503,6 +533,66 @@ Sources: https://www.runpod.io/pricing and https://modal.com/pricing -->
 
 ---
 
+## Choosing the Model Is an Eval Problem
+
+Not a leaderboard problem. Agentware ships the eval framework I use:
+
+```bash
+python3 -m evals.main --all \
+  --models qwen3.6-27b-mtp \
+  --base-url http://pedrogpt:8000
+```
+
+Each case is a tool-calling question with a right answer:
+
+```text
+system prompt + user message + tool schemas
+                    ↓
+        did it call the expected tool?
+```
+
+**File search · general · GitHub · calendar — against *your* tools.**
+
+<!-- Real source: ~/code/haikei/Agentware/docs/evals/README.md and go/evals/.
+The framework exists in Go, Python, and TypeScript, and supports six backends:
+ollama, llamacpp, vllm, lmstudio, openai, anthropic. That matters for selection —
+the same suite runs against a local model and a frontier API, so the comparison is
+apples to apples. An EvalCase is name, system prompt, user message, tools, and
+ExpectedTool, with max_turns to catch models that wander. Point out that the
+default model is already qwen3.6-27b-mtp against pedrogpt:8000 — this is the
+harness I actually run, not a hypothetical. -->
+
+---
+
+## Tune the Tools, Not Just the Model
+
+The same suite tells you when the **tool schema** is the problem.
+
+```text
+model picks the wrong tool
+          ↓
+is the description ambiguous?
+          ↓
+rewrite the schema → rerun → compare
+```
+
+- add cases for the tools your agent actually has
+- a failing case is a spec for a better description
+- step down a model size and rerun the suite
+
+**The smallest model that passes your suite is the model you should run.**
+
+<!-- This is the practical loop and the reason the framework is worth having. A
+small model failing a tool call is often not a capability gap — it is an ambiguous
+description or an overlapping tool. Adding a case, rewriting the schema, and
+rerunning turns that into a measurable fix. Then the selection procedure becomes
+mechanical: get the suite passing, step down a size, rerun, and stop at the
+smallest model that still passes. Six backends means you can run the identical
+cases against a frontier model to see whether a failure is the model or the
+schema. -->
+
+---
+
 <!-- _class: lead -->
 
 # The Takeaway
@@ -595,10 +685,14 @@ Measure:
 
 **The unit of reliability is the completed workflow.**
 
+Agentware's evals pick the model. This telemetry tells you when that choice stops holding.
+
 <!-- The telemetry summary reports tokens, tool calls, rounds, phases, duration, and
 estimated cost per job. The eval harness saves full transcripts, supports repeated
 trials and concurrency, and records latency, throughput, and grading results. This is
-how to expose evaluation variance instead of trusting one demo run. Sources:
+how to expose evaluation variance instead of trusting one demo run. Ties back to the
+model-selection slide in the main deck: the eval suite chooses the model, and this
+telemetry tells you when that choice stops holding. Sources:
 ~/code/pedro/PedroCLI/pkg/telemetry/types.go and pkg/evals/types.go -->
 
 ---
