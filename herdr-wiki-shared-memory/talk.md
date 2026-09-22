@@ -288,6 +288,87 @@ release can be published.
 
 ---
 
+## Orchestrators and Workers
+
+Workers get named for the task they were assigned:
+
+```text
+D-007-otp-no-autocreate       ADR-015-A       ADR-015-B
+        │                          ▲               │
+        │ acknowledges             └───── handoff ─┘
+        ▼
+  D-007  (orchestrator decision)
+```
+
+**The wiki is the channel.** No queue, no bus, no protocol.
+
+<!-- These IDs are real. A decision D-007 is recorded by the orchestrator; a
+worker spawned to execute it is literally named D-007-otp-no-autocreate. ADR-015
+was split between two workers, A and B. Note that the orchestrator in these pages
+is called "herder" — workers hand back to it by name. -->
+
+---
+
+## A Worker Acknowledges Its Assignment
+
+```markdown
+---
+title: ack/D-007-otp-no-autocreate
+category: ack
+---
+
+Worker D-007-otp-no-autocreate acks D-007 (Option C of R-002).
+Will: replace create-fallback in
+resolveActiveOrganizationForEmailUser with resolve-only...
+Verified: single call site at handlers.go:171 already tolerates
+empty result; zero tests reference the function.
+
+## Links
+- acknowledges: [[decisions/D-007-onboarding-option-c-gated-on-stop-a]]
+```
+
+**It states its plan and what it checked before starting.**
+
+---
+
+## A Worker Hands Back What It Did Not Finish
+
+```markdown
+---
+title: handoff/ADR-015-B-to-A-admin-members-edge-pending
+category: handoff
+---
+
+handoff to ADR-015-A / herder — pending admin→members
+containment edge. ADR-015-B built the write path ... but
+deliberately did NOT seed the admin contains members edge.
+That edge must be seeded once workspace-group-init lands.
+```
+
+**The most valuable thing an agent can record is what it chose not to do.**
+
+<!-- This is the slide to linger on. A worker deliberately leaving work undone,
+and saying so in a durable, addressable place, is the thing that never survives a
+context window. The next worker does not rediscover the gap — it reads it. -->
+
+---
+
+## They Told Me How They Work
+
+A `decision` page captured by an agent today:
+
+> "Workers coordinate through wiki findings and must preserve
+> dirty worktrees; live cloud/Twilio mutations require explicit
+> approval."
+
+**Nobody wrote that protocol down first. It was recorded from practice.**
+
+<!-- This is a real, unedited line from a capture that was still pending in the
+inbox when this deck was built. The coordination convention is itself a wiki page
+— which means it is searchable, linkable, and can be contradicted later. -->
+
+---
+
 ## What Is Actually In There
 
 | | |

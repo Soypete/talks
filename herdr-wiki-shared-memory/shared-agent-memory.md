@@ -195,6 +195,68 @@ This is worth distinguishing from a message queue. A handoff is a durable page
 with links, findable months later, not an event that is consumed and disappears.
 The coordination record and the knowledge record are the same artifact.
 
+## How orchestrators and workers actually use it
+
+The handoff and ack pages show a pattern nobody specified in advance. Workers are
+named for the task they were assigned, and they address each other by those names.
+
+A decision `D-007` is recorded. A worker spawned to execute it is called
+`D-007-otp-no-autocreate`, and its first act is an acknowledgment:
+
+```markdown
+---
+title: ack/D-007-otp-no-autocreate
+category: ack
+---
+
+Worker D-007-otp-no-autocreate acks D-007 (Option C of R-002).
+Will: replace create-fallback in resolveActiveOrganizationForEmailUser
+with resolve-only returning "" for no-org users... Verified: single
+call site at handlers.go:171 already tolerates empty result; zero
+tests reference the function.
+
+## Links
+- acknowledges: [[decisions/D-007-onboarding-option-c-gated-on-stop-a]]
+```
+
+Two things are happening. The worker restates its plan, which makes the
+assignment auditable before any code changes. And it reports what it verified
+first — the call site tolerates an empty result, no tests reference the function —
+so the next reader knows the work rests on checked assumptions rather than
+optimism.
+
+Larger tasks get split across workers who then hand unfinished pieces to each
+other. `ADR-015` was split between workers A and B:
+
+```markdown
+---
+title: handoff/ADR-015-B-to-A-admin-members-edge-pending
+category: handoff
+---
+
+handoff to ADR-015-A / herder — pending admin→members containment
+edge. ADR-015-B built the write path ... but deliberately did NOT
+seed the admin contains members edge. That edge must be seeded once
+workspace-group-init lands. Until then the expected two-level shape
+exists in neither the init path nor the backfill.
+```
+
+This is the most valuable kind of record in the whole system, and it is the kind
+that never survives a context window: a worker saying what it deliberately did not
+do, and why, in a place the next worker will look. The orchestrator here is called
+`herder`, and workers hand back to it by name.
+
+The convention is not documented anywhere outside the wiki. It is *in* the wiki —
+a decision page captured while this was being written states it directly:
+
+> Workers coordinate through wiki findings and must preserve dirty worktrees; live
+> cloud/Twilio mutations require explicit approval.
+
+That page was still sitting in the inbox, unorganized, when it turned up in a
+search. Which is the read-sees-pending property doing exactly what it is for: the
+coordination protocol became a searchable, linkable page that a later capture can
+contradict, rather than a rule in someone's head.
+
 ## What is actually in there
 
 | | |

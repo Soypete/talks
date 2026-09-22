@@ -37,7 +37,9 @@ agents write to shared memory without one.
 - Why promotion from inbox to graph should be deterministic: the agent classifies
   at capture time, the boundary validates, and nothing reinterprets it later.
 - How typed coordination primitives — handoff, blocker, ack, release — turn a
-  knowledge base into a place agents hand work to each other.
+  knowledge base into a place agents hand work to each other, including real
+  orchestrator-to-worker traffic: workers acknowledging assignments, splitting a
+  task between them, and handing back what they deliberately left undone.
 - Why human-readable storage is an operational advantage, not a compromise: the
   memory is greppable, diffable, reviewable, and editable by hand.
 
