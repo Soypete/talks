@@ -195,6 +195,73 @@ This is worth distinguishing from a message queue. A handoff is a durable page
 with links, findable months later, not an event that is consumed and disappears.
 The coordination record and the knowledge record are the same artifact.
 
+## How a worker starts a task
+
+Before any of the coordination machinery matters, there is a simpler behavior
+worth watching: what an agent does in the first thirty seconds of a task.
+
+Here is a real session. The worker has been given ticket HAI-123 and begins by
+searching:
+
+```text
+wiki search "HAI-123"   → no results for 'HAI-123'
+wiki search "ADR-016"   → 6 results
+wiki search "ADR-020"   → ...
+```
+
+The first search misses, which is itself information: nobody has recorded anything
+about this ticket. So it widens to the adjacent ADR numbers and the component
+names, and finds prior work:
+
+```text
+default-policy-bootstrap-and-tool-catalog
+  PR kei-policy-catalog#14
+  branch feat/default-policy-bootstrap
+  migration 029 creates abac.tool_catalog
+```
+
+Its own summary of that result: *"This is highly relevant to HAI-123!"* — followed
+by a note that the branch already exists on origin. The worker found the branch it
+was about to duplicate, before writing any code.
+
+This reframes the lexical-search tradeoff. Semantic retrieval is better for fuzzy
+conceptual recall, and this system does not have it. But an agent starting a task
+does not have a fuzzy concept — it has exact tokens: a ticket ID, an ADR number, a
+branch name, a migration number. Lexical matching on those is precise and
+predictable, and predictability matters more than recall when the cost of a miss
+is duplicated work rather than a worse answer.
+
+## Agents audit each other
+
+Because claims are pages and pages can be linked, an agent can correct an earlier
+agent in a way that survives:
+
+```markdown
+---
+title: kei has no CLAUDE.md; the agent-facing file is AGENTS.md
+category: contradiction
+---
+
+Corrects [[HAI-53 audit ...]], which attributes two stale claims to
+'CLAUDE.md'. Verified: NO CLAUDE.md exists anywhere in the repo, and
+none exists in git history either (git log --all -- '**/CLAUDE.md'
+returns empty). It was never committed...
+
+ADR-016's stale boundary is NOT fixed and remains an open docs
+inconsistency for whoever owns docs/adr/.
+
+## Links
+- contradicts: [[HAI-53 audit ...]]
+```
+
+Three properties are doing work here. The correction cites the exact commands it
+ran, so a human or another agent can re-verify it rather than trusting it. The
+`contradicts` edge means both pages survive — the original audit is not deleted or
+silently overwritten, and the disagreement is queryable. And the closing line
+hands an unresolved problem forward to whoever eventually owns that area.
+
+None of that survives in a chat log, and none of it is expressible in an embedding.
+
 ## How orchestrators and workers actually use it
 
 The handoff and ack pages show a pattern nobody specified in advance. Workers are
@@ -294,10 +361,12 @@ uses the commands.
 
 ## The honest tradeoffs
 
-Search is lexical. There is no semantic recall, so phrasing matters, and a concept
-described two different ways may not connect. If you need embeddings, build an
-index over the same files and keep the files as the record — the substrate does
-not have to change, and the index stays disposable.
+Search is lexical. There is no semantic recall, so a concept described two
+different ways may not connect, and browsing by theme is poor. As noted above this
+matters less than expected for task-start retrieval, where agents search exact
+identifiers — but it is a real limit for anything conceptual. If you need
+embeddings, build an index over the same files and keep the files as the record;
+the substrate does not have to change, and the index stays disposable.
 
 The closed vocabulary rejects captures. An agent that picks a type outside the
 list gets an error rather than a coerced page. That is intentional and it is still

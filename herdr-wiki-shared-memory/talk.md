@@ -288,6 +288,86 @@ release can be published.
 
 ---
 
+## A Worker Orienting Itself
+
+Real session. First thing it does is search:
+
+```bash
+wiki search "HAI-123"    → no results
+wiki search "ADR-016"    → 6 results
+wiki search "ADR-020"    → ...
+```
+
+```text
+found: default-policy-bootstrap-and-tool-catalog
+       PR #14 · branch feat/default-policy-bootstrap
+       migration 029 creates abac.tool_catalog
+```
+
+> "This is highly relevant to HAI-123!"
+
+**It found the branch it was about to duplicate.**
+
+<!-- This is the retrieval half of the system, and it is worth showing as a
+transcript rather than describing. The worker is starting a task, searches for its
+own ticket, gets nothing, widens to adjacent ADR numbers, and discovers prior work
+including a branch name and a migration number. A miss is informative too: no
+results for HAI-123 means nobody has recorded anything about it yet. -->
+
+---
+
+## Search Is How a Worker Starts
+
+```text
+new task
+   ↓
+search the ticket, the ADR, the component
+   ↓
+┌── hits ──▶ read the pages, follow the links
+└── miss ──▶ nobody has done this; proceed and capture
+```
+
+Lexical search means **you search for identifiers**: ticket IDs, ADR
+numbers, branch names, migration numbers.
+
+**That is what agents actually have at the start of a task.**
+
+<!-- This reframes the lexical-vs-semantic tradeoff honestly. Semantic search is
+better for fuzzy conceptual recall. But a worker beginning a ticket has exact
+tokens — HAI-123, ADR-016, a PR number — and lexical matching on those is precise
+and predictable. The tradeoff slide later stays, but this is the other side. -->
+
+---
+
+## Agents Audit Each Other
+
+```markdown
+---
+title: kei has no CLAUDE.md; the agent-facing file is AGENTS.md
+category: contradiction
+---
+
+Corrects [[HAI-53 audit ...]], which attributes two stale claims
+to 'CLAUDE.md'. Verified: NO CLAUDE.md exists anywhere in the
+repo, and none exists in git history either
+(git log --all -- '**/CLAUDE.md' returns empty)...
+
+ADR-016's stale boundary is NOT fixed and remains an open
+docs inconsistency for whoever owns docs/adr/.
+
+## Links
+- contradicts: [[HAI-53 audit ...]]
+```
+
+**A later agent disproved an earlier one — and left the receipts.**
+
+<!-- Three things to point at. It cites the exact commands it ran, so the
+correction is checkable. It uses the contradicts edge, so both pages survive and
+the conflict is queryable. And the last line hands an unresolved issue forward to
+whoever picks up that area. None of this survives in a chat log. -->
+
+---
+
 ## Orchestrators and Workers
 
 Workers get named for the task they were assigned:
