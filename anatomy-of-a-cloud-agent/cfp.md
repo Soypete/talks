@@ -4,13 +4,12 @@ Anatomy of a Cloud Agent Harness: What Happens When the Harness Leaves Your Lapt
 
 # Session Description
 
-Tool-using agents now work with files, code, and computers through harnesses that provide the loop, tools, permissions, state, and telemetry around a model.
-
-These harnesses work because the laptop provides a user, filesystem, processes, credentials, network, and state. But what is the next step in their evolution? What would it take for an agent to escape one user's machine, scale across tasks, and keep working while its user is away?
-
-Cloud-native infrastructure is fundamentally different: a control plane, ephemeral pods, explicit identities, external state, and services connected through APIs. Simply putting a local harness in a container does not bridge that mismatch.
-
-This talk dissects a local harness and maps its components to a CNCF architecture. We confront the shift from filesystem-and-skill-oriented tools to API-based cloud services, then ask what agentic middleware—or Agentware—must provide for elastic, concurrent workloads. Lo Agent is the concrete local example; the talk names its loop, tools, skills, permissions, sandbox, memory, compaction, event log, replay, integrations, sessions, and telemetry as the anatomy to preserve.
+Local agent harnesses rely on the laptop for identity, credentials, filesystem,
+networking, and state. This talk maps those hidden dependencies to a cloud-native
+architecture for ephemeral agent workloads. Using Lo Agent as a concrete example,
+attendees learn how to separate workload and human identity, externalize state,
+deliver renewable credentials, expose narrow tools, and preserve auditability as
+agents move into shared infrastructure.
 
 ## What attendees will learn
 
