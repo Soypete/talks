@@ -172,7 +172,7 @@ Models and frameworks will change. The background should remain sovereign.
 |---|---|---|
 | **Lexicon** | Governed information and provenance | Scoped knowledge stores |
 | **Semantics** | Definitions, entities, and relationships | Ontology filtering |
-| **Pragmatics** | Purpose, authority, and permitted action | MCP and policy middleware |
+| **Pragmatics** | Purpose, authority, and permitted action | Protocol and policy middleware |
 
 Scoped stores are not merely a security feature. They are one implementation of
 context engineering.
@@ -289,13 +289,13 @@ User permissions ≠ Agent visibility
 
 ---
 
-## MCP Implications
+## Protocol Boundary Implications
 
 ### Trust Boundaries
 
 ```
 ┌─────────────────────────────────────────────┐
-│            MCP Server A                     │
+│          Scoped Gateway A                  │
 │         (Scoped Knowledge)                  │
 │  - Only returns: task_context               │
 │  - Never: credentials, keys, raw data       │
@@ -309,7 +309,7 @@ User permissions ≠ Agent visibility
 
 ---
 
-## MCP Implications
+## Protocol Boundary Implications
 
 ### Tool Identity
 
@@ -382,10 +382,10 @@ Query: `scope = wing:"project-a", room:"docs"`
 
 ---
 
-## Solution 2: MCP Server with Scoping
+## Solution 2: Protocol Gateway with Scoping
 
 ```python
-# mempalace/mcp_server.py
+# mempalace/scoped_gateway.py
 class ScopedTools:
     """Tools that only expose scoped data"""
 
@@ -603,13 +603,13 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 
 ---
 
-## MCP and Interoperability
+## Protocol Interoperability
 
 ### Trust Boundaries
 
-- Each MCP server exposes scoped data
-- No server has full access
-- Context routing between servers
+- Each gateway exposes scoped data
+- No gateway has full access
+- Context routing between boundaries
 - Agent identity = scope, not permissions
 
 ---
@@ -643,7 +643,7 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 
 ### Demonstration
 - MemPalace scoped retrieval
-- MCP server with scoping
+- Protocol gateway with scoping
 - Ontology-based filtering
 - Pedro middleware
 
@@ -668,7 +668,7 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 
 ## For Agent Framework Maintainers
 
-1. **MCP needs scoping** - Beyond tool registration
+1. **Tool protocols need scoping** - Beyond tool registration
 2. **Trust boundaries** - Server-to-server context
 3. **Eval consistency** - Scoped inputs make behavior easier to compare and debug
 

@@ -163,7 +163,7 @@ Agent: Let me read the meeting notes
 <tr>
 <td><strong>Pragmatics</strong></td>
 <td>Purpose, authority, and permitted action</td>
-<td>MCP and policy middleware</td>
+<td>Protocol and policy middleware</td>
 </tr>
 </tbody>
 </table>
@@ -281,10 +281,10 @@ unbounded view of the organization.</p>
 </table>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-background-image="url('../images/soypete_background.png')" data-theme="gaia" lang="C" data-marpit-pagination="19" style="--paginate:true;--background-image:url('../images/soypete_background.png');--theme:gaia;background-image:url('../images/soypete_background.png');background-position:center;background-repeat:no-repeat;background-size:cover;" data-marpit-pagination-total="46">
-<h2 id="mcp-implications">MCP Implications</h2>
+<h2 id="protocol-boundary-implications">Protocol Boundary Implications</h2>
 <h3 id="trust-boundaries">Trust Boundaries</h3>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code>┌─────────────────────────────────────────────┐
-│            MCP Server A                     │
+│          Scoped Gateway A                  │
 │         (Scoped Knowledge)                  │
 │  - Only returns: task_context               │
 │  - Never: credentials, keys, raw data       │
@@ -297,7 +297,7 @@ unbounded view of the organization.</p>
 </code></pre>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-background-image="url('../images/soypete_background.png')" data-theme="gaia" lang="C" data-marpit-pagination="20" style="--paginate:true;--background-image:url('../images/soypete_background.png');--theme:gaia;background-image:url('../images/soypete_background.png');background-position:center;background-repeat:no-repeat;background-size:cover;" data-marpit-pagination-total="46">
-<h2 id="mcp-implications-1">MCP Implications</h2>
+<h2 id="protocol-boundary-implications-1">Protocol Boundary Implications</h2>
 <h3 id="tool-identity">Tool Identity</h3>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code>┌─────────────────────────────────────────────┐
 │  Tool: read_file                            │
@@ -355,8 +355,8 @@ unbounded view of the organization.</p>
 → Cannot access project-b credentials</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-background-image="url('../images/soypete_background.png')" data-theme="gaia" lang="C" data-marpit-pagination="24" style="--paginate:true;--background-image:url('../images/soypete_background.png');--theme:gaia;background-image:url('../images/soypete_background.png');background-position:center;background-repeat:no-repeat;background-size:cover;" data-marpit-pagination-total="46">
-<h2 id="solution-2-mcp-server-with-scoping">Solution 2: MCP Server with Scoping</h2>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-python"><span class="hljs-comment"># mempalace/mcp_server.py</span>
+<h2 id="solution-2-protocol-gateway-with-scoping">Solution 2: Protocol Gateway with Scoping</h2>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-python"><span class="hljs-comment"># mempalace/scoped_gateway.py</span>
 <span class="hljs-keyword">class</span> <span class="hljs-title class_">ScopedTools</span>:
     <span class="hljs-string">&quot;&quot;&quot;Tools that only expose scoped data&quot;&quot;&quot;</span>
 
@@ -588,12 +588,12 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 <p><strong>The safest agent is the one that never saw sensitive data</strong></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="37" data-paginate="true" data-background-image="url('../images/soypete_background.png')" data-theme="gaia" lang="C" data-marpit-pagination="37" style="--paginate:true;--background-image:url('../images/soypete_background.png');--theme:gaia;background-image:url('../images/soypete_background.png');background-position:center;background-repeat:no-repeat;background-size:cover;" data-marpit-pagination-total="46">
-<h2 id="mcp-and-interoperability">MCP and Interoperability</h2>
+<h2 id="protocol-interoperability">Protocol Interoperability</h2>
 <h3 id="trust-boundaries-1">Trust Boundaries</h3>
 <ul>
-<li>Each MCP server exposes scoped data</li>
-<li>No server has full access</li>
-<li>Context routing between servers</li>
+<li>Each gateway exposes scoped data</li>
+<li>No gateway has full access</li>
+<li>Context routing between boundaries</li>
 <li>Agent identity = scope, not permissions</li>
 </ul>
 </section>
@@ -623,7 +623,7 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 <h3 id="demonstration">Demonstration</h3>
 <ul>
 <li>MemPalace scoped retrieval</li>
-<li>MCP server with scoping</li>
+<li>Protocol gateway with scoping</li>
 <li>Ontology-based filtering</li>
 <li>Pedro middleware</li>
 </ul>
@@ -648,7 +648,7 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="43" data-paginate="true" data-background-image="url('../images/soypete_background.png')" data-theme="gaia" lang="C" data-marpit-pagination="43" style="--paginate:true;--background-image:url('../images/soypete_background.png');--theme:gaia;background-image:url('../images/soypete_background.png');background-position:center;background-repeat:no-repeat;background-size:cover;" data-marpit-pagination-total="46">
 <h2 id="for-agent-framework-maintainers">For Agent Framework Maintainers</h2>
 <ol>
-<li><strong>MCP needs scoping</strong> - Beyond tool registration</li>
+<li><strong>Tool protocols need scoping</strong> - Beyond tool registration</li>
 <li><strong>Trust boundaries</strong> - Server-to-server context</li>
 <li><strong>Eval consistency</strong> - Scoped inputs make behavior easier to compare and debug</li>
 </ol>

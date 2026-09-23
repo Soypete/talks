@@ -42,7 +42,7 @@ retrieval surface that the task and invoking identity justify. The goal is reduc
 exposure before inference, not a promise that models are incapable of error.
 
 I will walk through four implementations — scoped retrieval partitioned by
-wing/room, an MCP server that enforces scope at the protocol boundary,
+wing/room, a protocol gateway that enforces scope at the tool boundary,
 ontology-based filtering, and policy middleware around tool calls — and then spend
 real time on what that cost. Reliability tradeoffs, eval consistency improvements,
 observability, the patterns that worked, and the patterns I would not repeat.
@@ -58,8 +58,8 @@ out.
 Primary track is Context Engineering: this is reusable, testable context, knowledge
 and memory, and multi-model portability, since a scoped store works the same way
 regardless of which model sits in front of it. It touches the Enablement Platform
-track through the MCP scoping implications, which matter for anyone exposing
-internal systems to agents through a protocol boundary.
+track through the protocol-scoping implications, which matter for anyone exposing
+internal systems to agents through a tool or protocol boundary.
 
 ## What attendees will learn
 
@@ -73,8 +73,8 @@ internal systems to agents through a protocol boundary.
   and where each one breaks down.
 - What scoping does to eval consistency — this was the most surprising result for
   me, and it is measurable.
-- The MCP implications: what changes when the scope boundary lives at the protocol
-  layer rather than inside the agent.
+- The protocol implications: what changes when the scope boundary lives at the
+  tool boundary rather than inside the agent.
 - Patterns to avoid, drawn from the ones I tried first.
 
 ## Audience level
