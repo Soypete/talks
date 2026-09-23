@@ -10,7 +10,7 @@
 
 ## Session Title
 
-Scoped Knowledge Stores: Applying the Context Engineering Manifesto to Agents
+Scoped Knowledge Stores: Applying a Sovereign Context Framework to Your Agents
 
 ## Session Description
 
@@ -28,7 +28,7 @@ discover the tightened scope blocks real work, widen it again. That loop runs
 forever because the scope was guessed rather than derived from what the task
 actually required.
 
-This talk applies Haikei Labs' Context Engineering Manifesto to a concrete design:
+This talk applies Haikei Labs' Sovereign Context Framework to a concrete design:
 scope the knowledge store, not just the permission list. A scoped store is the
 Semantic Background for a task. It implements the Law of Lexicon by exposing only
 governed information whose source, authority, freshness, ownership, and access

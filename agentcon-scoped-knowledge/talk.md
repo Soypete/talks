@@ -2,16 +2,16 @@
 marp: true
 theme: gaia
 paginate: true
-title: "Scoped Knowledge Stores: Applying the Context Engineering Manifesto"
+title: "Scoped Knowledge Stores: Applying a Sovereign Context Framework"
 backgroundImage: url('../images/soypete_background.png')
-description: Applying Haikei Labs' Context Engineering Manifesto through scoped knowledge stores
+description: Applying Haikei Labs' Sovereign Context Framework through scoped knowledge stores
 ---
 
 <!-- _class: lead -->
 
 # Scoped Knowledge Stores
 
-## Applying the Context Engineering Manifesto
+## Applying a Sovereign Context Framework
 
 by Miriah Peterson
 @Soypete
@@ -150,7 +150,7 @@ The damage is done. The model processed sensitive data. We can't un-see it.
 
 ---
 
-## The Context Engineering Manifesto
+## The Sovereign Context Framework
 
 The model is the foreground intelligence.
 
