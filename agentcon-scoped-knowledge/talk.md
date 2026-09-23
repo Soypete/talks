@@ -2,16 +2,16 @@
 marp: true
 theme: gaia
 paginate: true
-title: "Stop Giving Agents Permissions: Give Them Scoped Knowledge Stores"
+title: "Scoped Knowledge Stores: Applying a Sovereign Context Framework"
 backgroundImage: url('../images/soypete_background.png')
-description: Building safer agent systems through scoped knowledge stores instead of permissions
+description: Applying Haikei Labs' Sovereign Context Framework through scoped knowledge stores
 ---
 
 <!-- _class: lead -->
 
-# Stop Giving Agents Permissions
+# Scoped Knowledge Stores
 
-## Give Them Scoped Knowledge Stores
+## Applying a Sovereign Context Framework
 
 by Miriah Peterson
 @Soypete
@@ -31,11 +31,11 @@ by Miriah Peterson
 
 <!-- _class: lead -->
 
-# PART 1: THE PROBLEM
+# PART 1: THE CONTEXT VOID
 
 ---
 
-## Current Agent Security Model
+## The Model-Centric Architecture
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -54,7 +54,11 @@ by Miriah Peterson
       "Hope prompts work"
 ```
 
-We give agents unrestricted access, then hope prompts and policies keep them safe.
+We give agents broad access, then ask the model to reconstruct meaning and authority
+from prompts, retrieved data, and tool descriptions.
+
+That gap between the context a task requires and the context the agent receives is
+the **Context Void**.
 
 ---
 
@@ -142,13 +146,46 @@ The damage is done. The model processed sensitive data. We can't un-see it.
 
 <!-- _class: lead -->
 
-# PART 2: THE SOLUTION
+# PART 2: THE SEMANTIC BACKGROUND
+
+---
+
+## The Sovereign Context Framework
+
+The model is the foreground intelligence.
+
+The system around it supplies the **Semantic Background**:
+
+- governed information
+- definitions and relationships
+- identity and purpose
+- tools and state
+- policy and permitted outcomes
+
+Models and frameworks will change. The background should remain sovereign.
+
+---
+
+## Three Laws, One Scoped Store
+
+| Law | System responsibility | In this talk |
+|---|---|---|
+| **Lexicon** | Governed information and provenance | Scoped knowledge stores |
+| **Semantics** | Definitions, entities, and relationships | Ontology filtering |
+| **Pragmatics** | Purpose, authority, and permitted action | Protocol and policy middleware |
+
+Scoped stores are not merely a security feature. They are one implementation of
+context engineering.
+
+---
+
+## The Scoped Store Is the Boundary
 
 ---
 
 ## Context Engineering as Infrastructure
 
-### Instead of teaching models what they can't do...
+### Instead of asking models to reconstruct what they cannot know...
 
 **Reduce the accessible world before the model sees it.**
 
@@ -174,7 +211,7 @@ The damage is done. The model processed sensitive data. We can't un-see it.
 │ - Task-specific context                     │
 │ - Derived knowledge store                   │
 │ - Ephemeral semantic environment            │
-│ → Impossible to access unauthorized data    │
+│ → Unauthorized data is excluded by policy  │
 └─────────────────────────────────────────────┘
 ```
 
@@ -207,7 +244,7 @@ The damage is done. The model processed sensitive data. We can't un-see it.
                   ↓
 ┌─────────────────────────────────────────────┐
 │         Safe Inference                      │
-│    Agent CANNOT see unauthorized data       │
+│    Out-of-scope data is excluded by policy  │
 └─────────────────────────────────────────────┘
 ```
 
@@ -215,19 +252,26 @@ The damage is done. The model processed sensitive data. We can't un-see it.
 
 ## Key Principles
 
-### 1. Least-Privilege Retrieval
+### 1. Governed Lexicon
 
-Only return data the **specific task** needs, not "everything relevant."
+Return information whose source, authority, freshness, ownership, and access
+conditions are known—not merely "everything relevant."
 
-### 2. Derived Knowledge Stores
+### 2. Explicit Semantics
 
-Pre-compute what's needed, don't query live systems at inference time.
+Make entities, definitions, relationships, and constraints explicit before inference.
 
-### 3. Ephemeral Semantic Environments
+### 3. Pragmatic Boundaries
 
-Task-scoped context that doesn't persist sensitive data.
+Let the model propose useful actions; let infrastructure decide whether they are
+permitted.
 
-### 4. Separation of Concerns
+### 4. Scoped, Ephemeral Context
+
+Derive a task-specific knowledge store instead of handing the model a live,
+unbounded view of the organization.
+
+### 5. Separation of Concerns
 
 User permissions ≠ Agent visibility
 
@@ -241,17 +285,17 @@ User permissions ≠ Agent visibility
 | Runtime enforcement | Pre-inference filtering |
 | Trust the model | Trust the infrastructure |
 | "Don't do X" | "You never saw X" |
-| Failure = data leak | Impossible to leak |
+| Failure = data leak | Reduced exposure |
 
 ---
 
-## MCP Implications
+## Protocol Boundary Implications
 
 ### Trust Boundaries
 
 ```
 ┌─────────────────────────────────────────────┐
-│            MCP Server A                     │
+│          Scoped Gateway A                  │
 │         (Scoped Knowledge)                  │
 │  - Only returns: task_context               │
 │  - Never: credentials, keys, raw data       │
@@ -265,7 +309,7 @@ User permissions ≠ Agent visibility
 
 ---
 
-## MCP Implications
+## Protocol Boundary Implications
 
 ### Tool Identity
 
@@ -338,10 +382,10 @@ Query: `scope = wing:"project-a", room:"docs"`
 
 ---
 
-## Solution 2: MCP Server with Scoping
+## Solution 2: Protocol Gateway with Scoping
 
 ```python
-# mempalace/mcp_server.py
+# mempalace/scoped_gateway.py
 class ScopedTools:
     """Tools that only expose scoped data"""
 
@@ -461,7 +505,7 @@ func (m *Middleware) CallTool(
 | "Don't access X" | "You never saw X" |
 | Runtime blocking | Pre-inference filtering |
 | Prompt-based safety | Infrastructure-based safety |
-| Audit after leak | Impossible to leak |
+| Audit after leak | Audit before and after execution |
 
 ---
 
@@ -475,7 +519,7 @@ func (m *Middleware) CallTool(
 
 ### What we gained:
 - Consistent eval results (scoped = deterministic)
-- Impossible to leak data not in scope
+- Reduce exposure by excluding out-of-scope data before inference
 - Clear audit trails
 
 ### What we traded:
@@ -559,13 +603,13 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 
 ---
 
-## MCP and Interoperability
+## Protocol Interoperability
 
 ### Trust Boundaries
 
-- Each MCP server exposes scoped data
-- No server has full access
-- Context routing between servers
+- Each gateway exposes scoped data
+- No gateway has full access
+- Context routing between boundaries
 - Agent identity = scope, not permissions
 
 ---
@@ -574,7 +618,7 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 
 ### The safest agent is not the one that follows instructions best.
 
-### It is the one that never saw data it should not have seen.
+### It is the one whose Semantic Background is scoped before inference.
 
 ---
 
@@ -593,12 +637,13 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 
 ### Solution
 - Scoped knowledge stores before inference
+- Lexicon, Semantics, and Pragmatics around the model
 - Derived context, not live queries
 - Infrastructure-based safety, not prompt-based
 
 ### Demonstration
 - MemPalace scoped retrieval
-- MCP server with scoping
+- Protocol gateway with scoping
 - Ontology-based filtering
 - Pedro middleware
 
@@ -606,25 +651,26 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 
 ## For Platform Engineers
 
-1. **Scope at request time** - Derive from task, not user
+1. **Scope at request time** - Derive from task *and* invoking identity (Lexicon)
 2. **Filter before inference** - Pre-compute what agent sees
-3. **Audit everything** - You can't fix what you don't see
+3. **Make meaning explicit** - Resolve entities, definitions, and relationships (Semantics)
+4. **Audit the decision** - Record scope inputs, sources, denials, and tool outcomes (Pragmatics)
 
 ---
 
 ## For Security Engineers
 
-1. **Prompts fail** - Infrastructure succeeds
+1. **Prompts are not boundaries** - Enforce scope in infrastructure
 2. **Least-privilege retrieval** - Not just for humans
-3. **Impossible to leak** - What agent never saw can't be extracted
+3. **Reduce exposure** - What the agent never receives cannot be extracted from its context
 
 ---
 
 ## For Agent Framework Maintainers
 
-1. **MCP needs scoping** - Beyond tool registration
+1. **Tool protocols need scoping** - Beyond tool registration
 2. **Trust boundaries** - Server-to-server context
-3. **Eval consistency** - Scoped = predictable
+3. **Eval consistency** - Scoped inputs make behavior easier to compare and debug
 
 ---
 

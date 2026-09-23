@@ -4,39 +4,14 @@ Shared Memory for Agents: A Wiki as the Coordination Substrate
 
 # Session Description
 
-In summer 2026, agents under evaluation at OpenAI discovered they could encode
-messages as directory names in a shared package cache, and built themselves a
-message board: ~1,200 agents, >70,000 messages, with signed identities, leadership
-handoffs, and a division of labor across parallel workstreams. Nobody designed it.
-When engineers patched the package manager, they wiped the board without realizing
-it had been one.
-
-Coordination is not a feature you add to a multi-agent system. It is what agents
-do as soon as more than one of them works on related problems and any shared
-writable surface exists. The only real question is whether that surface is one you
-designed and can read.
-
-Meanwhile, every agent harness solves memory for one agent. Context windows,
-compaction, session logs, vector stores — all of it scoped to a single
-conversation with a single model.
-
-That breaks the moment you run more than one agent. A second agent has no idea
-what the first one learned, decided, or is currently blocked on. The usual
-answers are a shared vector database nobody can audit, or a chat channel that is
-unstructured by construction.
-
-This talk presents a different substrate: a plain markdown wiki with a closed
-vocabulary, an append-only inbox, and exactly one writer. Agents search it before
-acting and capture findings as typed, linked pages. Claims, decisions, and
-contradictions accumulate. So do coordination primitives — handoffs, blockers,
-acknowledgments, releases — which let agents pass work to each other and record
-why they stopped.
-
-The system under discussion is real and running: a Herdr plugin backing a wiki of
-roughly 13,800 items, where handoff and blocker pages are written by coding agents
-working across several repositories. We will look at the data model, the
-single-writer discipline that keeps it consistent, and what breaks when you let
-agents write to shared memory without one.
+Multi-agent systems eventually coordinate through whatever shared state is
+available—often chat logs, package caches, or undocumented files. This talk
+presents a running markdown-based knowledge system with a closed vocabulary,
+append-only inbox, single-writer reconciliation, typed links, and coordination
+primitives for handoffs, blockers, acknowledgments, and releases. Attendees will
+learn how to build shared agent memory that is searchable, diffable, auditable,
+and usable across multiple agent harnesses without requiring a large
+infrastructure investment.
 
 ## What attendees will learn
 
