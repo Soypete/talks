@@ -10,13 +10,14 @@
 
 ## Session Title
 
-Stop Giving Agents Permissions: Give Them Scoped Knowledge Stores
+Scoped Knowledge Stores: Applying the Context Engineering Manifesto to Agents
 
 ## Session Description
 
-The default agent security model is to grant broad access and then hope the prompt
-holds. Connect the agent to the warehouse, give it tools, tell it which data it
-should not touch, and trust that the instruction survives inference.
+The default agent architecture is model-centric: connect the agent to the warehouse,
+give it tools, tell it which data it should not touch, and trust the prompt to hold.
+That asks a probabilistic model to reconstruct the organization's data, meaning,
+identity, and authority while it is trying to complete the task.
 
 It does not. And the failure mode is not usually dramatic — it is an agent quietly
 retrieving the wrong customer definition, using a superseded policy, or answering a
@@ -27,11 +28,18 @@ discover the tightened scope blocks real work, widen it again. That loop runs
 forever because the scope was guessed rather than derived from what the task
 actually required.
 
-This talk presents the alternative that has worked for me in production: scope the
-knowledge store, not the permission list. Instead of giving an agent broad retrieval
-and a list of prohibitions, give it a retrieval surface that only contains what the
-task and the invoking identity justify. The unauthorized information never enters
-the context, so no instruction is needed to keep it out.
+This talk applies Haikei Labs' Context Engineering Manifesto to a concrete design:
+scope the knowledge store, not just the permission list. A scoped store is the
+Semantic Background for a task. It implements the Law of Lexicon by exposing only
+governed information whose source, authority, freshness, ownership, and access
+conditions are known. Ontology and entity filters implement the Law of Semantics by
+making definitions and relationships explicit. Tool and policy middleware implement
+the Law of Pragmatics by separating what the model may propose from what
+infrastructure may authorize.
+
+Instead of giving an agent broad retrieval and a list of prohibitions, give it a
+retrieval surface that the task and invoking identity justify. The goal is reduced
+exposure before inference, not a promise that models are incapable of error.
 
 I will walk through four implementations — scoped retrieval partitioned by
 wing/room, an MCP server that enforces scope at the protocol boundary,
@@ -57,6 +65,8 @@ internal systems to agents through a protocol boundary.
 
 - Why prompt-level prohibitions are not a security boundary, and why the usual
   permission-tightening loop never converges.
+- How scoped stores provide a Semantic Background by applying the Laws of Lexicon,
+  Semantics, and Pragmatics at different system boundaries.
 - How to derive retrieval scope from the task and invoking identity rather than
   guessing it and retightening after incidents.
 - Four concrete implementations of scoped retrieval, including where each one fits
@@ -74,9 +84,10 @@ framework or ontology tooling required.
 
 ## Key takeaway
 
-Do not give an agent everything and a list of prohibitions. Give it a retrieval
-surface the task and the identity justify. The information you do not want in the
-answer should never be in the context.
+Do not give an agent everything and a list of prohibitions. Give it a governed
+retrieval surface the task and identity justify, then enforce action policy outside
+the model. Context engineering is the work of making the model's background
+explicit.
 
 The first implementation can be narrow: choose one sensitive workflow, derive its
 scope from task and identity, filter before inference, and test both an authorized
