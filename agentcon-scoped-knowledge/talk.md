@@ -174,7 +174,7 @@ The damage is done. The model processed sensitive data. We can't un-see it.
 │ - Task-specific context                     │
 │ - Derived knowledge store                   │
 │ - Ephemeral semantic environment            │
-│ → Impossible to access unauthorized data    │
+│ → Unauthorized data is excluded by policy  │
 └─────────────────────────────────────────────┘
 ```
 
@@ -241,7 +241,7 @@ User permissions ≠ Agent visibility
 | Runtime enforcement | Pre-inference filtering |
 | Trust the model | Trust the infrastructure |
 | "Don't do X" | "You never saw X" |
-| Failure = data leak | Impossible to leak |
+| Failure = data leak | Reduced exposure |
 
 ---
 
@@ -461,7 +461,7 @@ func (m *Middleware) CallTool(
 | "Don't access X" | "You never saw X" |
 | Runtime blocking | Pre-inference filtering |
 | Prompt-based safety | Infrastructure-based safety |
-| Audit after leak | Impossible to leak |
+| Audit after leak | Audit before and after execution |
 
 ---
 
@@ -475,7 +475,7 @@ func (m *Middleware) CallTool(
 
 ### What we gained:
 - Consistent eval results (scoped = deterministic)
-- Impossible to leak data not in scope
+- Reduce exposure by excluding out-of-scope data before inference
 - Clear audit trails
 
 ### What we traded:
@@ -606,17 +606,17 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 
 ## For Platform Engineers
 
-1. **Scope at request time** - Derive from task, not user
+1. **Scope at request time** - Derive from task *and* invoking identity
 2. **Filter before inference** - Pre-compute what agent sees
-3. **Audit everything** - You can't fix what you don't see
+3. **Audit the decision** - Record scope inputs, sources, denials, and tool outcomes
 
 ---
 
 ## For Security Engineers
 
-1. **Prompts fail** - Infrastructure succeeds
+1. **Prompts are not boundaries** - Enforce scope in infrastructure
 2. **Least-privilege retrieval** - Not just for humans
-3. **Impossible to leak** - What agent never saw can't be extracted
+3. **Reduce exposure** - What the agent never receives cannot be extracted from its context
 
 ---
 
@@ -624,7 +624,7 @@ After:  Agent only sees scoped data → nothing to exfiltrate
 
 1. **MCP needs scoping** - Beyond tool registration
 2. **Trust boundaries** - Server-to-server context
-3. **Eval consistency** - Scoped = predictable
+3. **Eval consistency** - Scoped inputs make behavior easier to compare and debug
 
 ---
 

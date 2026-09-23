@@ -12,8 +12,8 @@ You Cannot Review Every Agent Action
 
 ## Session Description
 
-In July 2026, a single agent on a single evaluation task produced roughly 17,600
-reconstructed actions. Imagine that review queue. Now imagine a software factory
+In a July 2026 incident, investigators reconstructed roughly 17,600 actions from
+one agent-driven evaluation campaign. Imagine that review queue. Now imagine a software factory
 running a hundred agents continuously.
 
 The software factory premise — more agents, more autonomy, more throughput — has a
@@ -67,6 +67,11 @@ should not need a person.
 You cannot review every action. Constrain the set, carry the identity, record the
 decision — then review the contract, the exceptions, and the anomalies rather than
 the queue. That is the difference between autonomy and abdication.
+
+The practical exercise is small enough to do after the talk: choose one tool,
+write its typed contract and deny-by-default policy, add the invoking subject and
+delegation chain to its trace, and route denials to a review queue. The result is a
+measurable first control, not a promise to instrument an entire factory at once.
 
 ## Audience level
 

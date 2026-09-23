@@ -78,6 +78,11 @@ Do not give an agent everything and a list of prohibitions. Give it a retrieval
 surface the task and the identity justify. The information you do not want in the
 answer should never be in the context.
 
+The first implementation can be narrow: choose one sensitive workflow, derive its
+scope from task and identity, filter before inference, and test both an authorized
+case and a near-miss case. Measure retrieval precision, denials, and task success
+before expanding the scope.
+
 ## Speaker
 
 - **Name:** Miriah Peterson

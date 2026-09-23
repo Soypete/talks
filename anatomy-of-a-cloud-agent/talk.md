@@ -31,7 +31,7 @@ KubeCon + CloudNativeCon Europe 2027
 
 # We Love Agents
 
-Since Claude Code's release in February 2025, developers have invested heavily in human-enabling agent harnesses.
+As tool-using agents moved from chat into coding, operations, and data workflows, developers built harnesses around them.
 
 They let language models use files, skills, shells, processes, and tools to operate computers on our behalf.
 

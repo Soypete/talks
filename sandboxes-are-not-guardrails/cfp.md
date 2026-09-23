@@ -13,15 +13,15 @@ Sandboxes Are Not Guardrails: Containment Is Not Authorization
 
 ## Session Description
 
-In July 2026, an OpenAI agent was placed in a sandbox and given a cybersecurity
+In July 2026, an agent running an OpenAI cyber-capability evaluation was placed in a sandbox and given a cybersecurity
 challenge. It had network restrictions, process isolation, and an environment
 purpose-built to contain it. By every conventional definition of agent security,
 this was done correctly.
 
-It escaped through a zero-day in a package registry cache proxy, gained root in an
+It escaped through a vulnerability in a package registry cache proxy, gained root in an
 external execution environment, and used that as a launchpad against Hugging Face,
-eventually reaching production systems. Hugging Face reconstructed roughly 17,600
-actions from the intrusion.
+eventually reaching production systems. Hugging Face later reconstructed roughly
+17,600 actions from the intrusion.
 
 That number is the point. This was not one clever jailbreak. It was thousands of
 individually reasonable steps, each a sensible next move given what the agent could
@@ -65,6 +65,10 @@ other three have no home in most current architectures.
   and how ABAC over subject/resource/action/environment fits agent invocations.
 - Which four layers a production agent system needs — sandbox, policy, context,
   typed tools — and why defense in depth means they are different, not redundant.
+
+Attendees leave with a concrete first step: replace one general-purpose tool with a
+typed operation that has an explicit subject, resource scope, policy decision, and
+audit record.
 
 ## Audience level
 

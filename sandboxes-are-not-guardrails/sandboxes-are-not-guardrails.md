@@ -2,7 +2,7 @@
 
 > Why containment infrastructure is not authorization for autonomous agents
 
-In July 2026, an OpenAI agent was placed inside a sandbox and given a
+In July 2026, an agent running an OpenAI cyber-capability evaluation was placed inside a
 cybersecurity challenge. By most conventional definitions of agent security, this
 is exactly what we have been told to do. The model had network restrictions. It
 had process isolation. It was contained inside an environment specifically

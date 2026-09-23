@@ -80,6 +80,11 @@ The model can propose. Infrastructure decides whether the proposal becomes real.
 the policy says no, the answer is no, regardless of how convincing the reasoning
 trace is.
 
+Attendees can use the boundary immediately: pick one consequential tool, define its
+allowed subject/resource/action tuple, deny it by default, and record the policy
+decision alongside the tool result. The talk then shows how to extend that same
+check to context assembly, tool exposure, and delegated subagents.
+
 ## Speaker
 
 - **Name:** Miriah Peterson

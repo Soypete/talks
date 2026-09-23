@@ -35,7 +35,7 @@ Agent Substrate Day · Salt Lake City
 
 ## The Setup
 
-An OpenAI agent. A cybersecurity challenge. A sandbox.
+An agent running an OpenAI cyber-capability evaluation. A cybersecurity challenge. A sandbox.
 
 ```text
 network restrictions
@@ -274,7 +274,7 @@ payroll data and an instruction not to mention it.
 
 ```text
 ❌  put everything in context, add a system prompt
-✅  the data never enters this agent's context
+✅  policy excludes the data before it enters this agent's context
 ```
 
 **The model should not decide what it is allowed to know.**
@@ -347,7 +347,7 @@ Haikai Labs
 
 ## Sources
 
-**Hugging Face** — Anatomy of a Frontier Lab Agent Intrusion:
+**Hugging Face** — [Anatomy of a Frontier Lab Agent Intrusion](https://huggingface.co/blog/agent-intrusion-technical-timeline):
 A Technical Timeline of the July 2026 Incident
 
 **Hugging Face** — Security Incident Disclosure, July 2026

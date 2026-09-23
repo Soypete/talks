@@ -351,7 +351,7 @@ Haikai Labs
 
 **The Context Engineering Manifesto** — Haikai Labs
 
-**Hugging Face** — Anatomy of a Frontier Lab Agent Intrusion,
+**Hugging Face** — [Anatomy of a Frontier Lab Agent Intrusion](https://huggingface.co/blog/agent-intrusion-technical-timeline),
 July 2026 technical timeline
 
 **NIST SP 800-162** — Attribute Considerations for Access Control Systems
