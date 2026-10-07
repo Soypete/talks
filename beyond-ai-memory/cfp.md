@@ -16,7 +16,7 @@ Yes. The talk presents Haikai Labs' architectural perspective on the Sovereign C
 
 ## Session description
 
-We love agents. Since February 2025, developers have built harnesses that turn language models into tools for working with files, code, and computers. But what is the next step in their evolution? What would it take for an agent to escape one user's machine, scale across tasks, and keep working while its user is away?
+Tool-using agents can now work with files, code, and computers through harnesses. But what is the next step in their evolution? What would it take for an agent to escape one user's machine, scale across tasks, and keep working while its user is away?
 
 This talk argues that personalization is not AI memory; it is governed access to meaningful context. We will examine why vector retrieval can return semantically nearby but operationally wrong data, then introduce Context Engineering: classifying tasks, resolving ontology, retrieving scoped data, validating tool calls, and auditing actions.
 
@@ -41,6 +41,8 @@ AI engineers, MLOps engineers, platform engineers, data engineers, security engi
 - Tool calls should be validated as actions with purpose, identity, and policy—not treated as free-form model output.
 - Agentic MLOps must operate context, tools, policies, traces, and outcomes alongside models.
 - A Neural Proxy or agentic middleware layer can preserve semantic and action rules across agents and model providers.
+
+Attendees can apply the model immediately by choosing one consequential workflow and documenting its task classifier, authoritative sources, identity attributes, allowed tools, pre-execution checks, and audit fields. The talk also shows how to test that workflow with stale-context, wrong-identity, and unauthorized-action cases.
 
 ## Talk outline — 30 minutes
 

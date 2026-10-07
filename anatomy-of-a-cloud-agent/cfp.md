@@ -4,13 +4,12 @@ Anatomy of a Cloud Agent Harness: What Happens When the Harness Leaves Your Lapt
 
 # Session Description
 
-We love agents. Since February 2025, developers have built harnesses that turn language models into tools for working with files, code, and computers.
-
-These harnesses work because the laptop provides a user, filesystem, processes, credentials, network, and state. But what is the next step in their evolution? What would it take for an agent to escape one user's machine, scale across tasks, and keep working while its user is away?
-
-Cloud-native infrastructure is fundamentally different: a control plane, ephemeral pods, explicit identities, external state, and services connected through APIs. Simply putting a local harness in a container does not bridge that mismatch.
-
-This talk dissects a local harness and maps its components to a CNCF architecture. We confront the shift from filesystem-and-skill-oriented tools to API-based cloud services, then ask what agentic middleware—or Agentware—must provide for elastic, concurrent workloads. Lo Agent is the concrete local example; the talk names its loop, tools, skills, permissions, sandbox, memory, compaction, event log, replay, integrations, sessions, and telemetry as the anatomy to preserve.
+Local agent harnesses rely on the laptop for identity, credentials, filesystem,
+networking, and state. This talk maps those hidden dependencies to a cloud-native
+architecture for ephemeral agent workloads. Using Lo Agent as a concrete example,
+attendees learn how to separate workload and human identity, externalize state,
+deliver renewable credentials, expose narrow tools, and preserve auditability as
+agents move into shared infrastructure.
 
 ## What attendees will learn
 
@@ -27,6 +26,13 @@ This is a beginner-friendly architecture talk for platform engineers, security e
 ## Key takeaways
 
 Attendees will leave with a practical mental model for designing agents whose compute is ephemeral, authority is scoped, credentials are renewable, state is external, tools are narrow, and actions are attributable to both a workload and a human request.
+
+They will also leave with a migration checklist:
+
+1. Inventory what the laptop currently supplies: identity, secrets, filesystem, process isolation, network, and state.
+2. Replace each implicit dependency with an explicit cloud primitive or service boundary.
+3. Carry workload identity and delegated human identity through every tool and subagent hop.
+4. Externalize resumable state and make every action typed, authorized, and auditable.
 
 ## Small print
 

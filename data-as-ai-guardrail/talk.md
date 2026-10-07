@@ -376,7 +376,8 @@ Result: INVALID - violates prerequisite chain
 Agent Action: Regenerate with correct ordering
 ```
 
-The ontology provides **ground truth** for domain knowledge.
+The ontology provides an **authoritative, versioned model** for the domain — one
+that can be checked and changed deliberately.
 
 Implementation: [PKO Experiment in Professor Pedro](https://github.com/Soypete/professor_pedro/pull/22) — AI assistant with semantic grounding
 
@@ -393,7 +394,7 @@ Implementation: [PKO Experiment in Professor Pedro](https://github.com/Soypete/p
 | LLM Self-Critique | ❌ | ❌ | ❌ |
 | **Ontology Inference** | ✅ | ✅ | ✅ |
 
-Ontologies combine AI flexibility with formal rigor.
+Ontologies can combine AI flexibility with formal checks.
 
 ---
 
@@ -415,10 +416,10 @@ Ontologies combine AI flexibility with formal rigor.
 
 ## Key Takeaways
 
-- **Hallucination is a data validation problem** — we know how to solve those
-- **Ontologies are schemas for text** — apply data engineering to AI
-- **AI natively understands** semantic relationships
-- **Deterministic validation** beats prompt engineering
+- **Many hallucinations are also data-validation problems** — treat the claim as something to check, not merely something to prompt away
+- **Ontologies are executable semantic models** — apply data-engineering discipline to AI inputs and actions
+- **Language models can use semantic relationships, but the ontology and validator must provide the authority**
+- **Deterministic validation** is stronger than prompt-only guidance at the execution boundary
 - **Your data engineering expertise transfers** — use it to ground AI
 
 ---
