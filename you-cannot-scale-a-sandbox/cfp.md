@@ -179,3 +179,11 @@ engineering book.
 *Who Is Your AI Agent Acting For?* is the enterprise and leadership version of this
 architecture. This talk is the engineering and platform version: containment does
 not scale into authorization.
+
+---
+
+## KubeCon + CloudNativeCon EU 2027 co-located event (CNCF Sessionize)
+
+Description (913 chars, limit 1000):
+
+Sandboxes are essential for containing code execution, but they are not a scalable authorization model for autonomous agents. Moving from one coding agent on a laptop to fleets of agents on Kubernetes changes the question from "where can this pod run?" to "which actions should this identity take?" Namespaces, NetworkPolicy, and RBAC contain the workload, but they cannot see the API calls, data reads, and refunds an agent makes with credentials in its environment. For platform engineers and SREs running agents in production, this talk shows what breaks when sandboxing is the primary control and what to add: delegated identity on every call, typed tools instead of a shell, deterministic policy enforcement, approval boundaries, and audit. Attendees leave with a checklist of what an agent control plane must make deterministic. Let models reason freely; let infrastructure decide which actions become real.

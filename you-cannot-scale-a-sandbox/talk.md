@@ -405,6 +405,90 @@ An approval without these is a click, not a control.
 
 <!-- _class: lead -->
 
+# Build it with open source
+
+## Kei is one way. CNCF projects are another.
+
+<!-- Be explicit: Kei doesn't run on these. This is how a platform team could
+build the same layers themselves with tools this audience already operates. -->
+
+---
+
+## The same layers, CNCF edition
+
+| Layer | CNCF option |
+|---|---|
+| Workload identity | **SPIFFE/SPIRE**, K8s projected SA tokens |
+| Delegated user identity | **Keycloak** token exchange (RFC 8693) |
+| Policy decision point | **OPA** (Rego), **OpenFGA** for per-resource checks |
+| Enforcement on the wire | **Envoy** `ext_authz` → OPA |
+| Audit | OPA decision logs → **OpenTelemetry** → append-only store |
+| Containment | K8s namespaces, NetworkPolicy, seccomp, **Falco** |
+
+---
+
+## The flow, open-source edition
+
+```text
+agent pod   spiffe://corp/ns/support/sa/refund-agent
+   │        + user token via RFC 8693 exchange (sub = alice)
+   ▼
+Envoy sidecar ── ext_authz ──▶ OPA
+   │                            ├─ allow / escalate / deny
+   │                            └─ decision log ──▶ OTel ──▶ audit
+   ▼
+billing API   (only reached if OPA said allow)
+```
+
+Identity from SPIRE + IdP. Decision from OPA. Enforcement in Envoy.
+**The model never touches any of it.**
+
+---
+
+## Approval tiers in Rego
+
+```rego
+package agent.authz
+
+default decision := "deny"
+
+decision := "allow" if {
+    input.tool == "refund_order"
+    input.principal.role == "support"
+    input.args.amount_cents <= 10000
+    input.resource.region == input.principal.region
+}
+
+decision := "escalate" if {
+    input.tool == "refund_order"
+    input.principal.role == "support"
+    input.args.amount_cents > 10000
+    input.args.amount_cents <= 200000
+}
+```
+
+<!-- OPA returns any JSON, so a three-tier decision is just a string. The
+harness or Envoy filter turns "escalate" into a paused request. -->
+
+---
+
+## What you still have to build
+
+- **Typed tools.** No CNCF project defines your agent's operations. `bash` + Envoy
+  still means policy on URLs, not on refunds.
+- **Authorize before context assembly.** OPA and OpenFGA can answer; your
+  retrieval layer has to **ask** before it fetches.
+- **Escalation.** OPA can say "escalate"; something has to route, wait, and resume.
+- **SaaS delegation.** Salesforce and Slack don't speak SPIFFE.
+- **Audit integrity.** Telemetry isn't tamper-evident by default.
+
+That glue is what a governed context layer packages.
+**Build or buy, the layers are the same.**
+
+---
+
+<!-- _class: lead -->
+
 # Model proposes.
 # Infrastructure disposes.
 
