@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "model": "gpt-oss-20b",
+    "scenario": "coding:3",
+    "seed": 1002,
+    "temperature": 0.6
+  },
+  "panes": [
+    {
+      "title": "NO GUARDRAILS",
+      "events": [
+        [
+          1.03,
+          "run_tests -> ok"
+        ],
+        [
+          1.81,
+          "grep(def parse_line) -> ok"
+        ],
+        [
+          2.15,
+          "read_file(parse.py) -> ok"
+        ],
+        [
+          3.99,
+          "edit_file(parse.py) -> ok"
+        ],
+        [
+          4.62,
+          "run_tests -> ok"
+        ],
+        [
+          5.21,
+          "grep(def build_invoice) -> ok"
+        ],
+        [
+          5.57,
+          "read_file(invoice.py) -> ok"
+        ],
+        [
+          6.15,
+          "grep(def line_total) -> ok"
+        ],
+        [
+          6.44,
+          "read_file(pricing.py) -> ok"
+        ],
+        [
+          7.01,
+          "read_file(test_invoice.py) -> ok"
+        ],
+        [
+          13.62,
+          "read_file(render.py) -> ok"
+        ],
+        [
+          20.78,
+          "edit_file(pricing.py) -> ok"
+        ],
+        [
+          21.4,
+          "run_tests -> ok"
+        ],
+        [
+          23.21,
+          "edit_file(invoice.py) -> ok"
+        ],
+        [
+          23.68,
+          "run_tests -> ok"
+        ]
+      ],
+      "result": [
+        "",
+        "✗ stopped: stopped_without_tool_call (16 turns)",
+        "✗ the code is fixed, but the run never called done"
+      ],
+      "turns": 16,
+      "duration": 24.32
+    },
+    {
+      "title": "WITH GUARDRAILS",
+      "events": [
+        [
+          0.67,
+          "run_tests -> ok"
+        ],
+        [
+          1.44,
+          "grep(def parse_line) -> ok"
+        ],
+        [
+          1.78,
+          "read_file(parse.py) -> ok"
+        ],
+        [
+          3.59,
+          "edit_file(parse.py) -> ok"
+        ],
+        [
+          4.21,
+          "run_tests -> ok"
+        ],
+        [
+          4.8,
+          "grep(def build_invoice) -> ok"
+        ],
+        [
+          5.13,
+          "read_file(invoice.py) -> ok"
+        ],
+        [
+          5.69,
+          "grep(def line_total) -> ok"
+        ],
+        [
+          5.96,
+          "read_file(pricing.py) -> ok"
+        ],
+        [
+          6.53,
+          "read_file(test_invoice.py) -> ok"
+        ],
+        [
+          13.15,
+          "read_file(render.py) -> ok"
+        ],
+        [
+          20.39,
+          "edit_file(pricing.py) -> ok"
+        ],
+        [
+          21.06,
+          "run_tests -> ok"
+        ],
+        [
+          22.87,
+          "edit_file(invoice.py) -> ok"
+        ],
+        [
+          23.34,
+          "run_tests -> ok"
+        ],
+        [
+          23.87,
+          "nudge 1: That was not a valid tool call. Respond with exactly one tool call from the allowed tools."
+        ],
+        [
+          25.01,
+          "done(Fixed SKU parsing to allow h…) -> ok"
+        ]
+      ],
+      "result": [
+        "",
+        "✓ finished: all checks pass (17 turns, 1 nudges)"
+      ],
+      "turns": 17,
+      "duration": 25.14
+    }
+  ]
+}

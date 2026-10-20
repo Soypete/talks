@@ -1,0 +1,16 @@
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+runs/*.err
+runs/*.log
+runs/*DONE
+# superseded or pre-scenario runs (no state_score / different sampling)
+runs/probe-*
+runs/oss-*.jsonl
+
+# recordings are saved here for the PPTX but not committed (size)
+out/*.mov
+out/*.mp4
+
+# private YouTube Studio export used by the analytics scenario
+data/*.csv

@@ -94,9 +94,9 @@ data centers to get more training-->
 
 ---
 
-## MoE: More Capacity, Less Compute per Token
+## Term to Know: MoE
 
-Instead of using every parameter for every token, a router selects a few experts:
+More capacity, less compute per token. Instead of using every parameter for every token, a router selects a few experts:
 
 ```text
 397B total parameters
@@ -106,6 +106,8 @@ Instead of using every parameter for every token, a router selects a few experts
 
 **Local hosts can keep inactive experts in system RAM and move selected experts through the GPU.**
 
+**When picking a model: total parameters sets memory, active parameters sets speed.**
+
 <!-- MoE expands total capacity without making every token pay for every expert.
 This lowers active compute, which matters at provider scale. It also made surprisingly
 powerful models accessible to local hosts: the complete quantized model can live in
@@ -114,6 +116,30 @@ VRAM. The tradeoff is CPU-to-GPU transfer latency and bandwidth. Shared attentio
 other non-expert layers still run; MoE routes expert feed-forward blocks, not arbitrary
 transformer layers. Sources: https://arxiv.org/abs/2101.03961 and
 https://arxiv.org/abs/2603.19289 -->
+
+---
+
+## Term to Know: MTP
+
+Multi-token prediction: the model drafts several tokens ahead, then verifies them
+in one pass.
+
+```text
+draft  →  the  quick  brown  fox
+verify →   ✓      ✓      ✓     ✗
+                              ↑ re-decode from here
+```
+
+**Acceptance rate is the whole story.** High means tokens nearly free; low means you paid to draft and threw it away.
+
+**When picking a model: does it ship MTP, and does your server use it?**
+
+<!-- MTP is server-side speculative decoding, so llama-bench does not show it: it
+measures the model and kernels, not the serving feature. mtp accept = draft_n_accepted
+/ draft_n. Predictable, templated output accepts well; surprising output accepts poorly.
+For agents this matters more than it looks, because tool calls are highly structured and
+therefore highly predictable. The 5090 in this talk currently serves Qwen3.8 without MTP
+acceptance reporting, so I explain the term rather than demo it. -->
 
 ---
 
@@ -256,18 +282,39 @@ Author discussion and results context: https://news.ycombinator.com/item?id=4819
 
 ## Guardrails Change Completion Rates
 
-![width:1050px](../images/forge-guardrails-results.png)
+![width:1180px](demo/out/ladder-both.png)
 
-Selected bare vs. Reforged results across the evaluation suite.
+Same tasks, same harness, bare vs. guardrails. Light bars: the code was right, but the run never called `done`.
 
-[CAIS 2026 demo and paper](https://www.caisconf.org/program/2026/demos/forge-agentic-reliability/) · [Author discussion on Hacker News](https://news.ycombinator.com/item?id=48192383)
+Forge's original 8B results: [CAIS 2026 demo and paper](https://www.caisconf.org/program/2026/demos/forge-agentic-reliability/)
 
-<!-- Read the chart as workflow completion, not general intelligence. The same model
-becomes dramatically more reliable when the harness validates calls, rescues malformed
-formats, returns useful errors, and retries. Zambelli notes that 90% per-step accuracy
-across five required steps yields roughly a 41% chance of at least one failure:
-1 - 0.9^5 ≈ 0.41. This is why small per-turn weaknesses compound in agents. The
-figure was supplied from the Forge CAIS material. -->
+<!-- Read the chart as completion, not intelligence. Left: Qwen3.8-27B on the 5090 finishes
+every task with or without guardrails (4-5 runs per bar). Right: gpt-oss-20B on a laptop
+(10 runs per bar). On the three fix-the-failing-tests rungs (1, 2 and 3 bugs) the 20B fixed
+the code in 100% of bare runs, but only 20%, 40% and 0% of them finished by calling done;
+it stopped with a plain-text reply. With guardrails one nudge ("respond with a tool call")
+got it to finish 10 of 10 on each rung, at about one extra turn. The 4-bug rung (80% vs
+90%) and the access-provisioning task (100% vs 100%) show no real gap, so do not claim a
+steady slope. These guardrails fixed "never signals completion", not wrong code. Zambelli's
+compounding argument still explains why it matters: 90% per-step accuracy across five
+required steps gives roughly a 41% chance of at least one failure, 1 - 0.9^5 ≈ 0.41.
+Runs, code and the replay are in agentcon-self-hosting/demo. -->
+
+---
+
+## Same Task, Same Model: Bare vs. Guardrails
+
+<video src="demo/out/guardrails-demo.mp4" controls muted loop style="width:1100px"></video>
+
+Two runs recorded separately on one laptop, shown together at real speed: gpt-oss-20B, fix three bugs.
+
+<!-- Press play and talk over it; there is no audio. Left (no guardrails): the model fixes
+all three bugs, re-runs the tests green, then answers in plain text and never calls done,
+so the run ends unfinished. Right (guardrails): identical until the end; one nudge
+("respond with a tool call") and it calls done. Both runs are real, recorded alone at true
+speed (running them together slowed each to about 72s). Seed 1002 of 10; all ten seeds
+showed the same pattern. If the video fails, the chart on the previous slide is the
+fallback. Source: agentcon-self-hosting/demo/live_demo.py. -->
 
 ---
 
@@ -305,83 +352,49 @@ https://news.ycombinator.com/item?id=48192383 -->
 
 # Demo: One GPU, Real Agents
 
-## Qwen3.6-27B · RTX 5090 · my house
+## Qwen3.8-27B · RTX 5090 · my house
 
 We need to prove **speed, tool use, and completed work**.
 
 ---
 
-## Demo 1: A Multistep Agent Over the Wire
-
-```text
-conference laptop → Tailscale → home inference server → RTX 5090
-```
-
-Run `cfp_watch` live and watch the loop in the logs:
-
-- search → fetch page → store → notify
-- tool call, arguments, and result per turn
-- token counts and the final Discord message
-
-<!-- Run the real agent from the venue against the home 5090 over Tailscale. The
-logs already show the loop: each tool call, its arguments, the result coming back
-as input, and the decision to continue or stop. Keep a recorded run as the primary
-conference fallback — venue wifi is the risk, not the agent. Source:
-~/code/pedro/pedro-bots/src/core/agents/cfp_watch.py -->
-
----
-
-## What MTP Buys You
-
-Multi-token prediction: the model drafts several tokens ahead, then verifies them
-in one pass.
-
-```text
-draft  →  the  quick  brown  fox
-verify →   ✓      ✓      ✓     ✗
-                              ↑ re-decode from here
-```
-
-**Acceptance rate is the whole story.**
-
-```text
-mtp accept = draft_n_accepted ÷ draft_n
-```
-
-High acceptance means tokens nearly free. Low acceptance means you paid to draft
-and threw it away.
-
-<!-- MTP is server-side speculative decoding, which is why llama-bench does not
-show it — llama-bench measures the model and kernels, not the serving feature. The
-API benchmark on the next slide reads llama.cpp's own timings and reports
-draft_n_accepted / draft_n. Predictable, templated output accepts well; surprising
-output accepts poorly. For agents this matters more than it looks, because tool
-calls are highly structured and therefore highly predictable. Source:
-~/code/pedro/pedro-ops/scripts/pedrogpt/benchmark -->
-
----
-
-## Demo 2: Measure the Local Server
+## Demo: Measure the Local Server
 
 ```bash
 cd ~/code/pedro/pedro-ops/scripts/pedrogpt/benchmark
 
 go run . -url http://pedrogpt:8000/v1 \
-  -model qwen3.6-27b-mtp -n 10
+  -model qwen3.8-27b -n 3 -max-tokens 128
 
 go run . \
   -prompt "Write a Go HTTP server with graceful shutdown." \
   -max-tokens 512
 ```
 
-**TTFT · prompt tok/s · generation tok/s · p50/p95 latency · MTP acceptance**
+**TTFT · prompt tok/s · generation tok/s · p50/p95 latency**
 
-<!-- Run the first command for ten comparable requests against llama-server. It
+<!-- Run the first command for comparable requests against llama-server. It
 discards a warmup by default, streams /v1/chat/completions, reads llama.cpp's own
 prompt and generation timings, and reports client-side TTFT and total latency. The
 second command demonstrates a longer, recognizable coding response. Explain that the
 browser demo includes network latency; this benchmark isolates the serving path more
-directly. Real source: ~/code/pedro/pedro-ops/scripts/pedrogpt/benchmark -->
+directly. The server currently runs Qwen3.8 and does not report MTP draft acceptance, so
+that metric is not shown. TTFT counts reasoning tokens (the benchmark was fixed in the
+pedro-ops branch fix/benchmark-ttft-reasoning; it read 0.0 before). Real source:
+~/code/pedro/pedro-ops/scripts/pedrogpt/benchmark -->
+
+---
+
+## Demo: The Run
+
+<video src="demo/out/benchmark-demo.mp4" controls muted loop style="width:1100px"></video>
+
+The first command above, recorded live against the 5090 over Tailscale. No audio.
+
+<!-- Press play and talk over it. The recording is the real command at real speed: a
+warmup request is discarded, then three streamed requests, then the summary with TTFT,
+prompt and generation tokens per second, and p50/p95 latency. If the video fails, run
+the command live; it takes about 20 seconds. -->
 
 ---
 
