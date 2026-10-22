@@ -14,3 +14,6 @@ out/*.mp4
 
 # private YouTube Studio export used by the analytics scenario
 data/*.csv
+
+# local eval re-runs (CI is the record)
+runs/agentware-evals-*/

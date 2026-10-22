@@ -94,58 +94,115 @@ data centers to get more training-->
 
 ---
 
-## Term to Know: MoE
+<!-- _backgroundColor: #14202e -->
+<!-- _color: #ffffff -->
 
-More capacity, less compute per token. Instead of using every parameter for every token, a router selects a few experts:
+## Open Weights Got Good. Now Where Do They Run?
 
-```text
-397B total parameters
-       ↓ route each token
- 17B active parameters
-```
+<div style="display:flex;gap:56px;align-items:center;justify-content:center;margin:34px 0 14px">
+  <div style="text-align:center"><img src="assets/logos/modal-white.svg" style="height:56px"><br><small>serverless GPUs</small></div>
+  <div style="text-align:center"><img src="assets/logos/runpod-white.svg" style="height:56px"><br><small>rented GPUs</small></div>
+  <div style="text-align:center"><span style="font-size:46px;font-weight:700">Self-host</span><br><small>the 5090 in my house</small></div>
+</div>
 
-**Local hosts can keep inactive experts in system RAM and move selected experts through the GPU.**
+**Open-weight models are strong enough for real agent work.**
 
-**When picking a model: total parameters sets memory, active parameters sets speed.**
+**You pay for compute, not tokens.**
 
-<!-- MoE expands total capacity without making every token pay for every expert.
-This lowers active compute, which matters at provider scale. It also made surprisingly
-powerful models accessible to local hosts: the complete quantized model can live in
-larger, cheaper CPU memory while only routed experts are staged through limited GPU
-VRAM. The tradeoff is CPU-to-GPU transfer latency and bandwidth. Shared attention and
-other non-expert layers still run; MoE routes expert feed-forward blocks, not arbitrary
-transformer layers. Sources: https://arxiv.org/abs/2101.03961 and
-https://arxiv.org/abs/2603.19289 -->
-
----
-
-## Term to Know: MTP
-
-Multi-token prediction: the model drafts several tokens ahead, then verifies them
-in one pass.
-
-```text
-draft  →  the  quick  brown  fox
-verify →   ✓      ✓      ✓     ✗
-                              ↑ re-decode from here
-```
-
-**Acceptance rate is the whole story.** High means tokens nearly free; low means you paid to draft and threw it away.
-
-**When picking a model: does it ship MTP, and does your server use it?**
-
-<!-- MTP is server-side speculative decoding, so llama-bench does not show it: it
-measures the model and kernels, not the serving feature. mtp accept = draft_n_accepted
-/ draft_n. Predictable, templated output accepts well; surprising output accepts poorly.
-For agents this matters more than it looks, because tool calls are highly structured and
-therefore highly predictable. The 5090 in this talk currently serves Qwen3.8 without MTP
-acceptance reporting, so I explain the term rather than demo it. -->
+<!-- Transition out of the problem slide. The token bill is the cost of renting someone else's
+model. Open-weight models changed that: good open models can run on a GPU you rent by the
+second or hour (Modal, RunPod) or on hardware you own. In all three cases you pay for
+compute, so the cost depends on how well you use the GPU, not on how many tokens you send.
+That sets up the next two slides, which are about what makes these models cheap enough to run:
+MoE and MTP. Logos are the vendors' own marks; the Modal wordmark is recolored white for
+the dark background. -->
 
 ---
 
-## “Local Model” Covers Two Different Bets
 
-| Large local model | Small local model |
+## Choosing Hardware: Start With Memory
+
+| Unified memory | Split memory |
+|---|---|
+| CPU and GPU share one big pool | GPU has its own VRAM, the CPU has system RAM |
+| simple to size: does the model fit? | fast VRAM is small; system RAM is big and cheap |
+| lower bandwidth than discrete VRAM | spilling out of VRAM costs speed |
+| **Mac · NVIDIA DGX Spark · AMD Strix Halo** | **RTX series (the 5090 in my house) · commercial datacenter GPUs** |
+
+**First question: does the model plus its KV cache fit, and where?**
+
+<!-- Start with memory, not with the GPU model name. Unified memory (Apple Silicon, NVIDIA's DGX Spark,
+and AMD's Strix Halo are the examples) gives one pool the CPU and GPU both use, so sizing is simple but bandwidth is
+lower than a discrete card. Split memory is a discrete GPU (RTX cards, or commercial datacenter GPUs) with fast VRAM plus system RAM that is
+cheaper and larger but slower to reach. Everything that follows is about what lives in which
+pool. -->
+---
+
+
+## What Memory Is Used For
+
+- **GPU:** runs inference and holds the **KV cache** (the model's working memory for the conversation)
+- **KV cache can be offloaded** to system RAM: more context, slower
+- **CPU + system RAM:** run the inference engine and load the entire model
+- **You can run inference on a CPU**, but a GPU does it in parallel, and that is the speed
+
+More on hardware: [Domesticating AI, Ep 3: What AI Hardware Should You Buy? · youtu.be/LZ0N6q6S1WY](https://youtu.be/LZ0N6q6S1WY)
+
+<!-- Keep this concrete. The GPU does the math and keeps the KV cache, which grows with context
+length and can be offloaded to CPU memory when VRAM runs out. The CPU and system RAM run the
+inference engine itself and hold the entire model while it loads. Nothing stops you from running
+inference on the CPU; the GPU's advantage is parallelism. This is why memory size and where it
+sits decide what you can run. The link is episode 3 of the Domesticating AI podcast (hardware,
+memory, backends, scaling at home). Other listings:
+https://podcasts.apple.com/us/podcast/id1873338950 -->
+---
+
+
+## Pick the Engine and the Model
+
+<div style="display:flex;gap:46px;align-items:flex-end;justify-content:center;margin:18px 0 6px">
+  <div style="text-align:center"><img src="assets/logos/vllm.png" style="height:64px"><br><small>vLLM</small></div>
+  <div style="text-align:center"><img src="assets/logos/llamacpp.svg" style="height:64px"><br><small>llama.cpp</small></div>
+  <div style="text-align:center"><img src="assets/logos/ollama.png" style="height:64px"><br><small>Ollama</small></div>
+  <div style="text-align:center"><img src="assets/logos/lmstudio.png" style="height:64px"><br><small>LM Studio</small></div>
+</div>
+
+I manage them with **systemd scripts**. vLLM is the cloud-native one: it runs on Kubernetes with **KServe**.
+[Stop Scaling AI Like Software (Red Hat) · Domesticating AI](https://youtu.be/IqQnQ5vFdhE)
+
+<div style="display:flex;gap:20px;align-items:center;margin-top:14px">
+  <img src="assets/logos/huggingface.svg" style="height:52px"><span style="font-size:28px"><b>Hugging Face</b>: choose the model, and filter by what it can do: <b>multimodal, tool calling, reasoning</b>. That matters for our agents.</span>
+</div>
+
+<!-- After memory, two choices: the inference engine and the model. vLLM is built for NVIDIA
+throughput and batching and is cloud native: on Kubernetes it is served through KServe. llama.cpp
+runs almost anywhere and uses GGUF quantizations; Ollama and LM Studio wrap that with a friendlier
+install and a model library. My own servers are managed with plain systemd scripts. Hugging Face is
+where I read the model card, the size and the quantizations, and where I filter by capability:
+multimodal input, tool calling, and reasoning. For agents, tool calling and reasoning support is the
+important filter. The video is a Domesticating AI episode with Daniel Dowler of Red Hat. -->
+---
+
+
+## What the Model and the Engine Do
+
+| Inference | Reasoning | Tool calls |
+|---|---|---|
+| turns weights into tokens: speed and context length | thinking tokens before the answer | structured calls the harness runs |
+
+**Model:** what it can do (multimodal, reasoning, tool calling).
+**Engine:** how fast, and whether those features actually work.
+
+<!-- Three things we enable on top of the hardware. Inference speed depends on the engine and the
+memory. Reasoning depends on a model trained to think and an engine that exposes it. Tool calls
+depend on a model trained for structured output and an engine whose parser and chat template turn
+that output into real tool calls. The same weights can behave differently on two engines. This leads
+into the candy-store moment and then the second half of the infrastructure: the harness. -->
+---
+
+## Start With MoE or a Small Dense Model
+
+| MoE (large local model) | Small dense model |
 |---|---|
 | capacity through MoE | efficiency through dense weights |
 | weights spill into system RAM | weights fit on one GPU |
@@ -154,18 +211,21 @@ acceptance reporting, so I explain the term rather than demo it. -->
 
 **Choose for the workload—not for the leaderboard.**
 
-<!-- This distinction was missing in the first version of the talk. “Running
+<!-- Where to start. “Running
 locally” can mean making an enormous MoE model possible with CPU RAM and partial GPU
 offload, or making a small dense model extremely fast by keeping it entirely in VRAM.
 The large-model bet buys more capacity but accepts memory traffic and operational
 complexity. The small-model bet only works when the task and harness are constrained
-enough, but it gives the agent fast, cheap turns. -->
-
+enough, but it gives the agent fast, cheap turns. The MoE and MTP terms are in the appendix if someone asks. -->
 ---
+
 
 <!-- _class: lead -->
 
 # “We Are Kids in a Candy Store”
+
+<div style="display:flex;gap:56px;align-items:center;justify-content:center">
+<div style="text-align:left;max-width:640px">
 
 > “We are kids in a candy store.”
 >
@@ -173,25 +233,32 @@ enough, but it gives the agent fast, cheap turns. -->
 
 ## [▶ Watch the short on YouTube](https://youtube.com/shorts/ljxaBcd5zx8)
 
-<!-- Open the link in a browser during the talk, then return to the deck. This is
-the emotional pivot: the old consumer constraint has changed. -->
+</div>
+<iframe width="260" height="462" src="https://www.youtube.com/embed/ljxaBcd5zx8" title="We are kids in a candy store" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture" allowfullscreen style="border:0;border-radius:10px"></iframe>
+</div>
 
+<!-- The clip is embedded, but venue wifi is the risk: if it does not load, use the link, or skip it
+and say the line. This is the emotional pivot: the old consumer constraint has changed. -->
 ---
+
 
 <!-- _class: lead -->
 
-# Can we make Cheaper Agents more effective?
+# The Second Half of the Infrastructure: the Harness
 
-## Small, dense, and actually local
+The harness controls:
 
-**We genuinely do not know the ceiling yet.**
+**whether we reason · whether we call tools · what we can call**
 
-<!-- Qwen3.6-27B is a 27B dense model, post-trained for agentic coding and
-structured tool use, and small enough to run on one high-end consumer GPU when
-quantized. With a dense model, every model parameter participates in every token.
-What we know: these models are trained for tools, fast enough for iterative loops,
-and available for us to operate. Source: https://huggingface.co/Qwen/Qwen3.6-27B -->
+We do it with **tags** in the chat template: thinking tags and tool-call tags.
 
+**On small models, reliability is the work. That is where Forge comes in.**
+
+<!-- The first half of the infrastructure is the model server. The second half is the harness that
+drives it. Through the chat template and its tags (for example Qwen's think and tool_call tags) the
+harness turns reasoning on or off, decides whether the model may call tools at all, and chooses which
+tools are visible. Building harnesses for agents on small models means reliability becomes the main
+problem, which is what Forge addresses. -->
 ---
 
 ## What Does “Reasoning” Mean Here?
@@ -220,16 +287,6 @@ observations. Ambiguity adds decisions before the real work begins; every choice
 another opportunity for a wrong tool, extra turn, or over-the-wire call. Source: Yao
 et al., “ReAct: Synergizing Reasoning and Acting in Language Models,”
 https://arxiv.org/abs/2210.03629 -->
-
----
-
-<!-- _class: lead -->
-
-# The Subproblem
-
-## Small models have less margin for ambiguity and recovery
-
-One bad turn can become three expensive turns—or a complete restart.
 
 ---
 
@@ -405,7 +462,7 @@ base_url = os.environ.get(
     "LLAMA_CPP_BASE_URL", "http://.../v1"
 )
 model_name = os.environ.get(
-    "LLAMA_CPP_MODEL", "qwen3.6-27b-mtp"
+    "LLAMA_CPP_MODEL", "qwen3.8-27b"
 )
 
 tools = [duckduckgo_search, fetch_cfp_page,
@@ -548,32 +605,30 @@ Sources: https://www.runpod.io/pricing and https://modal.com/pricing -->
 
 ## Choosing the Model Is an Eval Problem
 
-Not a leaderboard problem. Agentware ships the eval framework I use:
+The same method as the guardrails graph: fixed task, repeats, score the outcome.
 
 ```bash
-python3 -m evals.main --all \
-  --models qwen3.6-27b-mtp \
-  --base-url http://pedrogpt:8000
+python3 -m evals.main --suite ../evals/suites \
+  --model-profile qwen3.8-27b --repeats 3
 ```
 
-Each case is a tool-calling question with a right answer:
+Each case: prompt + tool schemas → right tool, required args, no forbidden args.
 
-```text
-system prompt + user message + tool schemas
-                    ↓
-        did it call the expected tool?
-```
+| Run (24 cases × 3) | Passed | Mean case |
+|---|---:|---:|
+| **Qwen3.8-27B**, my 5090, today | **72 / 72** | **4.8 s** |
+| Qwen3.8-27B, nightly CI | 72 / 72 | 5.7 s |
+| DeepSeek-V4-Flash, nightly CI | 72 / 72 | 27.3 s |
 
-**File search · general · GitHub · calendar — against *your* tools.**
-
-<!-- Real source: ~/code/haikei/Agentware/docs/evals/README.md and go/evals/.
-The framework exists in Go, Python, and TypeScript, and supports six backends:
-ollama, llamacpp, vllm, lmstudio, openai, anthropic. That matters for selection —
-the same suite runs against a local model and a frontier API, so the comparison is
-apples to apples. An EvalCase is name, system prompt, user message, tools, and
-ExpectedTool, with max_turns to catch models that wander. Point out that the
-default model is already qwen3.6-27b-mtp against pedrogpt:8000 — this is the
-harness I actually run, not a hypothetical. -->
+<!-- Real source: ~/code/haikei/Agentware/docs/evals/README.md. Suite agentware.beta-tools
+covers GitHub, Linear, Drive, docs, S3, HTTP API, CRM and meeting tools, including cases that
+must decline, must not pass a tenant or repository argument, or must handle a failing
+connector. The local row is a re-run I did today against the 5090; the CI rows are the
+nightly Agent evals run 39435743386 (Oct 20). The two models run on different
+infrastructure, so the times are not a controlled speed comparison. A 100% pass rate on both
+means this suite cannot separate them: that is the point of the next slide, add cases until it
+can. The framework exists in Go, Python, and TypeScript and runs the same suite against a
+local model and a frontier API. -->
 
 ---
 
@@ -592,6 +647,7 @@ rewrite the schema → rerun → compare
 - add cases for the tools your agent actually has
 - a failing case is a spec for a better description
 - step down a model size and rerun the suite
+- a failing run is how the guardrails were found: nudges, rescue parsing, step checks
 
 **The smallest model that passes your suite is the model you should run.**
 
@@ -604,6 +660,31 @@ smallest model that still passes. Six backends means you can run the identical
 cases against a frontier model to see whether a failure is the model or the
 schema. -->
 
+
+---
+
+## Evals Are Your Regression Test
+
+```text
+pull request / nightly → eval suites → pass rate per suite
+                                              ↓ below threshold
+                                       the check fails
+```
+
+- **tool-call suites:** right tool, right args, nothing it must not send
+- **skill suites:** the skills still do what they say
+- run per model profile, sharded, with repeats to absorb variance
+- a new model, quant, prompt, or tool schema is a change like any other
+
+**Treat the model, hosted or self-hosted, as infrastructure: test it like a dependency.**
+
+<!-- This is how I use the same evals in CI/CD. Agentware's Agent evals workflow runs on
+pull requests and on a nightly schedule, one job per model profile (Qwen3.8 on the 5090 and
+DeepSeek-V4-Flash), sharded three ways. A suite below its pass-rate threshold fails the
+check, so a regression in tool calls or skills is caught before it ships. Be honest that
+this works because the CI runner can reach the model server: when the runner could not
+reach the 5090 the Qwen jobs failed at "Probe the model server" and scored nothing. That is
+a real operational cost of treating a self-hosted model as infrastructure. -->
 ---
 
 <!-- _class: lead -->
@@ -636,6 +717,55 @@ schema. -->
 # Appendix
 
 ## Optional discussion after the outro
+
+---
+
+## Term to Know: MoE
+
+More capacity, less compute per token. Instead of using every parameter for every token, a router selects a few experts:
+
+```text
+397B total parameters
+       ↓ route each token
+ 17B active parameters
+```
+
+**Local hosts can keep inactive experts in system RAM and move selected experts through the GPU.**
+
+**When picking a model: total parameters sets memory, active parameters sets speed.**
+
+<!-- MoE expands total capacity without making every token pay for every expert.
+This lowers active compute, which matters at provider scale. It also made surprisingly
+powerful models accessible to local hosts: the complete quantized model can live in
+larger, cheaper CPU memory while only routed experts are staged through limited GPU
+VRAM. The tradeoff is CPU-to-GPU transfer latency and bandwidth. Shared attention and
+other non-expert layers still run; MoE routes expert feed-forward blocks, not arbitrary
+transformer layers. Sources: https://arxiv.org/abs/2101.03961 and
+https://arxiv.org/abs/2603.19289 -->
+
+---
+
+## Term to Know: MTP
+
+Multi-token prediction: the model drafts several tokens ahead, then verifies them
+in one pass.
+
+```text
+draft  →  the  quick  brown  fox
+verify →   ✓      ✓      ✓     ✗
+                              ↑ re-decode from here
+```
+
+**Acceptance rate is the whole story.** High means tokens nearly free; low means you paid to draft and threw it away.
+
+**When picking a model: does it ship MTP, and does your server use it?**
+
+<!-- MTP is server-side speculative decoding, so llama-bench does not show it: it
+measures the model and kernels, not the serving feature. mtp accept = draft_n_accepted
+/ draft_n. Predictable, templated output accepts well; surprising output accepts poorly.
+For agents this matters more than it looks, because tool calls are highly structured and
+therefore highly predictable. The 5090 in this talk currently serves Qwen3.8 without MTP
+acceptance reporting, so I explain the term rather than demo it. -->
 
 ---
 
