@@ -7,7 +7,7 @@ style: |
   section { background:#0C1723; color:#F5FAFC; font-family:Arial, sans-serif; padding:54px 70px; font-size:28px; }
   section h1 { color:#F5FAFC; font-size:47px; line-height:1.09; margin:0.19em 0 0.42em; }
   section h2 { color:#D3EAF2; font-size:34px; line-height:1.3; }
-  section.lead h1 {font-size:104px;margin-top:68px;color:#F5FAFC;}
+  section.lead h1 {font-size:72px;margin-top:45px;color:#F5FAFC;}
   section.lead h2 {font-size:35px;line-height:1.3;color:#D3EAF2;}
   section strong { color:#58D3BC; }
   section code { color:#84DDF2; background:#172635; }
@@ -22,79 +22,21 @@ style: |
   section > p:last-of-type {font-size:12px;color:#9BB7C6;}
   section::after {color:#7896A8;font-size:14px;}
 ---
-
 <!-- _class: lead -->
 
-**2009-2026 | A TECHNICAL HISTORY**
+**GO MEETUP | 2009–2026**
 
-# net/http
+# net/http: the timeline
 
 ## Know your HTTP stack before an AI agent gaslights you
 
-**A chronological guide to protocols, routing, security, concurrency and testing**
+2009–12 · **Handlers** → 2014–18 · **lifetimes** → 2016 · **HTTP/2** → 2022–23 · **hardening** → 2024 · **routing** → 2025–26 · **protocols & migration**
 
-*Sources: [Go 1 announcement, 28 Mar 2012](https://go.dev/blog/go1) | [net/http documentation](https://pkg.go.dev/net/http) (additional references in speaker notes)*
+*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
 
-<!--
-SPEAKER NOTES
-Research cutoff: 26 October 2026. Focus is Go 1.x releases, and HTTP/1.x versus HTTP/2 protocol versions. The central history is an interface that stayed familiar while multiple implementations changed.
-SOURCE LINKS
-Go 1 announcement, 28 Mar 2012 - https://go.dev/blog/go1
-net/http documentation - https://pkg.go.dev/net/http
-Go 1.27 release notes - https://go.dev/doc/go1.27
+<!-- SPEAKER NOTES
+We will return to this timeline at each milestone, then look at the API and run a matching example. Dates name Go releases where the change landed; HTTP/2 is the wire protocol, not a new net/http API.
 -->
-
----
-
-**ROADMAP**
-
-# One interface, three long arcs
-
-### PUBLIC API - Handler + Client + Transport
-
-Stable composition since Go 1.
-
-### PROTOCOL ENGINE - HTTP/1.1 to transparent HTTP/2
-
-2016 support; 2026 source migration.
-
-### CONTROL PLANE - Routing, security, testing
-
-ServeMux 1.22; protocol knobs 1.24; synctest 1.25.
-
-> The story is evolution inside a compatibility boundary.
-
-*Sources: [Go 1 release notes](https://go.dev/doc/go1) | [Go 1.6 release notes](https://go.dev/doc/go1.6) (additional references in speaker notes)*
-
-<!--
-SPEAKER NOTES
-The story is evolution inside a compatibility boundary.
-SOURCE LINKS
-Go 1 release notes - https://go.dev/doc/go1
-Go 1.6 release notes - https://go.dev/doc/go1.6
-Go 1.22 release notes - https://go.dev/doc/go1.22
-Go 1.24 release notes - https://go.dev/doc/go1.24
-Go 1.27 release notes - https://go.dev/doc/go1.27
--->
-
----
-
-**THE MIGRATION | THREE DISTINCT CHANGES**
-
-# What actually changed?
-
-- **2016:** HTTP/2 support arrives in `net/http` with Go 1.6.
-- **2024:** `ServeMux` gets method and wildcard routing in Go 1.22.
-- **2026:** HTTP/2's implementation moves from `x/net/http2` into the standard library.
-- The application-facing package remains `net/http` and the handler contract stays familiar.
-
-*Sources: [Go 1.6 release notes](https://go.dev/doc/go1.6) | [Go 1.22 release notes](https://go.dev/doc/go1.22) | [HTTP/2 migration notes](https://pkg.go.dev/golang.org/x/net/http2)*
-
-<!--
-SPEAKER NOTES
-HTTP/2 is a wire protocol version, not a new major version of the net/http API. The 2026 change moves the implementation's source of truth; HTTP/2 was already available through net/http since Go 1.6. x/net/http2 remains available for compatibility.
--->
-
 ---
 
 **TRY THE CODE**
@@ -114,28 +56,23 @@ go test -race ./...
 - The examples README explains TLS and the Go 1.27 test.
 
 ---
+**TIMELINE | STOP 1 OF 7**
 
-**ANATOMY | TODAY**
+# 2009–2012: Handlers and the net/http package
 
-# What net/http actually owns
+| When | What changed |
+| --- | --- |
+| ▶ **2009–2012** | **Handlers and the net/http package** |
+| 2014–2015 | Goroutines and request lifetimes |
+| 2016 | HTTP/2 arrives in net/http |
+| 2017–2021 | Context, shutdown and production controls |
+| 2022–2023 | Testing, security and migration proposals |
+| 2024 | ServeMux methods and wildcards |
+| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
 
-**SERVER:** net.Listener -> http.Server -> http.Handler -> ResponseWriter
+> Now: Start with the Handler interface and direct dispatch.
 
-**CLIENT / CONTEXT:** http.Client -> http.Transport -> HTTP/1.1 or HTTP/2
-
-- Server request parsing, connection lifecycle, deadlines and protocol negotiation.
-- Client retries/redirects, connection pooling, TLS, proxies and response bodies.
-- A tiny handler interface; optional URL dispatch via ServeMux.
-
-*Sources: [net/http documentation](https://pkg.go.dev/net/http)*
-
-<!--
-SPEAKER NOTES
-Adjacent packages include net/http/httptest, httputil, httptrace, cookiejar and pprof. Routers plug into the Handler interface; they are not tied to a protocol version.
-SOURCE LINKS
-net/http documentation - https://pkg.go.dev/net/http
--->
-
+*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
 ---
 
 **2009 | ORIGINS**
@@ -189,6 +126,29 @@ Go release history - https://go.dev/doc/devel/release
 
 ---
 
+**ANATOMY | TODAY**
+
+# What net/http actually owns
+
+**SERVER:** net.Listener -> http.Server -> http.Handler -> ResponseWriter
+
+**CLIENT / CONTEXT:** http.Client -> http.Transport -> HTTP/1.1 or HTTP/2
+
+- Server request parsing, connection lifecycle, deadlines and protocol negotiation.
+- Client retries/redirects, connection pooling, TLS, proxies and response bodies.
+- A tiny handler interface; optional URL dispatch via ServeMux.
+
+*Sources: [net/http documentation](https://pkg.go.dev/net/http)*
+
+<!--
+SPEAKER NOTES
+Adjacent packages include net/http/httptest, httputil, httptrace, cookiejar and pprof. Routers plug into the Handler interface; they are not tied to a protocol version.
+SOURCE LINKS
+net/http documentation - https://pkg.go.dev/net/http
+-->
+
+---
+
 **2012 ONWARD | API CONTRACT**
 
 # The Handler is the hinge
@@ -219,6 +179,70 @@ Go 1 release notes - https://go.dev/doc/go1
 
 ---
 
+**ROUTING | NO MUX IS VALID**
+
+# You can skip routing entirely
+
+```go
+handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodGet {
+        w.Header().Set("Allow", "GET")
+        http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
+    fmt.Fprintln(w, "hello")
+})
+log.Fatal(http.ListenAndServe(":8080", handler))
+```
+
+- No router allocation or route table is required.
+- The server takes any http.Handler, including a middleware chain.
+
+*Sources: [net/http documentation](https://pkg.go.dev/net/http)*
+
+<!--
+SPEAKER NOTES
+
+SOURCE LINKS
+net/http documentation - https://pkg.go.dev/net/http
+-->
+
+---
+**LIVE CODE**
+
+# A handler without a router
+
+```sh
+go run . -direct
+# Another terminal:
+curl -i localhost:8080/
+```
+
+Stop the server with Ctrl+C before the next demo.
+
+<!-- SPEAKER NOTES
+Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
+-->
+---
+**TIMELINE | STOP 2 OF 7**
+
+# 2014–2015: Goroutines and request lifetimes
+
+| When | What changed |
+| --- | --- |
+| 2009–2012 | Handlers and the net/http package |
+| ▶ **2014–2015** | **Goroutines and request lifetimes** |
+| 2016 | HTTP/2 arrives in net/http |
+| 2017–2021 | Context, shutdown and production controls |
+| 2022–2023 | Testing, security and migration proposals |
+| 2024 | ServeMux methods and wildcards |
+| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
+
+> Now: A request has a lifetime; concurrent work must respect it.
+
+*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
+---
+
 **2014 | A CONCURRENCY MODEL EMERGES**
 
 # A request already has a goroutine
@@ -240,6 +264,101 @@ SOURCE LINKS
 Go Concurrency Patterns: Context (2014) - https://go.dev/blog/context
 -->
 
+---
+
+**CONCURRENCY | PRACTICAL RULES**
+
+# The request is a bounded lifetime
+
+**GOROUTINES**
+
+- Server dispatch already runs handlers concurrently; shared state needs synchronization.
+- Pass r.Context() into outbound requests, queries and child tasks.
+- Do not access ResponseWriter or Request.Body from a goroutine after ServeHTTP returns.
+- For durable jobs, hand off work to a queue with an independent lifetime.
+
+> Cancellation and ownership matter more than raw goroutine count.
+
+*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go Concurrency Patterns: Context (2014)](https://go.dev/blog/context) (additional references in speaker notes)*
+
+<!--
+SPEAKER NOTES
+Request.Context is canceled when ServeHTTP returns, and the ResponseWriter must not be used after that. HTTP/1 request and response bodies have additional ordering constraints; Go 1.21 added EnableFullDuplex for a controlled exception.
+SOURCE LINKS
+net/http documentation - https://pkg.go.dev/net/http
+Go Concurrency Patterns: Context (2014) - https://go.dev/blog/context
+Go 1.21 release notes - https://go.dev/doc/go1.21
+-->
+
+---
+
+**CONCURRENCY | FAN-OUT**
+
+# Bound concurrency and wait for your work
+
+```go
+g, ctx := errgroup.WithContext(r.Context())
+g.SetLimit(4)
+for _, id := range ids {
+    id := id
+    g.Go(func() error {
+        return fetchAndStore(ctx, id)
+    })
+}
+if err := g.Wait(); err != nil {
+    http.Error(w, "upstream failed", http.StatusBadGateway)
+    return
+}
+w.WriteHeader(http.StatusNoContent)
+```
+
+- errgroup is in golang.org/x/sync, not net/http.
+- A bounded group and propagated context beat unbounded fire-and-forget.
+
+*Sources: [Go Concurrency Patterns: Context (2014)](https://go.dev/blog/context) | [net/http documentation](https://pkg.go.dev/net/http)*
+
+<!--
+SPEAKER NOTES
+
+SOURCE LINKS
+Go Concurrency Patterns: Context (2014) - https://go.dev/blog/context
+net/http documentation - https://pkg.go.dev/net/http
+-->
+
+---
+**LIVE CODE**
+
+# Bounded fan-out
+
+```sh
+go run .
+# Another terminal:
+curl -i localhost:8080/fanout
+```
+
+The server waits for its child work. Leave it running for route demos.
+
+<!-- SPEAKER NOTES
+Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
+-->
+---
+**TIMELINE | STOP 3 OF 7**
+
+# 2016: HTTP/2 arrives in net/http
+
+| When | What changed |
+| --- | --- |
+| 2009–2012 | Handlers and the net/http package |
+| 2014–2015 | Goroutines and request lifetimes |
+| ▶ **2016** | **HTTP/2 arrives in net/http** |
+| 2017–2021 | Context, shutdown and production controls |
+| 2022–2023 | Testing, security and migration proposals |
+| 2024 | ServeMux methods and wildcards |
+| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
+
+> Now: HTTP/2 adds multiplexed streams, while handlers stay the same.
+
+*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
 ---
 
 **2015-2016 | GO 1.6**
@@ -288,6 +407,69 @@ Go 1.6 release notes - https://go.dev/doc/go1.6
 net/http documentation - https://pkg.go.dev/net/http
 -->
 
+---
+
+**ROUTING VOCABULARY**
+
+# Three different things called a mux
+
+### ServeMux - Application routing
+
+Map method / host / path to Handler.
+
+### HTTP/2 multiplexing - Protocol transport
+
+Interleave independent streams on a connection.
+
+### No mux - Direct handler
+
+Server.Handler can be a single HandlerFunc.
+
+> Router choice does not determine whether HTTP/2 is used.
+
+*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go 1.6 release notes](https://go.dev/doc/go1.6) (additional references in speaker notes)*
+
+<!--
+SPEAKER NOTES
+Router choice does not determine whether HTTP/2 is used.
+SOURCE LINKS
+net/http documentation - https://pkg.go.dev/net/http
+Go 1.6 release notes - https://go.dev/doc/go1.6
+Routing enhancements, Go blog (13 Feb 2024) - https://go.dev/blog/routing-enhancements
+-->
+
+---
+**LIVE CODE**
+
+# See HTTP/2 negotiated
+
+```sh
+go test -v -run TestHTTP2
+```
+
+The test starts a TLS server and asserts that the client negotiated HTTP/2.
+
+<!-- SPEAKER NOTES
+Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
+-->
+---
+**TIMELINE | STOP 4 OF 7**
+
+# 2017–2021: Context, shutdown and production controls
+
+| When | What changed |
+| --- | --- |
+| 2009–2012 | Handlers and the net/http package |
+| 2014–2015 | Goroutines and request lifetimes |
+| 2016 | HTTP/2 arrives in net/http |
+| ▶ **2017–2021** | **Context, shutdown and production controls** |
+| 2022–2023 | Testing, security and migration proposals |
+| 2024 | ServeMux methods and wildcards |
+| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
+
+> Now: Add cancellation, shutdown and connection controls.
+
+*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
 ---
 
 **2016-2017 | GO 1.7 AND 1.8**
@@ -375,6 +557,67 @@ Go 1.17 release notes - https://go.dev/doc/go1.17
 
 ---
 
+**TODAY | THE CLIENT-SIDE CONTRACT**
+
+# Reuse transports. Close bodies. Budget requests.
+
+**CLIENT BEST PRACTICES**
+
+- Clients and Transports are safe for concurrent use; reuse them to retain connection pooling.
+- DefaultTransport supports HTTPS HTTP/2; verify protocol settings when customizing a Transport.
+- Use Request.WithContext (or NewRequestWithContext) and Client.Timeout for cancellation.
+- Always close Response.Body. Go 1.27 can drain a bounded amount of unread HTTP/1 data to improve reuse.
+
+> Most HTTP client bugs are lifecycle bugs, not routing bugs.
+
+*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go 1.13 release notes](https://go.dev/doc/go1.13) (additional references in speaker notes)*
+
+<!--
+SPEAKER NOTES
+Most HTTP client bugs are lifecycle bugs, not routing bugs.
+SOURCE LINKS
+net/http documentation - https://pkg.go.dev/net/http
+Go 1.13 release notes - https://go.dev/doc/go1.13
+Go 1.24 release notes - https://go.dev/doc/go1.24
+Go 1.27 release notes - https://go.dev/doc/go1.27
+Better HTTP/1 connection reuse, 14 Oct 2026 - https://go.dev/blog/http-connection-reuse
+-->
+
+---
+**LIVE CODE**
+
+# Shut the server down
+
+```sh
+curl -i localhost:8080/health
+# In the server terminal: press Ctrl+C
+```
+
+The server uses a bounded graceful shutdown; inspect main.go for the lifecycle.
+
+<!-- SPEAKER NOTES
+Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
+-->
+---
+**TIMELINE | STOP 5 OF 7**
+
+# 2022–2023: Testing, security and migration proposals
+
+| When | What changed |
+| --- | --- |
+| 2009–2012 | Handlers and the net/http package |
+| 2014–2015 | Goroutines and request lifetimes |
+| 2016 | HTTP/2 arrives in net/http |
+| 2017–2021 | Context, shutdown and production controls |
+| ▶ **2022–2023** | **Testing, security and migration proposals** |
+| 2024 | ServeMux methods and wildcards |
+| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
+
+> Now: Test the boundaries and track the implementation migration.
+
+*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
+---
+
 **2022 | GO 1.18 AND 1.19**
 
 # The year of testability and hardening
@@ -422,6 +665,65 @@ A stable interface gained modern controls without replacing Handler.
 SOURCE LINKS
 Go 1.20 release notes - https://go.dev/doc/go1.20
 Go 1.26 release notes - https://go.dev/doc/go1.26
+-->
+
+---
+
+**SECURITY | THREAT MODEL**
+
+# What net/http guards - and what it cannot
+
+### RESOURCE LIMITS - Headers, bodies, timeouts
+
+MaxHeaderBytes, MaxBytesReader, ReadHeaderTimeout.
+
+### PROTOCOL BOUNDARIES - TLS, proxy rewriting, path parsing
+
+Validate header semantics; safer ReverseProxy.Rewrite.
+
+### BROWSER REQUESTS - CrossOriginProtection
+
+CSRF mitigation, not authorization.
+
+> None of these replaces identity, business authorization or safe endpoint design.
+
+*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go 1.20 release notes](https://go.dev/doc/go1.20) (additional references in speaker notes)*
+
+<!--
+SPEAKER NOTES
+None of these replaces identity, business authorization or safe endpoint design.
+SOURCE LINKS
+net/http documentation - https://pkg.go.dev/net/http
+Go 1.20 release notes - https://go.dev/doc/go1.20
+Go 1.25 release notes - https://go.dev/doc/go1.25
+Go 1.27 release notes - https://go.dev/doc/go1.27
+-->
+
+---
+
+**2022 + OCTOBER 2026 | SECURITY LESSONS**
+
+# HTTP parsers and proxies are attack surfaces
+
+**PATCHED VULNERABILITIES**
+
+- 2022: HTTP/2 header-key caching could permit large memory consumption per connection.
+- October 2026: malformed HTTP/2 framing-related headers risk response smuggling via an HTTP/1 proxy path.
+- October 2026: improperly handled successful CONNECT could risk request smuggling.
+- Relevant October fixes shipped in Go 1.26.9 and 1.27.2; stay on patched releases.
+
+> Protocol transitions deserve adversarial tests, not just happy-path tests.
+
+*Sources: [GO-2022-1144: HTTP/2 header memory](https://pkg.go.dev/vuln/GO-2022-1144) | [GO-2026-6610: HTTP/2 header handling](https://pkg.go.dev/vuln/GO-2026-6610) (additional references in speaker notes)*
+
+<!--
+SPEAKER NOTES
+Protocol transitions deserve adversarial tests, not just happy-path tests.
+SOURCE LINKS
+GO-2022-1144: HTTP/2 header memory - https://pkg.go.dev/vuln/GO-2022-1144
+GO-2026-6610: HTTP/2 header handling - https://pkg.go.dev/vuln/GO-2026-6610
+GO-2026-6613: CONNECT request smuggling - https://pkg.go.dev/vuln/GO-2026-6613
+Go release history - https://go.dev/doc/devel/release
 -->
 
 ---
@@ -474,6 +776,24 @@ Go 1.24 release notes - https://go.dev/doc/go1.24
 Go 1.27 release notes - https://go.dev/doc/go1.27
 -->
 
+---
+**TIMELINE | STOP 6 OF 7**
+
+# 2024: ServeMux methods and wildcards
+
+| When | What changed |
+| --- | --- |
+| 2009–2012 | Handlers and the net/http package |
+| 2014–2015 | Goroutines and request lifetimes |
+| 2016 | HTTP/2 arrives in net/http |
+| 2017–2021 | Context, shutdown and production controls |
+| 2022–2023 | Testing, security and migration proposals |
+| ▶ **2024** | **ServeMux methods and wildcards** |
+| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
+
+> Now: Route by method and path using the standard library.
+
+*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
 ---
 
 **JULY 2023 -> FEBRUARY 2024**
@@ -613,6 +933,128 @@ Go 1.23 release notes - https://go.dev/doc/go1.23
 net/http/httptest documentation - https://pkg.go.dev/net/http/httptest
 -->
 
+---
+
+**ROUTER CHOICE**
+
+# ServeMux versus third-party routing
+
+| Option | Best when | Tradeoff |
+| --- | --- | --- |
+| HandlerFunc only | One endpoint or custom dispatch | Branch manually |
+| net/http.ServeMux | Most small or medium APIs | Fewer advanced grouping features |
+| chi | Nested routes + middleware groups | Dependency + its own conventions |
+| httprouter | Explicit params; performance focus | Different params/handler options |
+| gorilla/mux | Host, query, regex matchers | Broader API + dependency |
+
+*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Routing enhancements, Go blog (13 Feb 2024)](https://go.dev/blog/routing-enhancements) (additional references in speaker notes)*
+
+<!--
+SPEAKER NOTES
+All can integrate with the standard HTTP server through http.Handler. This is a qualitative interface comparison, not a performance benchmark. Go 1.22 narrowed the routing feature gap but did not eliminate all reasons to use third-party routers.
+SOURCE LINKS
+net/http documentation - https://pkg.go.dev/net/http
+Routing enhancements, Go blog (13 Feb 2024) - https://go.dev/blog/routing-enhancements
+chi router docs - https://pkg.go.dev/github.com/go-chi/chi/v5
+httprouter docs - https://pkg.go.dev/github.com/julienschmidt/httprouter
+gorilla/mux docs - https://pkg.go.dev/github.com/gorilla/mux
+-->
+
+---
+
+**COMPOSITION | MIDDLEWARE**
+
+# Routing and authorization solve different problems
+
+**SERVER:** http.Server -> CSRF / auth wrapper -> ServeMux or chi -> endpoint Handler
+
+**CLIENT / CONTEXT:** Request.Context -> Downstream clients -> time budgets
+
+- Middleware is function composition around http.Handler.
+- Routing chooses a handler; authorization decides whether an action is allowed.
+- Keep trust boundaries distinct from transport and dispatch.
+
+*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go 1.25 release notes](https://go.dev/doc/go1.25) (additional references in speaker notes)*
+
+<!--
+SPEAKER NOTES
+
+SOURCE LINKS
+net/http documentation - https://pkg.go.dev/net/http
+Go 1.25 release notes - https://go.dev/doc/go1.25
+chi router docs - https://pkg.go.dev/github.com/go-chi/chi/v5
+-->
+
+---
+**LIVE CODE**
+
+# Run routes and method checks
+
+```sh
+go run .
+# Another terminal:
+curl -i localhost:8080/posts/42
+curl -i -X PUT localhost:8080/posts/42
+go test -v -run "TestPostRoute|TestMethodsAndFanout"
+```
+
+GET also matches HEAD; a method mismatch returns 405 with an Allow header.
+
+<!-- SPEAKER NOTES
+Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
+-->
+---
+
+**TESTING | UNIT LEVEL**
+
+# Start at the Handler boundary
+
+```go
+func TestPostRoute(t *testing.T) {
+    mux := http.NewServeMux()
+    mux.HandleFunc("GET /posts/{id}", showPost)
+    req := httptest.NewRequest(http.MethodGet, "/posts/42", nil)
+    rec := httptest.NewRecorder()
+    mux.ServeHTTP(rec, req)
+    res := rec.Result()
+    defer res.Body.Close()
+    if res.StatusCode != http.StatusOK {
+        t.Fatalf("status: %d", res.StatusCode)
+    }
+}
+```
+
+- Fast: no live listener and no TLS setup.
+- Assert status, Allow header, route variables and body.
+
+*Sources: [net/http/httptest documentation](https://pkg.go.dev/net/http/httptest) | [Go 1.22 release notes](https://go.dev/doc/go1.22)*
+
+<!--
+SPEAKER NOTES
+This is a test sketch: showPost is an application-defined HandlerFunc. ResponseRecorder.Result returns a response snapshot and should be called after handler execution.
+SOURCE LINKS
+net/http/httptest documentation - https://pkg.go.dev/net/http/httptest
+Go 1.22 release notes - https://go.dev/doc/go1.22
+-->
+
+---
+**TIMELINE | STOP 7 OF 7**
+
+# 2025–2026: Protocol controls, testing and HTTP/2 source move
+
+| When | What changed |
+| --- | --- |
+| 2009–2012 | Handlers and the net/http package |
+| 2014–2015 | Goroutines and request lifetimes |
+| 2016 | HTTP/2 arrives in net/http |
+| 2017–2021 | Context, shutdown and production controls |
+| 2022–2023 | Testing, security and migration proposals |
+| 2024 | ServeMux methods and wildcards |
+| ▶ **2025–2026** | **Protocol controls, testing and HTTP/2 source move** |
+
+> Now: Configure HTTP/2, test behavior and follow the source move.
+
+*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
 ---
 
 **2025 | GO 1.24**
@@ -801,330 +1243,6 @@ net/http/httptest documentation - https://pkg.go.dev/net/http/httptest
 
 ---
 
-**TODAY | THE CLIENT-SIDE CONTRACT**
-
-# Reuse transports. Close bodies. Budget requests.
-
-**CLIENT BEST PRACTICES**
-
-- Clients and Transports are safe for concurrent use; reuse them to retain connection pooling.
-- DefaultTransport supports HTTPS HTTP/2; verify protocol settings when customizing a Transport.
-- Use Request.WithContext (or NewRequestWithContext) and Client.Timeout for cancellation.
-- Always close Response.Body. Go 1.27 can drain a bounded amount of unread HTTP/1 data to improve reuse.
-
-> Most HTTP client bugs are lifecycle bugs, not routing bugs.
-
-*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go 1.13 release notes](https://go.dev/doc/go1.13) (additional references in speaker notes)*
-
-<!--
-SPEAKER NOTES
-Most HTTP client bugs are lifecycle bugs, not routing bugs.
-SOURCE LINKS
-net/http documentation - https://pkg.go.dev/net/http
-Go 1.13 release notes - https://go.dev/doc/go1.13
-Go 1.24 release notes - https://go.dev/doc/go1.24
-Go 1.27 release notes - https://go.dev/doc/go1.27
-Better HTTP/1 connection reuse, 14 Oct 2026 - https://go.dev/blog/http-connection-reuse
--->
-
----
-
-**17-YEAR RECAP**
-
-# The chronological inflection points
-
-- **2009-12** - Origin -> stable net/http
-- **2014-16** - Context thinking + automatic HTTP/2
-- **2017-21** - Graceful lifecycle + resource limits
-- **2022-23** - Fuzzing + HTTP/2 migration proposal
-- **2024** - Method-aware ServeMux
-- **2025** - Protocol config + CSRF + synctest
-- **2026** - ClientConn + HTTP/2 source move
-
-*Sources: [Go 1 release notes](https://go.dev/doc/go1) | [Go 1.6 release notes](https://go.dev/doc/go1.6) (additional references in speaker notes)*
-
-<!--
-SPEAKER NOTES
-
-SOURCE LINKS
-Go 1 release notes - https://go.dev/doc/go1
-Go 1.6 release notes - https://go.dev/doc/go1.6
-Go 1.8 release notes - https://go.dev/doc/go1.8
-HTTP/2 standard library migration proposal (Jun 2023) - https://github.com/golang/go/discussions/60746
-Go 1.22 release notes - https://go.dev/doc/go1.22
-Go 1.24 release notes - https://go.dev/doc/go1.24
-Go 1.27 release notes - https://go.dev/doc/go1.27
--->
-
----
-
-**ROUTING VOCABULARY**
-
-# Three different things called a mux
-
-### ServeMux - Application routing
-
-Map method / host / path to Handler.
-
-### HTTP/2 multiplexing - Protocol transport
-
-Interleave independent streams on a connection.
-
-### No mux - Direct handler
-
-Server.Handler can be a single HandlerFunc.
-
-> Router choice does not determine whether HTTP/2 is used.
-
-*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go 1.6 release notes](https://go.dev/doc/go1.6) (additional references in speaker notes)*
-
-<!--
-SPEAKER NOTES
-Router choice does not determine whether HTTP/2 is used.
-SOURCE LINKS
-net/http documentation - https://pkg.go.dev/net/http
-Go 1.6 release notes - https://go.dev/doc/go1.6
-Routing enhancements, Go blog (13 Feb 2024) - https://go.dev/blog/routing-enhancements
--->
-
----
-
-**ROUTER CHOICE**
-
-# ServeMux versus third-party routing
-
-| Option | Best when | Tradeoff |
-| --- | --- | --- |
-| HandlerFunc only | One endpoint or custom dispatch | Branch manually |
-| net/http.ServeMux | Most small or medium APIs | Fewer advanced grouping features |
-| chi | Nested routes + middleware groups | Dependency + its own conventions |
-| httprouter | Explicit params; performance focus | Different params/handler options |
-| gorilla/mux | Host, query, regex matchers | Broader API + dependency |
-
-*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Routing enhancements, Go blog (13 Feb 2024)](https://go.dev/blog/routing-enhancements) (additional references in speaker notes)*
-
-<!--
-SPEAKER NOTES
-All can integrate with the standard HTTP server through http.Handler. This is a qualitative interface comparison, not a performance benchmark. Go 1.22 narrowed the routing feature gap but did not eliminate all reasons to use third-party routers.
-SOURCE LINKS
-net/http documentation - https://pkg.go.dev/net/http
-Routing enhancements, Go blog (13 Feb 2024) - https://go.dev/blog/routing-enhancements
-chi router docs - https://pkg.go.dev/github.com/go-chi/chi/v5
-httprouter docs - https://pkg.go.dev/github.com/julienschmidt/httprouter
-gorilla/mux docs - https://pkg.go.dev/github.com/gorilla/mux
--->
-
----
-
-**ROUTING | NO MUX IS VALID**
-
-# You can skip routing entirely
-
-```go
-handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodGet {
-        w.Header().Set("Allow", "GET")
-        http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-        return
-    }
-    fmt.Fprintln(w, "hello")
-})
-log.Fatal(http.ListenAndServe(":8080", handler))
-```
-
-- No router allocation or route table is required.
-- The server takes any http.Handler, including a middleware chain.
-
-*Sources: [net/http documentation](https://pkg.go.dev/net/http)*
-
-<!--
-SPEAKER NOTES
-
-SOURCE LINKS
-net/http documentation - https://pkg.go.dev/net/http
--->
-
----
-
-**COMPOSITION | MIDDLEWARE**
-
-# Routing and authorization solve different problems
-
-**SERVER:** http.Server -> CSRF / auth wrapper -> ServeMux or chi -> endpoint Handler
-
-**CLIENT / CONTEXT:** Request.Context -> Downstream clients -> time budgets
-
-- Middleware is function composition around http.Handler.
-- Routing chooses a handler; authorization decides whether an action is allowed.
-- Keep trust boundaries distinct from transport and dispatch.
-
-*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go 1.25 release notes](https://go.dev/doc/go1.25) (additional references in speaker notes)*
-
-<!--
-SPEAKER NOTES
-
-SOURCE LINKS
-net/http documentation - https://pkg.go.dev/net/http
-Go 1.25 release notes - https://go.dev/doc/go1.25
-chi router docs - https://pkg.go.dev/github.com/go-chi/chi/v5
--->
-
----
-
-**CONCURRENCY | PRACTICAL RULES**
-
-# The request is a bounded lifetime
-
-**GOROUTINES**
-
-- Server dispatch already runs handlers concurrently; shared state needs synchronization.
-- Pass r.Context() into outbound requests, queries and child tasks.
-- Do not access ResponseWriter or Request.Body from a goroutine after ServeHTTP returns.
-- For durable jobs, hand off work to a queue with an independent lifetime.
-
-> Cancellation and ownership matter more than raw goroutine count.
-
-*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go Concurrency Patterns: Context (2014)](https://go.dev/blog/context) (additional references in speaker notes)*
-
-<!--
-SPEAKER NOTES
-Request.Context is canceled when ServeHTTP returns, and the ResponseWriter must not be used after that. HTTP/1 request and response bodies have additional ordering constraints; Go 1.21 added EnableFullDuplex for a controlled exception.
-SOURCE LINKS
-net/http documentation - https://pkg.go.dev/net/http
-Go Concurrency Patterns: Context (2014) - https://go.dev/blog/context
-Go 1.21 release notes - https://go.dev/doc/go1.21
--->
-
----
-
-**CONCURRENCY | FAN-OUT**
-
-# Bound concurrency and wait for your work
-
-```go
-g, ctx := errgroup.WithContext(r.Context())
-g.SetLimit(4)
-for _, id := range ids {
-    id := id
-    g.Go(func() error {
-        return fetchAndStore(ctx, id)
-    })
-}
-if err := g.Wait(); err != nil {
-    http.Error(w, "upstream failed", http.StatusBadGateway)
-    return
-}
-w.WriteHeader(http.StatusNoContent)
-```
-
-- errgroup is in golang.org/x/sync, not net/http.
-- A bounded group and propagated context beat unbounded fire-and-forget.
-
-*Sources: [Go Concurrency Patterns: Context (2014)](https://go.dev/blog/context) | [net/http documentation](https://pkg.go.dev/net/http)*
-
-<!--
-SPEAKER NOTES
-
-SOURCE LINKS
-Go Concurrency Patterns: Context (2014) - https://go.dev/blog/context
-net/http documentation - https://pkg.go.dev/net/http
--->
-
----
-
-**SECURITY | THREAT MODEL**
-
-# What net/http guards - and what it cannot
-
-### RESOURCE LIMITS - Headers, bodies, timeouts
-
-MaxHeaderBytes, MaxBytesReader, ReadHeaderTimeout.
-
-### PROTOCOL BOUNDARIES - TLS, proxy rewriting, path parsing
-
-Validate header semantics; safer ReverseProxy.Rewrite.
-
-### BROWSER REQUESTS - CrossOriginProtection
-
-CSRF mitigation, not authorization.
-
-> None of these replaces identity, business authorization or safe endpoint design.
-
-*Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go 1.20 release notes](https://go.dev/doc/go1.20) (additional references in speaker notes)*
-
-<!--
-SPEAKER NOTES
-None of these replaces identity, business authorization or safe endpoint design.
-SOURCE LINKS
-net/http documentation - https://pkg.go.dev/net/http
-Go 1.20 release notes - https://go.dev/doc/go1.20
-Go 1.25 release notes - https://go.dev/doc/go1.25
-Go 1.27 release notes - https://go.dev/doc/go1.27
--->
-
----
-
-**2022 + OCTOBER 2026 | SECURITY LESSONS**
-
-# HTTP parsers and proxies are attack surfaces
-
-**PATCHED VULNERABILITIES**
-
-- 2022: HTTP/2 header-key caching could permit large memory consumption per connection.
-- October 2026: malformed HTTP/2 framing-related headers risk response smuggling via an HTTP/1 proxy path.
-- October 2026: improperly handled successful CONNECT could risk request smuggling.
-- Relevant October fixes shipped in Go 1.26.9 and 1.27.2; stay on patched releases.
-
-> Protocol transitions deserve adversarial tests, not just happy-path tests.
-
-*Sources: [GO-2022-1144: HTTP/2 header memory](https://pkg.go.dev/vuln/GO-2022-1144) | [GO-2026-6610: HTTP/2 header handling](https://pkg.go.dev/vuln/GO-2026-6610) (additional references in speaker notes)*
-
-<!--
-SPEAKER NOTES
-Protocol transitions deserve adversarial tests, not just happy-path tests.
-SOURCE LINKS
-GO-2022-1144: HTTP/2 header memory - https://pkg.go.dev/vuln/GO-2022-1144
-GO-2026-6610: HTTP/2 header handling - https://pkg.go.dev/vuln/GO-2026-6610
-GO-2026-6613: CONNECT request smuggling - https://pkg.go.dev/vuln/GO-2026-6613
-Go release history - https://go.dev/doc/devel/release
--->
-
----
-
-**TESTING | UNIT LEVEL**
-
-# Start at the Handler boundary
-
-```go
-func TestPostRoute(t *testing.T) {
-    mux := http.NewServeMux()
-    mux.HandleFunc("GET /posts/{id}", showPost)
-    req := httptest.NewRequest(http.MethodGet, "/posts/42", nil)
-    rec := httptest.NewRecorder()
-    mux.ServeHTTP(rec, req)
-    res := rec.Result()
-    defer res.Body.Close()
-    if res.StatusCode != http.StatusOK {
-        t.Fatalf("status: %d", res.StatusCode)
-    }
-}
-```
-
-- Fast: no live listener and no TLS setup.
-- Assert status, Allow header, route variables and body.
-
-*Sources: [net/http/httptest documentation](https://pkg.go.dev/net/http/httptest) | [Go 1.22 release notes](https://go.dev/doc/go1.22)*
-
-<!--
-SPEAKER NOTES
-This is a test sketch: showPost is an application-defined HandlerFunc. ResponseRecorder.Result returns a response snapshot and should be called after handler execution.
-SOURCE LINKS
-net/http/httptest documentation - https://pkg.go.dev/net/http/httptest
-Go 1.22 release notes - https://go.dev/doc/go1.22
--->
-
----
-
 **TESTING | INTEGRATION LEVEL**
 
 # Then test over the wire
@@ -1186,6 +1304,21 @@ net/http/httptest documentation - https://pkg.go.dev/net/http/httptest
 Go 1.27 release notes - https://go.dev/doc/go1.27
 -->
 
+---
+**LIVE CODE**
+
+# Run the tests
+
+```sh
+go test -race ./...
+go test -v -run TestSlowEndpoint
+```
+
+TestSlowEndpoint uses fake time and requires Go 1.27; earlier versions skip it.
+
+<!-- SPEAKER NOTES
+Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
+-->
 ---
 
 **TESTING | THE MATRIX**
