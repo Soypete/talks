@@ -97,6 +97,24 @@ HTTP/2 is a wire protocol version, not a new major version of the net/http API. 
 
 ---
 
+**TRY THE CODE**
+
+# Run the examples
+
+```sh
+cd go-meetup-nethttp/history/examples
+go run .
+# In another terminal:
+curl localhost:8080/posts/42
+go test -race ./...
+```
+
+- Try `/health`, `/posts/42`, and `/fanout`; stop with Ctrl+C.
+- Use `go run . -direct` for a single handler without a mux.
+- The examples README explains TLS and the Go 1.27 test.
+
+---
+
 **ANATOMY | TODAY**
 
 # What net/http actually owns

@@ -7,3 +7,5 @@ Start with `talk.md`, the Marp source. `talk.html` is its generated presentation
 Regenerate the HTML with `marp --html talk.md -o talk.html`. To generate an updated PowerPoint, install a supported browser and run `marp --pptx talk.md -o talk.pptx`.
 
 The talk uses Go release numbers to date changes and HTTP/1 and HTTP/2 to describe wire protocols. Code snippets are illustrative; check API availability against the Go version used in your project.
+
+The slide examples are runnable in [`examples/`](examples/README.md), including route, HTTP/2, and concurrency tests.
