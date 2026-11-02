@@ -1,6 +1,6 @@
 # Go net/http: a chronological meetup talk
 
-Start with `talk.md`, the Marp source. `talk.html` is its generated presentation; open it in a browser. `research-changelog.md` records the release-by-release research and primary sources, with a research cutoff of October 26, 2026.
+Start with `talk.md`, the 30-slide Marp source. It includes attributed excerpts from the Go standard library; `research-changelog.md` preserves the deeper release history. `talk.html` is its generated presentation; open it in a browser. `research-changelog.md` records the release-by-release research and primary sources, with a research cutoff of October 26, 2026.
 
 `supplied-reference.pptx` is the original supplied PowerPoint, preserved for reference. It predates edits to the Marp source and is not a current export.
 
