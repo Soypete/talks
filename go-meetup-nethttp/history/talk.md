@@ -183,20 +183,15 @@ go func(ctx context.Context) {
 *Source: [Go pipelines and cancellation](https://go.dev/blog/pipelines)*
 
 ---
+<!-- _class: lead -->
 
-**LIVE CODE | CHANNELS**
+**DEMO**
 
-# Run the channel example
+# Goroutines and channels
 
-```sh
-./run.sh channels
-```
-
-- Run from `go-meetup-nethttp/history/demos`.
-- `TestChannelHandler` checks the worker result and response.
-- `TestDemoContextCancellation` shows cancellation reaching child work.
-- See `channelHandler` in `examples/main.go` for the complete `select`.
-
+<!-- SPEAKER NOTES
+Run from go-meetup-nethttp/history/demos: ./run.sh channels. The demo runner displays the actual source and then runs the test. A recording can be made with demos/record.sh; no video has been embedded yet.
+-->
 ---
 <!-- _paginate: false -->
 
@@ -254,18 +249,14 @@ net/http documentation - https://pkg.go.dev/net/http
 -->
 
 ---
-**LIVE CODE**
+<!-- _class: lead -->
 
-# See HTTP/2 negotiated
+**DEMO**
 
-```sh
-go test -v -run TestHTTP2
-```
-
-The test starts a TLS server and asserts that the client negotiated HTTP/2.
+# Negotiating HTTP/2
 
 <!-- SPEAKER NOTES
-Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
+Run from go-meetup-nethttp/history/demos: ./run.sh http2. The demo runner displays the actual source and then runs the test. A recording can be made with demos/record.sh; no video has been embedded yet.
 -->
 ---
 <!-- _paginate: false -->
@@ -348,19 +339,15 @@ Go 1.27 release notes - https://go.dev/doc/go1.27
 -->
 
 ---
+<!-- _class: lead -->
 
-**LIVE CODE | RESOURCE LIMITS**
+**DEMO**
 
-# A body can be too large
+# Limiting a request body
 
-`MaxBytesReader` limits request bodies. Handle `*http.MaxBytesError` and return 413; a header timeout alone does not bound the body.
-
-```sh
-../demos/run.sh security
-```
-
-*Source: [http.MaxBytesReader](https://pkg.go.dev/net/http#MaxBytesReader)*
-
+<!-- SPEAKER NOTES
+Run from go-meetup-nethttp/history/demos: ./run.sh security. The demo runner displays the actual source and then runs the test. A recording can be made with demos/record.sh; no video has been embedded yet.
+-->
 ---
 <!-- _paginate: false -->
 
@@ -401,26 +388,15 @@ Go 1.22 release notes - https://go.dev/doc/go1.22
 -->
 
 ---
+<!-- _class: lead -->
 
-<!-- _class: demo -->
-
-**LIVE CODE | ROUTING**
+**DEMO**
 
 # When routes collide
 
-- **Ambiguous routes:** panic at startup.
-- **Wrong method:** 405 + `Allow` header.
-
-```sh
-../demos/run.sh routing
-```
-
-*Source: [Go 1.22 routing](https://go.dev/blog/routing-enhancements)*
-
 <!-- SPEAKER NOTES
-ServeMux selects the more specific pattern. If overlapping registrations have no more-specific winner, registration panics. Run this command from the examples directory to see both behaviors.
+Run from go-meetup-nethttp/history/demos: ./run.sh routing. The demo runner displays the actual source and then runs the test. A recording can be made with demos/record.sh; no video has been embedded yet.
 -->
-
 ---
 
 **ROUTER CHOICE**
@@ -570,19 +546,14 @@ Go 1.27 release notes - https://go.dev/doc/go1.27
 -->
 
 ---
-**LIVE CODE**
+<!-- _class: lead -->
 
-# Run the tests
+**DEMO**
 
-```sh
-go test -race ./...
-go test -v -run TestSlowEndpoint
-```
-
-TestSlowEndpoint uses fake time and requires Go 1.27; earlier versions skip it.
+# Testing the HTTP stack
 
 <!-- SPEAKER NOTES
-Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
+Run from go-meetup-nethttp/history/examples: go test -race ./.... The demo runner displays the actual source and then runs the test. A recording can be made with demos/record.sh; no video has been embedded yet.
 -->
 ---
 **TAKEAWAYS**

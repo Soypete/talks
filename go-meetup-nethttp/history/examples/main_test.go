@@ -57,6 +57,7 @@ func TestHTTP2(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer res.Body.Close()
+	t.Logf("negotiated %s; status %d", res.Proto, res.StatusCode)
 	if res.ProtoMajor != 2 || res.StatusCode != http.StatusNoContent {
 		t.Fatalf("protocol %s, status %s", res.Proto, res.Status)
 	}

@@ -1,6 +1,6 @@
 # HTTP demos
 
-These demos run real Go tests in `../examples` and print their commands and results. They need Go 1.24 or later. The HTTP/2 and timeout examples bind a temporary local loopback port; no external server is required.
+These demos show the actual source from `../examples`, then run real Go tests and show their results. The demo slides have presenter notes with the corresponding command. They need Go 1.24 or later. The HTTP/2 and timeout examples bind a temporary local loopback port; no external server is required.
 
 ```sh
 cd go-meetup-nethttp/history/demos
