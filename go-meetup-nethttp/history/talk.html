@@ -353,14 +353,17 @@ section &gt; p:last-of-type {font-size:12px;color:#9BB7C6;}
 section::after {color:#7896A8;font-size:14px;}
 ;" data-marpit-pagination-total="63" data-size="16:9">
 <p><strong>ANATOMY | TODAY</strong></p>
-<h1 id="what-nethttp-actually-owns">What net/http actually owns</h1>
-<p><strong>SERVER:</strong> net.Listener -&gt; http.Server -&gt; http.Handler -&gt; ResponseWriter</p>
-<p><strong>CLIENT / CONTEXT:</strong> http.Client -&gt; http.Transport -&gt; HTTP/1.1 or HTTP/2</p>
-<ul>
-<li>Server request parsing, connection lifecycle, deadlines and protocol negotiation.</li>
-<li>Client retries/redirects, connection pooling, TLS, proxies and response bodies.</li>
-<li>A tiny handler interface; optional URL dispatch via ServeMux.</li>
-</ul>
+<h1 id="how-a-request-gets-handled">How a request gets handled</h1>
+<ol>
+<li><strong>Client:</strong> <code>http.Client</code> sends a request using a <code>Transport</code>.</li>
+<li><strong>Connection:</strong> the transport uses HTTP/1.1 or HTTP/2.</li>
+<li><strong>Server:</strong> <code>http.Server</code> accepts connections from a listener.</li>
+<li><strong>Handler:</strong> the server calls <code>ServeHTTP</code> with the request and a <code>ResponseWriter</code>.</li>
+<li><strong>Response:</strong> the handler writes a status, headers, and body back to the client.</li>
+</ol>
+<blockquote>
+<p>These are cooperating components, not an inheritance hierarchy.</p>
+</blockquote>
 <p><em>Sources: <a href="https://pkg.go.dev/net/http">net/http documentation</a></em></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="default" data-style="section { background:#0C1723; color:#F5FAFC; font-family:Arial, sans-serif; padding:54px 70px; font-size:28px; }
@@ -2389,12 +2392,11 @@ section::after {color:#7896A8;font-size:14px;}
 ;" data-marpit-pagination-total="63" data-size="16:9">
 <p><strong>COMPOSITION | MIDDLEWARE</strong></p>
 <h1 id="routing-and-authorization-solve-different-problems">Routing and authorization solve different problems</h1>
-<p><strong>SERVER:</strong> http.Server -&gt; CSRF / auth wrapper -&gt; ServeMux or chi -&gt; endpoint Handler</p>
-<p><strong>CLIENT / CONTEXT:</strong> Request.Context -&gt; Downstream clients -&gt; time budgets</p>
 <ul>
-<li>Middleware is function composition around http.Handler.</li>
-<li>Routing chooses a handler; authorization decides whether an action is allowed.</li>
-<li>Keep trust boundaries distinct from transport and dispatch.</li>
+<li>The server invokes a handler wrapped with CSRF or authentication middleware.</li>
+<li>A router such as <code>ServeMux</code> or chi selects an endpoint handler.</li>
+<li>The endpoint passes <code>Request.Context</code> to downstream calls so cancellation and deadlines propagate.</li>
+<li>Routing selects a handler; authorization decides whether an action is allowed.</li>
 </ul>
 <p><em>Sources: <a href="https://pkg.go.dev/net/http">net/http documentation</a> | <a href="https://go.dev/doc/go1.25">Go 1.25 release notes</a> (additional references in speaker notes)</em></p>
 </section>

@@ -106,15 +106,15 @@ Go release history - https://go.dev/doc/devel/release
 
 **ANATOMY | TODAY**
 
-# What net/http actually owns
+# How a request gets handled
 
-**SERVER:** net.Listener -> http.Server -> http.Handler -> ResponseWriter
+1. **Client:** `http.Client` sends a request using a `Transport`.
+2. **Connection:** the transport uses HTTP/1.1 or HTTP/2.
+3. **Server:** `http.Server` accepts connections from a listener.
+4. **Handler:** the server calls `ServeHTTP` with the request and a `ResponseWriter`.
+5. **Response:** the handler writes a status, headers, and body back to the client.
 
-**CLIENT / CONTEXT:** http.Client -> http.Transport -> HTTP/1.1 or HTTP/2
-
-- Server request parsing, connection lifecycle, deadlines and protocol negotiation.
-- Client retries/redirects, connection pooling, TLS, proxies and response bodies.
-- A tiny handler interface; optional URL dispatch via ServeMux.
+> These are cooperating components, not an inheritance hierarchy.
 
 *Sources: [net/http documentation](https://pkg.go.dev/net/http)*
 
@@ -953,13 +953,10 @@ gorilla/mux docs - https://pkg.go.dev/github.com/gorilla/mux
 
 # Routing and authorization solve different problems
 
-**SERVER:** http.Server -> CSRF / auth wrapper -> ServeMux or chi -> endpoint Handler
-
-**CLIENT / CONTEXT:** Request.Context -> Downstream clients -> time budgets
-
-- Middleware is function composition around http.Handler.
-- Routing chooses a handler; authorization decides whether an action is allowed.
-- Keep trust boundaries distinct from transport and dispatch.
+- The server invokes a handler wrapped with CSRF or authentication middleware.
+- A router such as `ServeMux` or chi selects an endpoint handler.
+- The endpoint passes `Request.Context` to downstream calls so cancellation and deadlines propagate.
+- Routing selects a handler; authorization decides whether an action is allowed.
 
 *Sources: [net/http documentation](https://pkg.go.dev/net/http) | [Go 1.25 release notes](https://go.dev/doc/go1.25) (additional references in speaker notes)*
 
