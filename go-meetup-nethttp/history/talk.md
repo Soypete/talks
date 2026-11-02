@@ -131,6 +131,20 @@ net/http documentation - https://pkg.go.dev/net/http
 
 ---
 
+**CORE TYPES | SERVER**
+
+# Follow one request
+
+`Server` accepts a connection → `Handler.ServeHTTP` receives a `*Request` and `ResponseWriter`.
+
+- `HandlerFunc` adapts a function; `ServeMux` selects a handler.
+- `ResponseWriter`: set headers before the first write; the first write implies status 200.
+- Do not use the writer after the handler returns.
+
+*Source: [net/http](https://pkg.go.dev/net/http)*
+
+---
+
 **2012 ONWARD | API CONTRACT**
 
 # The Handler is the hinge
@@ -424,6 +438,23 @@ Timeline stop 4: the highlighted milestone is the next section. See research-cha
 -->
 ---
 
+**CORE TYPES | CLIENT AND LIFETIME**
+
+# The other side of a request
+
+- `Client.Do` manages redirects; `Transport` manages connections and TLS.
+- Reuse clients and transports; close `Response.Body`.
+- `Request.Context` carries cancellation; set a timeout that fits the work.
+- `Server.Shutdown` waits for ordinary active requests, not hijacked connections.
+
+```sh
+../demos/run.sh lifetime
+```
+
+*Source: [net/http](https://pkg.go.dev/net/http)*
+
+---
+
 **2016-2017 | GO 1.7 AND 1.8**
 
 # Context, shutdown, timeouts
@@ -643,6 +674,20 @@ Go 1.27 release notes - https://go.dev/doc/go1.27
 
 ---
 
+**LIVE CODE | RESOURCE LIMITS**
+
+# A body can be too large
+
+`MaxBytesReader` limits request bodies. Handle `*http.MaxBytesError` and return 413; a header timeout alone does not bound the body.
+
+```sh
+../demos/run.sh security
+```
+
+*Source: [http.MaxBytesReader](https://pkg.go.dev/net/http#MaxBytesReader)*
+
+---
+
 **2022 + OCTOBER 2026 | SECURITY LESSONS**
 
 # HTTP parsers and proxies are attack surfaces
@@ -782,6 +827,20 @@ SOURCE LINKS
 Routing enhancements, Go blog (13 Feb 2024) - https://go.dev/blog/routing-enhancements
 Go 1.22 release notes - https://go.dev/doc/go1.22
 -->
+
+---
+
+**LIVE CODE | ROUTING HICCUPS**
+
+# Routes can conflict at startup
+
+`ServeMux` prefers the more specific pattern. Ambiguous overlapping registrations panic; a method mismatch returns 405 and `Allow`.
+
+```sh
+../demos/run.sh routing
+```
+
+*Source: [Routing Enhancements for Go 1.22](https://go.dev/blog/routing-enhancements)*
 
 ---
 
@@ -1241,6 +1300,20 @@ TestSlowEndpoint uses fake time and requires Go 1.27; earlier versions skip it.
 <!-- SPEAKER NOTES
 Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
 -->
+---
+
+**PACKAGE MAP | FIND THE RIGHT TOOL**
+
+# Related HTTP packages
+
+- `net/http`: handlers, clients, servers, routing and cookies.
+- `net/http/httptest`: recorder and test servers.
+- `net/http/httputil`: reverse proxy and request/response dumps.
+- `net/http/httptrace`: client request lifecycle hooks.
+- `net/http/cookiejar` and `net/http/pprof`: cookie storage and profiling.
+
+*Source: [Go standard library](https://pkg.go.dev/std)*
+
 ---
 
 **TESTING | THE MATRIX**
