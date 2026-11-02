@@ -12,7 +12,13 @@ style: |
   section strong { color:#58D3BC; }
   section code { color:#84DDF2; background:#172635; }
   section pre { background:#111E2C; border:1px solid #33505F; border-radius:9px; padding:17px; font-size:20px; line-height:1.23; }
-  section pre code {color:#E5F5FA;background:transparent;}
+  section pre code {color:#F5FAFC;background:transparent;}
+  section pre code span {color:#F5FAFC;}
+  section pre code .hljs-keyword, section pre code .hljs-literal {color:#FFB5E8;}
+  section pre code .hljs-string {color:#A9F1BD;}
+  section pre code .hljs-comment {color:#B7D3E0; font-style:italic;}
+  section pre code .hljs-number, section pre code .hljs-built_in, section pre code .hljs-type {color:#FFD58A;}
+  section pre code .hljs-title, section pre code .hljs-function {color:#9EE5FF;}
   section p, section li {line-height:1.24;}
   section ul {list-style-type:square;}
   section ul li {margin:0.28em 0;}
