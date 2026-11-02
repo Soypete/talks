@@ -22,6 +22,20 @@ style: |
   section > p:last-of-type {font-size:12px;color:#9BB7C6;}
   section::after {color:#7896A8;font-size:14px;}
 ---
+<!-- _class: lead -->
+
+**GO MEETUP | 2009–2026**
+
+# net/http: the timeline
+
+## Know your HTTP stack before an AI agent gaslights you
+
+From handlers and HTTP/2 to routing, security, and testing.
+
+<!-- SPEAKER NOTES
+We will follow the package chronologically, returning to the timeline as Go adds features and then using demos to see how they work.
+-->
+---
 <!-- _paginate: false -->
 
 ![bg](timeline/timeline-0.png)
@@ -29,24 +43,6 @@ style: |
 <!-- SPEAKER NOTES
 Follow each release milestone, then explain the APIs and run the matching examples. The image shows every year; subsequent timeline slides progressively reveal the changes.
 -->
----
-
-**TRY THE CODE**
-
-# Run the examples
-
-```sh
-cd go-meetup-nethttp/history/examples
-go run .
-# In another terminal:
-curl localhost:8080/posts/42
-go test -race ./...
-```
-
-- Try `/health`, `/posts/42`, and `/fanout`; stop with Ctrl+C.
-- Use `go run . -direct` for a single handler without a mux.
-- The examples README explains TLS and the Go 1.27 test.
-
 ---
 <!-- _paginate: false -->
 
