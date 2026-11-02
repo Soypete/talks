@@ -21,6 +21,8 @@ style: |
   section > p:first-of-type {font-size:16px;font-weight:bold;letter-spacing:1.5px;color:#00ADD8;text-transform:uppercase;}
   section > p:last-of-type {font-size:12px;color:#9BB7C6;}
   section::after {color:#7896A8;font-size:14px;}
+  section.demo pre { font-size:32px; padding:24px; }
+  section.demo li { font-size:32px; margin:0.5em 0; }
 ---
 <!-- _class: lead -->
 
@@ -826,17 +828,24 @@ Go 1.22 release notes - https://go.dev/doc/go1.22
 
 ---
 
-**LIVE CODE | ROUTING HICCUPS**
+<!-- _class: demo -->
 
-# Routes can conflict at startup
+**LIVE CODE | ROUTING**
 
-`ServeMux` prefers the more specific pattern. Ambiguous overlapping registrations panic; a method mismatch returns 405 and `Allow`.
+# When routes collide
+
+- **Ambiguous routes:** panic at startup.
+- **Wrong method:** 405 + `Allow` header.
 
 ```sh
 ../demos/run.sh routing
 ```
 
-*Source: [Routing Enhancements for Go 1.22](https://go.dev/blog/routing-enhancements)*
+*Source: [Go 1.22 routing](https://go.dev/blog/routing-enhancements)*
+
+<!-- SPEAKER NOTES
+ServeMux selects the more specific pattern. If overlapping registrations have no more-specific winner, registration panics. Run this command from the examples directory to see both behaviors.
+-->
 
 ---
 
