@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 name="${1:-}"
-case "$name" in handlers|routing|lifetime|security|http2) ;; *) echo 'Usage: ./record.sh {handlers|routing|lifetime|security|http2}' >&2; exit 2 ;; esac
+case "$name" in handlers|routing|channels|lifetime|security|http2) ;; *) echo 'Usage: ./record.sh {handlers|routing|channels|lifetime|security|http2}' >&2; exit 2 ;; esac
 mkdir -p recordings
 stamp="$(date +%Y%m%d-%H%M%S)"
 mov="recordings/${name}-${stamp}.mov"

@@ -6,6 +6,7 @@ These demos run real Go tests in `../examples` and print their commands and resu
 cd go-meetup-nethttp/history/demos
 ./run.sh handlers  # Handler, ResponseWriter, Request; status and body
 ./run.sh routing   # ServeMux methods, paths, 405, Allow and conflicting routes
+./run.sh channels  # goroutine, result channel and cancellation
 ./run.sh lifetime  # Context cancellation and Client.Timeout
 ./run.sh security  # MaxBytesReader and 413
 ./run.sh http2     # httptest TLS server and negotiated HTTP/2

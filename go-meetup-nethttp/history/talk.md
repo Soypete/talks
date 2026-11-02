@@ -235,11 +235,12 @@ Timeline stop 2: the highlighted milestone is the next section. See research-cha
 
 **2014 | A CONCURRENCY MODEL EMERGES**
 
-# A request already has a goroutine
+# The server already uses goroutines
 
 **CONCURRENCY**
 
-- Go's Context blog described an incoming request being served in its own goroutine.
+- The server starts a service goroutine for each accepted connection.
+- HTTP/2 can run multiple request handlers concurrently on one connection.
 - Handlers may fork concurrent database or RPC calls.
 - Cancellation, deadlines and request-scoped values must propagate to all child work.
 
@@ -253,6 +254,61 @@ Spawn additional goroutines only when there is real concurrent work.
 SOURCE LINKS
 Go Concurrency Patterns: Context (2014) - https://go.dev/blog/context
 -->
+
+---
+
+**CONCURRENCY | INSIDE NET/HTTP**
+
+# Where does the goroutine start?
+
+```go
+// Simplified from net/http.Server.Serve:
+conn := s.newConn(rw)
+go conn.serve(connCtx)
+```
+
+- The listener accepts a connection; `Serve` starts its service goroutine.
+- HTTP/1 requests on a connection are handled in sequence; HTTP/2 supports concurrent streams.
+- These are implementation details to inspect, not an API promise about goroutine counts.
+
+*Source: [net/http server source](https://go.dev/src/net/http/server.go)*
+
+---
+
+**CONCURRENCY | CHANNELS**
+
+# A worker sends a result to the handler
+
+```go
+result := make(chan string, 1)
+go func(ctx context.Context) {
+    if fetchAndStore(ctx, "example") != nil { return }
+    select {
+    case result <- "work complete":
+    case <-ctx.Done():
+    }
+}(r.Context())
+```
+
+- The handler receives the result and writes the response.
+- The worker checks cancellation; it never writes to `ResponseWriter`.
+
+*Source: [Go pipelines and cancellation](https://go.dev/blog/pipelines)*
+
+---
+
+**LIVE CODE | CHANNELS**
+
+# Run the channel example
+
+```sh
+cd go-meetup-nethttp/history/demos
+./run.sh channels
+```
+
+- `TestChannelHandler` checks the worker result and response.
+- `TestDemoContextCancellation` shows cancellation reaching child work.
+- See `channelHandler` in `examples/main.go` for the complete `select`.
 
 ---
 

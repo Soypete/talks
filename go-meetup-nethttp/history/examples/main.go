@@ -38,6 +38,7 @@ func routes() *http.ServeMux {
 		w.WriteHeader(http.StatusCreated)
 	})
 	mux.HandleFunc("GET /fanout", fanout)
+	mux.HandleFunc("GET /channel", channelHandler)
 	return mux
 }
 
@@ -64,6 +65,27 @@ func fanout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// channelHandler demonstrates coordination: only the handler writes the response.
+func channelHandler(w http.ResponseWriter, r *http.Request) {
+	result := make(chan string, 1)
+	go func(ctx context.Context) {
+		if err := fetchAndStore(ctx, "example"); err != nil {
+			return
+		}
+		select {
+		case result <- "work complete":
+		case <-ctx.Done():
+		}
+	}(r.Context())
+
+	select {
+	case message := <-result:
+		fmt.Fprintln(w, message)
+	case <-r.Context().Done():
+		return
+	}
 }
 
 func main() {

@@ -61,3 +61,12 @@ func TestHTTP2(t *testing.T) {
 		t.Fatalf("protocol %s, status %s", res.Proto, res.Status)
 	}
 }
+
+func TestChannelHandler(t *testing.T) {
+	rec := httptest.NewRecorder()
+	channelHandler(rec, httptest.NewRequest(http.MethodGet, "/channel", nil))
+	if rec.Code != http.StatusOK || rec.Body.String() != "work complete\n" {
+		t.Fatalf("status %d, body %q", rec.Code, rec.Body.String())
+	}
+	t.Log("worker sent a result; handler wrote the response")
+}
