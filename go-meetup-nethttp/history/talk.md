@@ -29,6 +29,9 @@ style: |
   section::after {color:#7896A8;font-size:14px;}
   section.demo pre { font-size:32px; padding:24px; }
   section.demo li { font-size:32px; margin:0.5em 0; }
+  section.video { padding:32px 70px; }
+  section.video h1 { font-size:38px; margin:0 0 12px; }
+  section.video video { display:block; width:auto; height:490px; max-width:100%; margin:auto; background:#000; }
 ---
 <!-- _class: lead -->
 
@@ -183,14 +186,14 @@ go func(ctx context.Context) {
 *Source: [Go pipelines and cancellation](https://go.dev/blog/pipelines)*
 
 ---
-<!-- _class: lead -->
-
-**DEMO**
+<!-- _class: video -->
 
 # Goroutines and channels
 
+<video controls preload="metadata" playsinline src="videos/channels.mp4"></video>
+
 <!-- SPEAKER NOTES
-Run from go-meetup-nethttp/history/demos: ./run.sh channels. The demo runner displays the actual source and then runs the test. A recording can be made with demos/record.sh; no video has been embedded yet.
+Silent recording of the runnable demo; use the video controls and narrate live. Source and recording scripts are in demos/ and examples/.
 -->
 ---
 <!-- _paginate: false -->
@@ -249,14 +252,14 @@ net/http documentation - https://pkg.go.dev/net/http
 -->
 
 ---
-<!-- _class: lead -->
-
-**DEMO**
+<!-- _class: video -->
 
 # Negotiating HTTP/2
 
+<video controls preload="metadata" playsinline src="videos/http2.mp4"></video>
+
 <!-- SPEAKER NOTES
-Run from go-meetup-nethttp/history/demos: ./run.sh http2. The demo runner displays the actual source and then runs the test. A recording can be made with demos/record.sh; no video has been embedded yet.
+Silent recording of the runnable demo; use the video controls and narrate live. Source and recording scripts are in demos/ and examples/.
 -->
 ---
 <!-- _paginate: false -->
@@ -339,14 +342,14 @@ Go 1.27 release notes - https://go.dev/doc/go1.27
 -->
 
 ---
-<!-- _class: lead -->
-
-**DEMO**
+<!-- _class: video -->
 
 # Limiting a request body
 
+<video controls preload="metadata" playsinline src="videos/security.mp4"></video>
+
 <!-- SPEAKER NOTES
-Run from go-meetup-nethttp/history/demos: ./run.sh security. The demo runner displays the actual source and then runs the test. A recording can be made with demos/record.sh; no video has been embedded yet.
+Silent recording of the runnable demo; use the video controls and narrate live. Source and recording scripts are in demos/ and examples/.
 -->
 ---
 <!-- _paginate: false -->
@@ -388,14 +391,14 @@ Go 1.22 release notes - https://go.dev/doc/go1.22
 -->
 
 ---
-<!-- _class: lead -->
-
-**DEMO**
+<!-- _class: video -->
 
 # When routes collide
 
+<video controls preload="metadata" playsinline src="videos/routing.mp4"></video>
+
 <!-- SPEAKER NOTES
-Run from go-meetup-nethttp/history/demos: ./run.sh routing. The demo runner displays the actual source and then runs the test. A recording can be made with demos/record.sh; no video has been embedded yet.
+Silent recording of the runnable demo; use the video controls and narrate live. Source and recording scripts are in demos/ and examples/.
 -->
 ---
 

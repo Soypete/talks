@@ -11,3 +11,5 @@ The talk uses Go release numbers to date changes and HTTP/1 and HTTP/2 to descri
 The slide examples are runnable in [`examples/`](examples/README.md), including route, HTTP/2, and concurrency tests.
 
 The opening and section timelines are PNG backgrounds in `timeline/`. They progressively reveal the milestones; `timeline/generate.py` regenerates them with Pillow and macOS Arial fonts.
+
+Four demo slides embed silent MP4 recordings from `videos/`; use the playback controls while narrating. Open the generated HTML with the `videos/` directory beside it. The body-limit recording shows the result but the top of the code scrolls out of view.
