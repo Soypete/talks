@@ -22,20 +22,12 @@ style: |
   section > p:last-of-type {font-size:12px;color:#9BB7C6;}
   section::after {color:#7896A8;font-size:14px;}
 ---
-<!-- _class: lead -->
+<!-- _paginate: false -->
 
-**GO MEETUP | 2009–2026**
-
-# net/http: the timeline
-
-## Know your HTTP stack before an AI agent gaslights you
-
-2009–12 · **Handlers** → 2014–18 · **lifetimes** → 2016 · **HTTP/2** → 2022–23 · **hardening** → 2024 · **routing** → 2025–26 · **protocols & migration**
-
-*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
+![bg](timeline/timeline-0.png)
 
 <!-- SPEAKER NOTES
-We will return to this timeline at each milestone, then look at the API and run a matching example. Dates name Go releases where the change landed; HTTP/2 is the wire protocol, not a new net/http API.
+Follow each release milestone, then explain the APIs and run the matching examples. The image shows every year; subsequent timeline slides progressively reveal the changes.
 -->
 ---
 
@@ -56,23 +48,13 @@ go test -race ./...
 - The examples README explains TLS and the Go 1.27 test.
 
 ---
-**TIMELINE | STOP 1 OF 7**
+<!-- _paginate: false -->
 
-# 2009–2012: Handlers and the net/http package
+![bg](timeline/timeline-1.png)
 
-| When | What changed |
-| --- | --- |
-| ▶ **2009–2012** | **Handlers and the net/http package** |
-| 2014–2015 | Goroutines and request lifetimes |
-| 2016 | HTTP/2 arrives in net/http |
-| 2017–2021 | Context, shutdown and production controls |
-| 2022–2023 | Testing, security and migration proposals |
-| 2024 | ServeMux methods and wildcards |
-| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
-
-> Now: Start with the Handler interface and direct dispatch.
-
-*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
+<!-- SPEAKER NOTES
+Timeline stop 1: the highlighted milestone is the next section. See research-changelog.md for the underlying release notes and dates.
+-->
 ---
 
 **2009 | ORIGINS**
@@ -224,23 +206,13 @@ Stop the server with Ctrl+C before the next demo.
 Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
 -->
 ---
-**TIMELINE | STOP 2 OF 7**
+<!-- _paginate: false -->
 
-# 2014–2015: Goroutines and request lifetimes
+![bg](timeline/timeline-2.png)
 
-| When | What changed |
-| --- | --- |
-| 2009–2012 | Handlers and the net/http package |
-| ▶ **2014–2015** | **Goroutines and request lifetimes** |
-| 2016 | HTTP/2 arrives in net/http |
-| 2017–2021 | Context, shutdown and production controls |
-| 2022–2023 | Testing, security and migration proposals |
-| 2024 | ServeMux methods and wildcards |
-| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
-
-> Now: A request has a lifetime; concurrent work must respect it.
-
-*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
+<!-- SPEAKER NOTES
+Timeline stop 2: the highlighted milestone is the next section. See research-changelog.md for the underlying release notes and dates.
+-->
 ---
 
 **2014 | A CONCURRENCY MODEL EMERGES**
@@ -342,23 +314,13 @@ The server waits for its child work. Leave it running for route demos.
 Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
 -->
 ---
-**TIMELINE | STOP 3 OF 7**
+<!-- _paginate: false -->
 
-# 2016: HTTP/2 arrives in net/http
+![bg](timeline/timeline-3.png)
 
-| When | What changed |
-| --- | --- |
-| 2009–2012 | Handlers and the net/http package |
-| 2014–2015 | Goroutines and request lifetimes |
-| ▶ **2016** | **HTTP/2 arrives in net/http** |
-| 2017–2021 | Context, shutdown and production controls |
-| 2022–2023 | Testing, security and migration proposals |
-| 2024 | ServeMux methods and wildcards |
-| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
-
-> Now: HTTP/2 adds multiplexed streams, while handlers stay the same.
-
-*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
+<!-- SPEAKER NOTES
+Timeline stop 3: the highlighted milestone is the next section. See research-changelog.md for the underlying release notes and dates.
+-->
 ---
 
 **2015-2016 | GO 1.6**
@@ -453,23 +415,13 @@ The test starts a TLS server and asserts that the client negotiated HTTP/2.
 Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
 -->
 ---
-**TIMELINE | STOP 4 OF 7**
+<!-- _paginate: false -->
 
-# 2017–2021: Context, shutdown and production controls
+![bg](timeline/timeline-4.png)
 
-| When | What changed |
-| --- | --- |
-| 2009–2012 | Handlers and the net/http package |
-| 2014–2015 | Goroutines and request lifetimes |
-| 2016 | HTTP/2 arrives in net/http |
-| ▶ **2017–2021** | **Context, shutdown and production controls** |
-| 2022–2023 | Testing, security and migration proposals |
-| 2024 | ServeMux methods and wildcards |
-| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
-
-> Now: Add cancellation, shutdown and connection controls.
-
-*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
+<!-- SPEAKER NOTES
+Timeline stop 4: the highlighted milestone is the next section. See research-changelog.md for the underlying release notes and dates.
+-->
 ---
 
 **2016-2017 | GO 1.7 AND 1.8**
@@ -599,23 +551,13 @@ The server uses a bounded graceful shutdown; inspect main.go for the lifecycle.
 Run from go-meetup-nethttp/history/examples. These commands use the runnable example module. See its README for setup, Go version requirements and TLS options.
 -->
 ---
-**TIMELINE | STOP 5 OF 7**
+<!-- _paginate: false -->
 
-# 2022–2023: Testing, security and migration proposals
+![bg](timeline/timeline-5.png)
 
-| When | What changed |
-| --- | --- |
-| 2009–2012 | Handlers and the net/http package |
-| 2014–2015 | Goroutines and request lifetimes |
-| 2016 | HTTP/2 arrives in net/http |
-| 2017–2021 | Context, shutdown and production controls |
-| ▶ **2022–2023** | **Testing, security and migration proposals** |
-| 2024 | ServeMux methods and wildcards |
-| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
-
-> Now: Test the boundaries and track the implementation migration.
-
-*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
+<!-- SPEAKER NOTES
+Timeline stop 5: the highlighted milestone is the next section. See research-changelog.md for the underlying release notes and dates.
+-->
 ---
 
 **2022 | GO 1.18 AND 1.19**
@@ -777,23 +719,13 @@ Go 1.27 release notes - https://go.dev/doc/go1.27
 -->
 
 ---
-**TIMELINE | STOP 6 OF 7**
+<!-- _paginate: false -->
 
-# 2024: ServeMux methods and wildcards
+![bg](timeline/timeline-6.png)
 
-| When | What changed |
-| --- | --- |
-| 2009–2012 | Handlers and the net/http package |
-| 2014–2015 | Goroutines and request lifetimes |
-| 2016 | HTTP/2 arrives in net/http |
-| 2017–2021 | Context, shutdown and production controls |
-| 2022–2023 | Testing, security and migration proposals |
-| ▶ **2024** | **ServeMux methods and wildcards** |
-| 2025–2026 | Protocol controls, testing and HTTP/2 source move |
-
-> Now: Route by method and path using the standard library.
-
-*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
+<!-- SPEAKER NOTES
+Timeline stop 6: the highlighted milestone is the next section. See research-changelog.md for the underlying release notes and dates.
+-->
 ---
 
 **JULY 2023 -> FEBRUARY 2024**
@@ -1038,23 +970,13 @@ Go 1.22 release notes - https://go.dev/doc/go1.22
 -->
 
 ---
-**TIMELINE | STOP 7 OF 7**
+<!-- _paginate: false -->
 
-# 2025–2026: Protocol controls, testing and HTTP/2 source move
+![bg](timeline/timeline-7.png)
 
-| When | What changed |
-| --- | --- |
-| 2009–2012 | Handlers and the net/http package |
-| 2014–2015 | Goroutines and request lifetimes |
-| 2016 | HTTP/2 arrives in net/http |
-| 2017–2021 | Context, shutdown and production controls |
-| 2022–2023 | Testing, security and migration proposals |
-| 2024 | ServeMux methods and wildcards |
-| ▶ **2025–2026** | **Protocol controls, testing and HTTP/2 source move** |
-
-> Now: Configure HTTP/2, test behavior and follow the source move.
-
-*Sources: [Go release history](https://go.dev/doc/devel/release) | [net/http documentation](https://pkg.go.dev/net/http)*
+<!-- SPEAKER NOTES
+Timeline stop 7: the highlighted milestone is the next section. See research-changelog.md for the underlying release notes and dates.
+-->
 ---
 
 **2025 | GO 1.24**

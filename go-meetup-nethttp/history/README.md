@@ -9,3 +9,5 @@ Regenerate the HTML with `marp --html talk.md -o talk.html`. To generate an upda
 The talk uses Go release numbers to date changes and HTTP/1 and HTTP/2 to describe wire protocols. Code snippets are illustrative; check API availability against the Go version used in your project.
 
 The slide examples are runnable in [`examples/`](examples/README.md), including route, HTTP/2, and concurrency tests.
+
+The opening and section timelines are PNG backgrounds in `timeline/`. They progressively reveal the milestones; `timeline/generate.py` regenerates them with Pillow and macOS Arial fonts.
