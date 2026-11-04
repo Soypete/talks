@@ -117,3 +117,11 @@ request is also 1 October 2026.]
 - *The Determinism Boundary* — the essay this talk is drawn from
 - *Reasoning Prompts Are Not Pragmatics* — the inference-gap argument in detail
 - *Sandboxes Are Not Guardrails* — the same boundary, from the containment side
+
+---
+
+## KubeCon + CloudNativeCon EU 2027 co-located event (CNCF Sessionize)
+
+Description (949 chars, limit 1000):
+
+A model can infer that a $2,000 refund would fix a customer's problem. That does not mean the employee it acts for may issue one. Agents on Kubernetes are good at interpreting intent and proposing actions, but too many platforms let the model also decide what is allowed, through system prompts that say "never" and "only." Prompts are guidelines, not access control. This talk draws the Determinism Boundary: the model proposes, infrastructure enforces. For platform engineers and security teams, we cover the two failure modes, agents doing what they shouldn't and seeing what they shouldn't, and where each gets enforced: authorization before context assembly, policy checks at the tool call, identity-aware gateways, and attribute-based policy evaluated outside the model. Attendees leave knowing how to find the rules hiding in their prompts and move them into enforcement points that hold whether the model is brilliant, confused, or injected.

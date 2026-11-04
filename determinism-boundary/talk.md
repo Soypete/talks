@@ -323,6 +323,43 @@ requests no engineer wrote.
 
 ---
 
+## The open-source version
+
+Kei doesn't run on these, but a platform team could build the same boundary with
+CNCF projects:
+
+| Failure mode | Enforce with |
+|---|---|
+| **Seeing**: retrieval leaks | **OpenFGA** `ListObjects` → fetch only what `user:alice` `can_view` |
+| **Doing**: tool calls | **OPA** policy at the harness, or **Envoy** `ext_authz` → OPA |
+| Who is asking | **SPIFFE/SPIRE** for the agent, **Keycloak** token exchange for the user |
+| What happened | OPA decision logs → **OpenTelemetry** → audit store |
+
+---
+
+## The $500 refund limit, as policy instead of prompt
+
+```rego
+package agent.authz
+
+default allow := false
+
+allow if {
+    input.tool == "issue_refund"
+    input.principal.can_refund
+    input.args.amount_usd <= 500
+    input.resource.account in input.principal.accounts
+}
+```
+
+Delete the system prompt. **This still holds.**
+
+<!-- Same rule as the "four sentences that sound like controls" slide, but
+evaluated outside the model. Injection can change what the model proposes,
+not what OPA returns. -->
+
+---
+
 <!-- _class: lead -->
 
 # The Takeaway
