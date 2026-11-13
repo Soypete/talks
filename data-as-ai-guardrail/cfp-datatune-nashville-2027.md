@@ -6,40 +6,46 @@
 **Submission:** https://www.datatuneconf.com/speak.html  
 **Audience:** Data engineers, analytics engineers, data platform practitioners  
 **Proposed length:** 60 minutes  
-**Related existing talk:** [Data as an AI Guardrail](talk.md)  
-**Source essay:** *The Semantic Background* (Haikei Labs, November 10, 2026); original Substack permalink to verify before submission.
+**Original talk:** [Data as an AI Guardrail](talk.md)  
+**Existing related CFP:** [Ontologies as Inference Models](cfp-dpe-summit.md)
 
 ## Title
 
-Access Is Not Context: What Data Engineering Must Build for AI Agents
+Data as an AI Guardrail: Using Ontologies to Ground Agentic AI
 
 ## Abstract
 
-Give an AI agent access to your warehouse, dashboards, support tickets, and operational logs, and it can retrieve a lot of data. That does not mean it understands what those records mean to your business. A field name is not a definition; a database connection is not a permission to act; and the latest query result is not necessarily the authoritative answer.
+An AI system cannot reliably produce accurate, domain-grounded answers from inaccurate, incomplete, or misleading information. Yet we spend enormous effort improving models and prompts while overlooking the data that determines what they can know. Enterprises already have years of curated, validated data, business rules, and domain knowledge. How do we actually make that information available to agents in a form they can reason over and check?
 
-We will follow a concrete operational incident — a checkout problem spanning logs, tickets, business metrics, and multiple systems — and ask what an agent actually needs to investigate it reliably. We will separate the lexicon of business terms, the semantic relationships and source authority behind those terms, and the pragmatic limits on which actions it may take. Then we will trace a governed workflow: asking the semantic layer which sources and metrics apply, querying the data, and executing a narrowly authorized follow-up action.
+Raw retrieval is not enough. A model may read a product row without knowing what its category means or which relationships and constraints make an assertion valid. Ontologies provide a formal semantic model: shared definitions, relationships, and inference rules. They do more than document business vocabulary. They let us test claims against the structure of the domain.
 
-The goal is not to put another wall of prose into a prompt. It is to show how data engineers can make business context queryable, testable, and reusable across agents, while still enforcing identity and tool boundaries in the harness.
+This session shows how data engineering becomes a practical AI guardrail. We will walk from controlled vocabularies and taxonomies to ontologies and knowledge graphs, then trace an agent that proposes an assertion, calls a validation tool, and rejects or corrects a claim that conflicts with the modeled domain. We will distinguish what semantic validation can prove from what still requires external factual verification.
+
+The central point: if we want more reliable AI output, we have to engineer and validate the information it relies on. Data engineers already know how to do that work.
 
 ## Takeaways
 
-- Distinguish data access, business semantics, and authorization for actions.
-- Identify what belongs in an ontology/semantic layer rather than in a prompt.
-- Design an agent workflow that queries both business definitions and operational data.
-- Test source selection, tool calls, and permission boundaries rather than trusting a plausible final answer.
+- Why the quality and accuracy of information supplied to an AI system constrain the quality of its output.
+- Why raw data retrieval is insufficient without definitions, relationships, and semantic constraints.
+- How to build from controlled vocabulary through taxonomy and ontology to a populated knowledge graph.
+- How ontologies work as inference models for validating agent assertions and tool interactions.
+- How to place deterministic data validation into an agent workflow rather than hoping a prompt prevents hallucinations.
 
 ## Proposed 60-minute flow
 
-1. 0–8 min: Why an agent with every connector can still answer the wrong question
-2. 8–20 min: Checkout incident across fragmented sources
-3. 20–35 min: Lexicon, semantic relationships, source authority, metrics
-4. 35–48 min: Governed tool sequence, identity, approvals, deterministic deny
-5. 48–55 min: Behavior-based evaluations and failure cases
-6. 55–60 min: Q&A
+1. 0–10 min: Curated enterprise data versus plausible AI hallucinations
+2. 10–20 min: Why raw data and prompt rules are insufficient
+3. 20–35 min: Ontology pipeline: vocabulary, taxonomies, inference, knowledge graphs
+4. 35–48 min: Three implementation patterns and agent assertion validation
+5. 48–55 min: Educational prerequisite example, limitations, and adoption
+6. 55–60 min: Questions
 
-## Editorial checks before submission
+## Speaker/reviewer notes
 
-- Verify the full case-study details and any claimed outcomes against the source essay.
-- Link the exact Substack article permalink, not a guessed slug.
-- Only promise a live demo after confirming a reproducible environment.
-- Check Nashville travel against pending March 15 Barcelona submissions.
+Vendor-neutral. Ground the examples in the original [slide deck](talk.md), including the educational prerequisite-checking example. Do not replace the talk with a separate access-control/governance or checkout-incident argument. Do not claim that good data mathematically guarantees perfect model output: even with accurate data, models and pipelines can still make errors.
+
+## Submission check
+
+- Review title and abstract against the existing Data as an AI Guardrail talk.
+- Confirm the CFP form's character limits and exact duration.
+- Check Nashville travel against pending Barcelona March 15 CFP.
