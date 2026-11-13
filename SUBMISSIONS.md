@@ -14,6 +14,17 @@ Event: April 28–29, 2027, San Francisco. CFP closes January 18, 2027. Limit: t
 
 The 2026 accepted talk on self-hosting is an earlier, separate presentation. No acceptance decision reported for 2027.
 
+## ContainerDays & AI Context New York 2027 — submitted November 13, 2026
+
+Event: March 16, 2027, New York. Both Sessionize slots filled; screenshot confirms these exact titles. Awaiting decisions.
+
+| Submitted session | Status |
+|---|---|
+| The Semantic Background: Connecting Tools Doesn't Create Meaningful Context | Submitted |
+| Shared Memory for Agents: A Wiki as a Coordination Substrate | Submitted |
+
+**Travel risk:** overlaps the March 15–18 KubeCon + CloudNativeCon Europe window and March 15 Barcelona event submissions if accepted. No acceptance is confirmed for these overlapping engagements.
+
 ## DataTune Nashville 2027 — submitted November 13, 2026
 
 Event: March 12–13, 2027; CFP deadline November 15, 2026. **All three proposals submitted through Sessionize** (confirmed by Miriah's November 13 screenshot). Decisions pending.
