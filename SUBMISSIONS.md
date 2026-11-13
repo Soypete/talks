@@ -10,7 +10,7 @@ Event: March 12–13, 2027; CFP deadline November 15, 2026. **All three proposal
 |---|---|---|
 | Data as AI Guardrail | [DataTune adaptation](data-as-ai-guardrail/cfp-datatune-nashville-2027.md); [original presentation](data-as-ai-guardrail/talk.md) | Submitted |
 | Shared Memory for Agents: A Wiki as a Coordination Substrate | `herdr-wiki-shared-memory` | Submitted |
-| Your AI Agent Does Not Have Memory: Personalization Is Governed Data Access | Existing memory/person-alization pitch (locate definitive talk directory before linking) | Submitted |
+| Your AI Agent Does Not Have Memory: Personalization Is Governed Data Access | Existing memory/personalization pitch (locate definitive talk directory before linking) | Submitted |
 
 No acceptance/rejection decision reported. Nashville may create a difficult turnaround if the March 15 Barcelona submission is accepted.
 
