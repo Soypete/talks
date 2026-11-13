@@ -2,6 +2,18 @@
 
 Which talk goes to which event, and why. Update as CFPs close and results land.
 
+## DataTune Nashville 2027 — submitted November 13, 2026
+
+Event: March 12–13, 2027; CFP deadline November 15, 2026. **All three proposals submitted through Sessionize** (confirmed by Miriah's November 13 screenshot). Decisions pending.
+
+| Sessionize submitted title | Source in talks repo | Status |
+|---|---|---|
+| Data as AI Guardrail | [DataTune adaptation](data-as-ai-guardrail/cfp-datatune-nashville-2027.md); [original presentation](data-as-ai-guardrail/talk.md) | Submitted |
+| Shared Memory for Agents: A Wiki as a Coordination Substrate | `herdr-wiki-shared-memory` | Submitted |
+| Your AI Agent Does Not Have Memory: Personalization Is Governed Data Access | Existing memory/person-alization pitch (locate definitive talk directory before linking) | Submitted |
+
+No acceptance/rejection decision reported. Nashville may create a difficult turnaround if the March 15 Barcelona submission is accepted.
+
 ## Submit this week
 
 | Event | Date | CFP closes | Talk | Status |
