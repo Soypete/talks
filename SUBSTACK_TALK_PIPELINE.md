@@ -4,7 +4,7 @@ Purpose: Turn essays into reusable, **distinct** CFP submissions. Article titles
 
 | Source article / writing | Original date | Talk or CFP | Audience | Status |
 |---|---|---|---|---|
-| The Semantic Background | 2026-11-10 | [Access Is Not Context: What Data Engineering Must Build for AI Agents](data-as-ai-guardrail/cfp-datatune-nashville-2027.md) | Data engineers | Draft for DataTune Nashville |
+| Data as an AI Guardrail (existing talk; semantic grounding) | Existing | [Data as an AI Guardrail: Using Ontologies to Ground Agentic AI](data-as-ai-guardrail/cfp-datatune-nashville-2027.md) | Data engineers | Draft for DataTune Nashville |
 | Anatomy of an Agent Harness | 2026-11-03 | [Anatomy of a Tool Call: Who Decides What the Model Can Execute?](anatomy-of-a-tool-call/cfp.md) | Agent/platform developers | Draft for AGNTCon 2027 |
 | Anatomy of a Tool Call (working draft) | November 2026 | [Anatomy of a Tool Call](anatomy-of-a-tool-call/cfp.md) | Agent/platform developers | Draft |
 | You Cannot Review Every Agent Action | 2026-10-26 | [Who Is Your AI Agent Acting For?](agent-authority-enterprise/cfp.md) | Enterprise leadership, security, governance | Draft organizer pitch; accepted technical angle retained separately |
