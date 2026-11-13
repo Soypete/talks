@@ -1,6 +1,6 @@
 # DataTune Nashville 2027 — CFP draft
 
-**Status:** Draft, not submitted  
+**Status:** Submitted November 13, 2026 (Sessionize title: **Data as AI Guardrail**); awaiting decision  
 **Event:** DataTune Nashville, March 12–13, 2027  
 **CFP deadline:** November 15, 2026  
 **Submission:** https://www.datatuneconf.com/speak.html  
@@ -43,6 +43,11 @@ The central point: if we want more reliable AI output, we have to engineer and v
 ## Speaker/reviewer notes
 
 Vendor-neutral. Ground the examples in the original [slide deck](talk.md), including the educational prerequisite-checking example. Do not replace the talk with a separate access-control/governance or checkout-incident argument. Do not claim that good data mathematically guarantees perfect model output: even with accurate data, models and pipelines can still make errors.
+
+## Post-submission notes
+
+- Sessionize confirms the shorter submitted title **Data as AI Guardrail**. The expanded title and abstract below are the repository working version; exact submitted abstract is not confirmed.
+- Two additional DataTune talks were submitted: *Shared Memory for Agents: A Wiki as a Coordination Substrate* and *Your AI Agent Does Not Have Memory: Personalization Is Governed Data Access*.
 
 ## Submission check
 
