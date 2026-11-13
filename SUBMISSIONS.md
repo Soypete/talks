@@ -2,6 +2,18 @@
 
 Which talk goes to which event, and why. Update as CFPs close and results land.
 
+## AGNTCon + MCPCon North America 2027 — submissions
+
+Event: April 28–29, 2027, San Francisco. CFP closes January 18, 2027. Limit: three proposals per speaker.
+
+| Sessionize title | Repo source | Status |
+|---|---|---|
+| Shared Memory for Agents: A Wiki as a Coordination Substrate | `herdr-wiki-shared-memory` | Submitted; exact date not recorded |
+| The Semantic Background: Why Connecting Tools Doesn't Create Context | Source essay *The Semantic Background*; dedicated slide deck not yet built | Submitted November 13, 2026; awaiting decision |
+| Anatomy of a Tool Call: Who Decides What the Model Can Execute? | [CFP draft](anatomy-of-a-tool-call/cfp.md) | **Draft; not yet submitted** |
+
+The 2026 accepted talk on self-hosting is an earlier, separate presentation. No acceptance decision reported for 2027.
+
 ## DataTune Nashville 2027 — submitted November 13, 2026
 
 Event: March 12–13, 2027; CFP deadline November 15, 2026. **All three proposals submitted through Sessionize** (confirmed by Miriah's November 13 screenshot). Decisions pending.
